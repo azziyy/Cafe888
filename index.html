@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cafe 777 - Premium System</title>
+    <title>Cafe 777 - Smart System</title>
     <style>
         :root {
             --primary: #ffbe0b;
@@ -22,7 +22,7 @@
             display: flex; flex-direction: column; align-items: center;
         }
 
-        /* NAVIGATSIYA */
+        /* KATEGORIYALAR */
         .category-nav {
             display: flex; gap: 10px; overflow-x: auto;
             width: 100%; padding: 15px; background: white;
@@ -51,37 +51,35 @@
         }
         .img-container {
             width: 100%; aspect-ratio: 1 / 1;
-            overflow: hidden; cursor: zoom-in;
+            overflow: hidden; cursor: pointer;
             background: #f9f9f9;
         }
         .card img {
             width: 100%; height: 100%; object-fit: cover;
             transition: transform 0.3s ease;
         }
-        .card img:active { transform: scale(1.05); }
+        .card-info { padding: 12px; text-align: center; }
+        .card h4 { font-size: 15px; margin: 5px 0; color: var(--dark); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .card b { color: var(--secondary); font-size: 14px; display: block; margin-bottom: 8px; }
 
-        .card-info { padding: 10px; text-align: center; }
-        .card h4 { font-size: 15px; margin: 5px 0; color: var(--dark); height: 20px; overflow: hidden; }
-        .card b { color: var(--secondary); font-size: 14px; }
-
-        /* COUNTER */
+        /* COUNTER (- 1 +) */
         .counter-box {
             display: flex; align-items: center; justify-content: center;
-            gap: 12px; margin: 10px 0;
+            gap: 15px;
         }
         .count-btn {
             background: var(--dark); color: white; border: none;
-            width: 28px; height: 28px; border-radius: 8px; cursor: pointer;
-            font-size: 16px; font-weight: bold;
+            width: 32px; height: 32px; border-radius: 10px; cursor: pointer;
+            font-size: 18px; font-weight: bold;
         }
-        .qty-label { font-weight: bold; font-size: 15px; min-width: 15px; }
+        .qty-label { font-weight: bold; font-size: 16px; min-width: 20px; }
 
-        /* PRODUCT VIEW MODAL (RASM KATTALASHGANDA) */
+        /* PRODUCT VIEW MODAL */
         #productModal {
             display: none; position: fixed; top: 0; left: 0;
             width: 100%; height: 100%; background: rgba(0,0,0,0.85);
             z-index: 2000; align-items: center; justify-content: center;
-            backdrop-filter: blur(5px);
+            backdrop-filter: blur(8px);
         }
         .modal-content {
             background: white; width: 90%; max-width: 400px;
@@ -89,19 +87,18 @@
             animation: slideUp 0.3s ease-out;
         }
         @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        
         .modal-img { width: 100%; aspect-ratio: 1/1; object-fit: cover; }
-        .modal-details { padding: 20px; }
-        .modal-details h2 { margin: 0 0 10px 0; font-size: 22px; }
-        .modal-details p { color: #666; line-height: 1.5; margin-bottom: 15px; font-size: 15px; }
+        .modal-details { padding: 25px; }
+        .modal-details h2 { margin: 0 0 10px 0; font-size: 24px; }
+        .modal-details p { color: #666; line-height: 1.6; margin-bottom: 20px; font-size: 15px; }
         .close-modal {
             position: absolute; top: 15px; right: 15px;
             background: rgba(0,0,0,0.5); color: white; border: none;
-            width: 35px; height: 35px; border-radius: 50%;
-            font-size: 20px; cursor: pointer; z-index: 10;
+            width: 40px; height: 40px; border-radius: 50%;
+            font-size: 24px; cursor: pointer; z-index: 10;
         }
 
-        /* SAVATCHA QISMI */
+        /* SAVATCHA */
         .order-section {
             background: #fff; margin: 20px; padding: 25px;
             border-radius: 25px; width: 90%; max-width: 450px;
@@ -109,13 +106,13 @@
         }
         .cart-item {
             display: flex; justify-content: space-between; align-items: center;
-            padding: 12px 0; border-bottom: 1px solid #eee; font-size: 14px;
+            padding: 12px 0; border-bottom: 1px solid #eee; font-size: 15px;
         }
-        .remove-btn { color: var(--red); cursor: pointer; font-weight: bold; font-size: 12px; }
+        .remove-btn { color: var(--red); cursor: pointer; font-weight: bold; font-size: 13px; }
 
         input {
             width: 100%; padding: 15px; margin: 10px 0;
-            border: 2px solid #eee; border-radius: 12px; font-size: 16px; outline: none;
+            border: 2px solid #eee; border-radius: 12px; font-size: 16px; outline: none; box-sizing: border-box;
         }
         input:focus { border-color: var(--blue); }
 
@@ -128,21 +125,23 @@
 
         .total-box {
             display: flex; justify-content: space-between;
-            margin: 20px 0; font-size: 20px; font-weight: 800;
+            margin: 20px 0; font-size: 22px; font-weight: 800; color: var(--dark);
         }
         .order-btn {
             background: var(--blue); color: white; border: none;
-            width: 100%; padding: 18px; border-radius: 15px;
+            width: 100%; padding: 20px; border-radius: 18px;
             font-size: 16px; font-weight: bold; cursor: pointer;
+            transition: 0.3s;
         }
+        .order-btn:active { transform: scale(0.98); }
 
-        /* ALERT MODAL */
+        /* ALERT */
         #customAlert {
             display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
             background: white; padding: 30px; border-radius: 25px; z-index: 2100;
             text-align: center; width: 80%; max-width: 320px; box-shadow: 0 0 50px rgba(0,0,0,0.3);
         }
-        .overlay { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.6); z-index: 1000; }
+        .overlay { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.7); z-index: 1000; }
     </style>
 </head>
 <body>
@@ -165,7 +164,7 @@
                 <h2 id="viewTitle"></h2>
                 <p id="viewDesc"></p>
                 <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <b id="viewPrice" style="font-size: 20px; color: var(--secondary);"></b>
+                    <b id="viewPrice" style="font-size: 22px; color: var(--secondary);"></b>
                     <div id="viewCounterPlaceholder"></div>
                 </div>
             </div>
@@ -187,34 +186,26 @@
 
     <div class="overlay" id="overlay" onclick="closeAlert()"></div>
     <div id="customAlert">
-        <div id="alertIcon" style="font-size: 45px;">✅</div>
+        <div id="alertIcon" style="font-size: 50px;">✅</div>
         <h2 id="alertTitle">Xabar</h2>
         <p id="alertMsg"></p>
-        <button onclick="closeAlert()" style="background:var(--dark); color:white; border:none; padding:10px 30px; border-radius:10px; cursor:pointer;">OK</button>
+        <button onclick="closeAlert()" style="background:var(--dark); color:white; border:none; padding:12px 35px; border-radius:12px; cursor:pointer; font-weight:bold;">TUSHUNARLI</button>
     </div>
 
     <script>
+        // SOZLAMALAR (TOKEN VA ID)
         const BOT_TOKEN = "8032226679:AAETTGPvYSYSvF_QmdofXKibpOwt4E9Iitc"; 
         const CHAT_ID = "519326806"; 
 
-        // Mahsulotlar tavsifi bilan
         const products = [
-            { id: 1, cat: 'Burgerlar', name: 'Cheeseburger', price: 28000, img: 'Images/kolbasa.jpg', desc: 'Yumshoq bulochka, sifatli go\'shtli kotlet, erigan pishloq va maxsus sous.' },
-            { id: 2, cat: 'Burgerlar', name: 'Double Burger', price: 42000, img: 'https://cdn-icons-png.flaticon.com/512/1161/1161695.png', desc: 'Ikki barobar go\'sht, ikki barobar lazzat. To\'yimli tanlov!' },
-            { id: 3, cat: 'Burgerlar', name: 'Chicken Burger', price: 25000, img: 'https://cdn-icons-png.flaticon.com/512/4727/4727270.png', desc: 'Tovuq go\'shtidan tayyorlangan karsillama burger.' },
-            { id: 4, cat: 'Burgerlar', name: 'Big Burger 777', price: 45000, img: 'https://cdn-icons-png.flaticon.com/512/3075/3075977.png', desc: 'Bizning eng katta va eng mashhur burgerimiz.' },
-            { id: 5, cat: 'Burgerlar', name: 'Hot Dog XL', price: 18000, img: 'https://cdn-icons-png.flaticon.com/512/2454/2454157.png', desc: 'Uzun sosiska, yangi salat va klassik souslar.' },
-            { id: 6, cat: 'Burgerlar', name: 'Chili Burger', price: 30000, img: 'https://cdn-icons-png.flaticon.com/512/8201/8201887.png', desc: 'Achchiqni xush ko\'ruvchilar uchun maxsus achchiq sous bilan.' },
-            { id: 7, cat: 'Ichimliklar', name: 'Coca-Cola 0.5', price: 8000, img: 'https://cdn-icons-png.flaticon.com/512/3122/3122045.png', desc: 'Muzdek tetiklantiruvchi ichimlik.' },
-            { id: 8, cat: 'Ichimliklar', name: 'Fanta 0.5', price: 8000, img: 'https://cdn-icons-png.flaticon.com/512/2722/2722527.png', desc: 'Apelsin ta\'mli quyoshli ichimlik.' },
-            { id: 9, cat: 'Ichimliklar', name: 'Kofe Americano', price: 15000, img: 'https://cdn-icons-png.flaticon.com/512/630/630656.png', desc: 'Yangi damlangan hushbo\'y qora kofe.' },
-            { id: 10, cat: 'Ichimliklar', name: 'Choy ko`k/qora', price: 5000, img: 'https://cdn-icons-png.flaticon.com/512/3063/3063784.png', desc: 'An\'anaviy o\'zbek choyi.' },
-            { id: 11, cat: 'Ichimliklar', name: 'Moxito', price: 18000, img: 'https://cdn-icons-png.flaticon.com/512/1269/1269911.png', desc: 'Yalpiz va laym bilan tayyorlangan salqinlantiruvchi kokteyl.' },
-            { id: 12, cat: 'Ichimliklar', name: 'Suv 0.5', price: 3000, img: 'https://cdn-icons-png.flaticon.com/512/3105/3105807.png', desc: 'Gazlanmagan toza ichimlik suvi.' },
-            { id: 13, cat: 'Shirinliklar', name: 'Cheesecake', price: 25000, img: 'https://cdn-icons-png.flaticon.com/512/4359/4359656.png', desc: 'Yumshoq pishloqli kremli shirinlik.' },
-            { id: 14, cat: 'Shirinliklar', name: 'Muzqaymoq', price: 12000, img: 'https://cdn-icons-png.flaticon.com/512/938/938063.png', desc: 'Turli xil mevali va shokoladli muzqaymoqlar.' },
-            { id: 19, cat: 'Maxsus', name: 'Combo 777', price: 55000, img: 'https://cdn-icons-png.flaticon.com/512/3050/3050130.png', desc: 'Burger, fri va ichimlik - hammasi bittada arzonroq!' },
-            { id: 20, cat: 'Maxsus', name: 'Fri Kartoshkasi', price: 12000, img: 'https://cdn-icons-png.flaticon.com/512/1037/1037762.png', desc: 'Karsillama va issiq fri kartoshkalari.' },
+            { id: 1, cat: 'Burgerlar', name: 'Cheeseburger', price: 28000, img: 'Images/kolbasa.jpg', desc: 'Yumshoq bulochka, sifatli go\'shtli kotlet, erigan pishloq, yangi bodring va maxsus sous.' },
+            { id: 2, cat: 'Burgerlar', name: 'Double Burger', price: 42000, img: 'https://cdn-icons-png.flaticon.com/512/1161/1161695.png', desc: 'Ikki barobar go\'sht va pishloq. Haqiqiy burger ishqibozlari uchun!' },
+            { id: 3, cat: 'Burgerlar', name: 'Chicken Burger', price: 25000, img: 'https://cdn-icons-png.flaticon.com/512/4727/4727270.png', desc: 'Karsillama tovuq filesi, salat bargi va mayonezli sous.' },
+            { id: 7, cat: 'Ichimliklar', name: 'Coca-Cola 0.5', price: 8000, img: 'https://cdn-icons-png.flaticon.com/512/3122/3122045.png', desc: 'Klassik tetiklantiruvchi ichimlik.' },
+            { id: 11, cat: 'Ichimliklar', name: 'Moxito', price: 18000, img: 'https://cdn-icons-png.flaticon.com/512/1269/1269911.png', desc: 'Yalpiz va laym qo\'shilgan muzdek salqin ichimlik.' },
+            { id: 13, cat: 'Shirinliklar', name: 'Cheesecake', price: 25000, img: 'https://cdn-icons-png.flaticon.com/512/4359/4359656.png', desc: 'Yumshoq tvorogli va qaymoqli nozik shirinlik.' },
+            { id: 19, cat: 'Maxsus', name: 'Combo 777', price: 55000, img: 'https://cdn-icons-png.flaticon.com/512/3050/3050130.png', desc: 'Burger, fri va ichimlik - hammasi bitta to\'plamda.' },
+            { id: 20, cat: 'Maxsus', name: 'Fri Kartoshkasi', price: 12000, img: 'https://cdn-icons-png.flaticon.com/512/1037/1037762.png', desc: 'Oltinrang karsillama fri kartoshkalari.' }
         ];
 
         let cart = {}; 
@@ -235,7 +226,7 @@
                 return `
                     <div class="card">
                         <div class="img-container" onclick="viewProduct(${p.id})">
-                            <img src="${p.img}" loading="lazy">
+                            <img src="${p.img}">
                         </div>
                         <div class="card-info">
                             <h4>${p.name}</h4>
@@ -251,16 +242,14 @@
             }).join('');
         }
 
-        // Mahsulotni kattalashtirib ko'rish
         function viewProduct(id) {
             const p = products.find(x => x.id === id);
             const qty = cart[id] || 0;
             document.getElementById('viewImg').src = p.img;
             document.getElementById('viewTitle').innerText = p.name;
-            document.getElementById('viewDesc').innerText = p.desc || "Mahsulot haqida ma'lumot tez kunda...";
+            document.getElementById('viewDesc').innerText = p.desc;
             document.getElementById('viewPrice').innerText = p.price.toLocaleString() + " so'm";
             
-            // Modal ichidagi counterni yangilash
             document.getElementById('viewCounterPlaceholder').innerHTML = `
                 <div class="counter-box">
                     <button class="count-btn" onclick="updateQty(${p.id}, -1); viewProduct(${p.id})">-</button>
@@ -268,13 +257,10 @@
                     <button class="count-btn" onclick="updateQty(${p.id}, 1); viewProduct(${p.id})">+</button>
                 </div>
             `;
-            
             document.getElementById('productModal').style.display = 'flex';
         }
 
-        function closeProduct() {
-            document.getElementById('productModal').style.display = 'none';
-        }
+        function closeProduct() { document.getElementById('productModal').style.display = 'none'; }
 
         function updateQty(id, change) {
             cart[id] = (cart[id] || 0) + change;
@@ -293,8 +279,8 @@
                 total += product.price * qty;
                 html += `
                     <div class="cart-item">
-                        <span><b>${product.name}</b> (x${qty})</span>
-                        <span class="remove-btn" onclick="updateQty(${id}, -${qty})">❌ O'chirish</span>
+                        <span><b>${product.name}</b> (${qty} dona)</span>
+                        <span class="remove-btn" onclick="updateQty(${id}, -${qty})">O'CHIRISH 🗑️</span>
                     </div>
                 `;
             }
@@ -312,10 +298,7 @@
                         btn.innerHTML = "✅ MANZIL ANIQLANDI";
                         btn.className = "location-check-btn success";
                     },
-                    () => {
-                        btn.innerHTML = "❌ Lokatsiyaga ruxsat berilmadi";
-                        btn.style.color = "red";
-                    }
+                    () => { showAlert("Xato", "Lokatsiyaga ruxsat bering!", "📍"); btn.innerText = "📍 MANZILNI ANIQLASH"; }
                 );
             }
         }
@@ -323,31 +306,40 @@
         function sendOrder() {
             const name = document.getElementById('userName').value.trim();
             const phone = document.getElementById('userPhone').value.trim();
-            if (Object.keys(cart).length === 0) return showAlert("Xatolik", "Savatcha bo'sh!", "🛒");
-            if (!name || !phone) return showAlert("Xatolik", "Ism va telni kiriting!", "👤");
-            if (!userCoords) return showAlert("Xatolik", "Manzilni aniqlang!", "📍");
+            const items = Object.keys(cart);
+
+            if (items.length === 0) return showAlert("Xatolik", "Siz hech narsa tanlamadingiz!", "🛒");
+            if (!name || !phone) return showAlert("Xatolik", "Ism va telefoningizni kiriting!", "👤");
+            if (!userCoords) return showAlert("Xatolik", "Manzilni aniqlash tugmasini bosing!", "📍");
 
             const btn = document.getElementById('submitBtn');
-            btn.disabled = true; btn.innerText = "Yuborilmoqda...";
+            btn.disabled = true; btn.innerText = "YUBORILMOQDA...";
 
-            let text = `🚀 <b>YANGI BUYURTMA</b>\n\n👤 <b>Mijoz:</b> ${name}\n📞 <b>Tel:</b> ${phone}\n\n📦 <b>Mahsulotlar:</b>\n`;
-            for (const id in cart) {
-                const p = products.find(i => i.id == id);
-                text += `- ${p.name} (${cart[id]} dona)\n`;
-            }
-            text += `\n💰 <b>JAMI: ${document.getElementById('totalPrice').innerText} so'm</b>\n📍 <a href="https://www.google.com/maps?q=${userCoords.lat},${userCoords.lon}">Xaritada ko'rish</a>`;
+            let msg = `🚀 <b>YANGI BUYURTMA</b>\n\n`;
+            msg += `👤 <b>Mijoz:</b> ${name}\n`;
+            msg += `📞 <b>Tel:</b> ${phone}\n\n`;
+            msg += `📦 <b>Mahsulotlar:</b>\n`;
+            items.forEach(id => {
+                const p = products.find(x => x.id == id);
+                msg += `- ${p.name} (${cart[id]} dona)\n`;
+            });
+            msg += `\n💰 <b>JAMI: ${document.getElementById('totalPrice').innerText} so'm</b>\n`;
+            msg += `📍 <a href="https://www.google.com/maps?q=${userCoords.lat},${userCoords.lon}">Xaritada ko'rish</a>`;
 
-            fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent(text)}&parse_mode=HTML`)
+            fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ chat_id: CHAT_ID, text: msg, parse_mode: 'HTML' })
+            })
             .then(res => {
                 if(res.ok) {
-                    showAlert("Raxmat!", "Buyurtmangiz yuborildi!", "✅");
+                    showAlert("Tayyor!", "Buyurtmangiz qabul qilindi!", "✅");
                     cart = {}; renderMenu(); renderCart();
                     document.getElementById('userName').value = "";
                     document.getElementById('userPhone').value = "";
-                }
-            }).finally(() => {
-                btn.disabled = false; btn.innerText = "BUYURTMA BERISH";
-            });
+                } else { showAlert("Xato", "Telegram bilan aloqa yo'q!", "❌"); }
+            })
+            .finally(() => { btn.disabled = false; btn.innerText = "BUYURTMA BERISH"; });
         }
 
         function showAlert(t, m, i) {
