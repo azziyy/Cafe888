@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cafe 777 - Smart System</title>
+    <style>
+        :root {
+            --primary: #ffbe0b;
+            --secondary: #fb5607;
+            --dark: #1a1a1a;
+            --blue: #0088cc;
+            --green: #2ecc71;
+            --red: #ff4757;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f0f2f5;
+            margin: 0; padding: 0;
+            display: flex; flex-direction: column; align-items: center;
+        }
+
+        /* NAVIGATSIYA */
+        .category-nav {
+            display: flex; gap: 10px; overflow-x: auto;
+            width: 100%; padding: 15px; background: white;
+            white-space: nowrap; position: sticky; top: 0; z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        .category-nav::-webkit-scrollbar { display: none; }
+        .cat-btn {
+            padding: 10px 18px; border-radius: 20px;
+            border: 2px solid var(--primary); background: transparent;
+            cursor: pointer; font-weight: 600;
+        }
+        .cat-btn.active { background: var(--primary); }
+
+        /* MENU GRID */
+        .menu-grid {
+            display: grid; grid-template-columns: 1fr 1fr;
+            gap: 15px; padding: 15px; max-width: 600px; width: 100%;
+            box-sizing: border-box;
+        }
+        .card {
+            background: #fff; padding: 15px; border-radius: 20px;
+            text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+        .card img { width: 80px; height: 80px; object-fit: contain; }
+        .card h4 { font-size: 14px; margin: 10px 0; height: 35px; overflow: hidden; }
+
+        /* COUNTER TUGMALARI */
+        .counter-box {
+            display: flex; align-items: center; justify-content: center;
+            gap: 15px; margin-top: 10px;
+        }
+        .count-btn {
+            background: var(--dark); color: white; border: none;
+            width: 30px; height: 30px; border-radius: 8px; cursor: pointer;
+            font-size: 18px; font-weight: bold;
+        }
+        .qty-label { font-weight: bold; font-size: 16px; min-width: 20px; }
+
+        /* SAVATCHA (ORDER SECTION) */
+        .order-section {
+            background: #fff; margin: 20px; padding: 25px;
+            border-radius: 25px; width: 90%; max-width: 450px;
+            box-sizing: border-box; box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        .cart-item {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 10px 0; border-bottom: 1px solid #eee;
+        }
+        .remove-btn { color: var(--red); cursor: pointer; font-weight: bold; padding: 5px; }
+
+        input {
+            width: 100%; padding: 15px; margin: 10px 0;
+            border: 2px solid #eee; border-radius: 12px; font-size: 16px;
+        }
+
+        .location-check-btn {
+            background: #f8f9fa; border: 2px dashed var(--blue);
+            color: var(--blue); width: 100%; padding: 15px;
+            border-radius: 12px; margin: 10px 0; cursor: pointer; font-weight: bold;
+        }
+        .location-check-btn.success { border-color: var(--green); color: var(--green); background: #eafff2; }
+        .location-check-btn.error { border-color: var(--red); color: var(--red); }
+
+        .total-box {
+            display: flex; justify-content: space-between;
+            margin: 20px 0; font-size: 20px; font-weight: 800;
+        }
+        .order-btn {
+            background: var(--blue); color: white; border: none;
+            width: 100%; padding: 18px; border-radius: 15px;
+            font-size: 16px; font-weight: bold; cursor: pointer;
+        }
+
+        /* MODAL */
+        #customAlert {
+            display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background: white; padding: 30px; border-radius: 25px; z-index: 1001;
+            text-align: center; width: 80%; max-width: 320px; box-shadow: 0 0 50px rgba(0,0,0,0.3);
+        }
+        .overlay { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.6); z-index: 1000; }
+    </style>
+</head>
+<body>
+
+    <div class="category-nav">
+        <button class="cat-btn active" onclick="filterMenu('Barchasi', this)">📂 Barchasi</button>
+        <button class="cat-btn" onclick="filterMenu('Burgerlar', this)">🍔 Burgerlar</button>
+        <button class="cat-btn" onclick="filterMenu('Ichimliklar', this)">🥤 Ichimliklar</button>
+        <button class="cat-btn" onclick="filterMenu('Shirinliklar', this)">🍰 Shirinliklar</button>
+        <button class="cat-btn" onclick="filterMenu('Maxsus', this)">✨ Maxsus</button>
+    </div>
+
+    <div class="menu-grid" id="menuDisplay"></div>
+
+    <div class="order-section">
+        <h3>Sizning tanlovingiz 🛒</h3>
+        <div id="cartList"></div>
+        
+        <div class="total-box">
+            <span>Jami:</span>
+            <span><span id="totalPrice">0</span> so'm</span>
+        </div>
+
+        <input type="text" id="userName" placeholder="Ismingiz">
+        <input type="tel" id="userPhone" placeholder="Telefoningiz">
+        
+        <button class="location-check-btn" id="locBtn" onclick="getLocation()">📍 MANZILNI ANIQLASH</button>
+
+        <button class="order-btn" id="submitBtn" onclick="sendOrder()">BUYURTMA BERISH</button>
+    </div>
+
+    <div class="overlay" id="overlay" onclick="closeAlert()"></div>
+    <div id="customAlert">
+        <div id="alertIcon" style="font-size: 45px;">✅</div>
+        <h2 id="alertTitle">Xabar</h2>
+        <p id="alertMsg"></p>
+        <button onclick="closeAlert()" style="background:var(--dark); color:white; border:none; padding:10px 30px; border-radius:10px; cursor:pointer;">OK</button>
+    </div>
+
+    <script>
+        const BOT_TOKEN = "8032226679:AAETTGPvYZYSvF_QmdofXKibpOwt4E9Iitc"; 
+        const CHAT_ID = "519326806"; 
+
+        const products = [
+            { id: 1, cat: 'Burgerlar', name: 'Cheeseburger', price: 28000, img: 'https://cdn-icons-png.flaticon.com/512/5787/5787016.png' },
+            { id: 2, cat: 'Burgerlar', name: 'Double Burger', price: 42000, img: 'https://cdn-icons-png.flaticon.com/512/1161/1161695.png' },
+            { id: 3, cat: 'Burgerlar', name: 'Chicken Burger', price: 25000, img: 'https://cdn-icons-png.flaticon.com/512/4727/4727270.png' },
+            { id: 4, cat: 'Burgerlar', name: 'Big Burger 777', price: 45000, img: 'https://cdn-icons-png.flaticon.com/512/3075/3075977.png' },
+            { id: 5, cat: 'Burgerlar', name: 'Hot Dog XL', price: 18000, img: 'https://cdn-icons-png.flaticon.com/512/2454/2454157.png' },
+            { id: 6, cat: 'Burgerlar', name: 'Chili Burger', price: 30000, img: 'https://cdn-icons-png.flaticon.com/512/8201/8201887.png' },
+            { id: 7, cat: 'Ichimliklar', name: 'Coca-Cola 0.5', price: 8000, img: 'https://cdn-icons-png.flaticon.com/512/3122/3122045.png' },
+            { id: 8, cat: 'Ichimliklar', name: 'Fanta 0.5', price: 8000, img: 'https://cdn-icons-png.flaticon.com/512/2722/2722527.png' },
+            { id: 9, cat: 'Ichimliklar', name: 'Kofe Americano', price: 15000, img: 'https://cdn-icons-png.flaticon.com/512/630/630656.png' },
+            { id: 10, cat: 'Ichimliklar', name: 'Choy ko`k/qora', price: 5000, img: 'https://cdn-icons-png.flaticon.com/512/3063/3063784.png' },
+            { id: 11, cat: 'Ichimliklar', name: 'Moxito', price: 18000, img: 'https://cdn-icons-png.flaticon.com/512/1269/1269911.png' },
+            { id: 12, cat: 'Ichimliklar', name: 'Suv 0.5', price: 3000, img: 'https://cdn-icons-png.flaticon.com/512/3105/3105807.png' },
+            { id: 13, cat: 'Shirinliklar', name: 'Cheesecake', price: 25000, img: 'https://cdn-icons-png.flaticon.com/512/4359/4359656.png' },
+            { id: 14, cat: 'Shirinliklar', name: 'Muzqaymoq', price: 12000, img: 'https://cdn-icons-png.flaticon.com/512/938/938063.png' },
+            { id: 15, cat: 'Shirinliklar', name: 'Donut Mix', price: 10000, img: 'https://cdn-icons-png.flaticon.com/512/2362/2362327.png' },
+            { id: 16, cat: 'Shirinliklar', name: 'Pechenye Box', price: 20000, img: 'https://cdn-icons-png.flaticon.com/512/2954/2954845.png' },
+            { id: 17, cat: 'Shirinliklar', name: 'Shokoladli Tort', price: 30000, img: 'https://cdn-icons-png.flaticon.com/512/2682/2682413.png' },
+            { id: 18, cat: 'Shirinliklar', name: 'Maffin', price: 15000, img: 'https://cdn-icons-png.flaticon.com/512/3506/3506147.png' },
+            { id: 19, cat: 'Maxsus', name: 'Combo 777', price: 55000, img: 'https://cdn-icons-png.flaticon.com/512/3050/3050130.png' },
+            { id: 20, cat: 'Maxsus', name: 'Fri Kartoshkasi', price: 12000, img: 'https://cdn-icons-png.flaticon.com/512/1037/1037762.png' },
+            { id: 21, cat: 'Maxsus', name: 'Naggetslar', price: 22000, img: 'https://cdn-icons-png.flaticon.com/512/599/599427.png' },
+            { id: 22, cat: 'Maxsus', name: 'Pitsa Mix', price: 65000, img: 'https://cdn-icons-png.flaticon.com/512/3595/3595455.png' },
+            { id: 23, cat: 'Maxsus', name: 'Club Sandwich', price: 28000, img: 'https://cdn-icons-png.flaticon.com/512/6518/6518091.png' },
+            { id: 24, cat: 'Maxsus', name: 'Karsillagan qanotchalar', price: 35000, img: 'https://cdn-icons-png.flaticon.com/512/1892/1892627.png' },
+        ];
+
+        let cart = {}; // {productId: quantity}
+        let userCoords = null;
+        let currentCat = 'Barchasi';
+
+        function filterMenu(cat, btn) {
+            currentCat = cat;
+            document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            renderMenu();
+        }
+
+        function renderMenu() {
+            const filtered = currentCat === 'Barchasi' ? products : products.filter(p => p.cat === currentCat);
+            document.getElementById('menuDisplay').innerHTML = filtered.map(p => {
+                const qty = cart[p.id] || 0;
+                return `
+                    <div class="card">
+                        <img src="${p.img}">
+                        <h4>${p.name}</h4>
+                        <b style="color:var(--secondary)">${p.price.toLocaleString()} so'm</b>
+                        <div class="counter-box">
+                            <button class="count-btn" onclick="updateQty(${p.id}, -1)">-</button>
+                            <span class="qty-label">${qty}</span>
+                            <button class="count-btn" onclick="updateQty(${p.id}, 1)">+</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function updateQty(id, change) {
+            cart[id] = (cart[id] || 0) + change;
+            if (cart[id] <= 0) delete cart[id];
+            renderMenu();
+            renderCart();
+        }
+
+        function renderCart() {
+            const list = document.getElementById('cartList');
+            let total = 0;
+            let html = "";
+
+            for (const id in cart) {
+                const product = products.find(p => p.id == id);
+                const qty = cart[id];
+                total += product.price * qty;
+                html += `
+                    <div class="cart-item">
+                        <span>${product.name} (x${qty})</span>
+                        <span class="remove-btn" onclick="updateQty(${id}, -${qty})">O'chirish</span>
+                    </div>
+                `;
+            }
+
+            list.innerHTML = html || "<p style='color:#999'>Savatcha bo'sh...</p>";
+            document.getElementById('totalPrice').innerText = total.toLocaleString();
+        }
+
+        function getLocation() {
+            const btn = document.getElementById('locBtn');
+            btn.innerText = "Aniqlanmoqda... ⏳";
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (pos) => {
+                        userCoords = { lat: pos.coords.latitude, lon: pos.coords.longitude };
+                        btn.innerHTML = "✅ MANZIL ANIQLANDI";
+                        btn.className = "location-check-btn success";
+                    },
+                    () => {
+                        btn.innerHTML = "❌ Xatolik yuz berdi qayta urunib ko'ring";
+                        btn.className = "location-check-btn error";
+                    }
+                );
+            }
+        }
+
+        function sendOrder() {
+            const name = document.getElementById('userName').value.trim();
+            const phone = document.getElementById('userPhone').value.trim();
+            const cartKeys = Object.keys(cart);
+
+            if (cartKeys.length === 0) return showAlert("Xatolik", "Savatcha bo'sh!", "🛒");
+            if (!name || !phone) return showAlert("Xatolik", "Ism va telni kiriting!", "👤");
+            if (!userCoords) return showAlert("Xatolik", "Manzilni aniqlang!", "📍");
+
+            const btn = document.getElementById('submitBtn');
+            btn.disabled = true;
+            btn.innerText = "Yuborilmoqda...";
+
+            let text = `🚀 <b>YANGI BUYURTMA</b>\n\n`;
+            text += `👤 <b>Mijoz:</b> ${name}\n`;
+            text += `📞 <b>Tel:</b> ${phone}\n\n`;
+            text += `📍 <b>Manzil:</b> <a href="https://www.google.com/maps?q=${userCoords.lat},${userCoords.lon}">Xaritada ochish</a>\n\n`;
+            text += `📦 <b>Mahsulotlar:</b>\n`;
+            
+            cartKeys.forEach((id, i) => {
+                const p = products.find(item => item.id == id);
+                text += `${i+1}. ${p.name} - ${cart[id]} dona\n`;
+            });
+            text += `\n💰 <b>JAMI: ${document.getElementById('totalPrice').innerText} so'm</b>`;
+
+            fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent(text)}&parse_mode=HTML`)
+            .then(res => {
+                if(res.ok) {
+                    showAlert("Raxmat!", "Buyurtmangiz qabul qilindi!", "✅");
+                    cart = {}; renderMenu(); renderCart();
+                    document.getElementById('userName').value = "";
+                    document.getElementById('userPhone').value = "";
+                    userCoords = null;
+                    document.getElementById('locBtn').innerHTML = "📍 MANZILNI ANIQLASH";
+                    document.getElementById('locBtn').className = "location-check-btn";
+                }
+            }).finally(() => {
+                btn.disabled = false;
+                btn.innerText = "BUYURTMA BERISH";
+            });
+        }
+
+        function showAlert(t, m, i) {
+            document.getElementById('alertTitle').innerText = t;
+            document.getElementById('alertMsg').innerText = m;
+            document.getElementById('alertIcon').innerText = i;
+            document.getElementById('customAlert').style.display = 'block';
+            document.getElementById('overlay').style.display = 'block';
+        }
+
+        function closeAlert() {
+            document.getElementById('customAlert').style.display = 'none';
+            document.getElementById('overlay').style.display = 'none';
+        }
+
+        window.onload = renderMenu;
+    </script>
+</body>
+</html>
