@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cafe 777 - Smart Menu</title>
+    <title>Cafe 777 - Premium Menu</title>
     <style>
         :root {
             --primary: #ffbe0b;
@@ -13,7 +13,6 @@
             --green: #2ecc71;
             --red: #ff4757;
             --gray: #f0f2f5;
-            --anim-speed: 0.4s;
         }
 
         body {
@@ -23,7 +22,7 @@
             display: flex; flex-direction: column; align-items: center;
         }
 
-        /* KATEGORIYALAR */
+        /* CATEGORY NAV */
         .category-nav {
             display: flex; gap: 10px; overflow-x: auto;
             width: 100%; padding: 15px; background: white;
@@ -34,100 +33,92 @@
         .cat-btn {
             padding: 10px 18px; border-radius: 20px;
             border: 2px solid var(--primary); background: transparent;
-            cursor: pointer; font-weight: 600; font-size: 14px;
-            transition: all 0.2s ease;
+            cursor: pointer; font-weight: 600; font-size: 14px; transition: 0.3s;
         }
-        .cat-btn:active { transform: scale(0.9); }
-        .cat-btn.active { background: var(--primary); border-color: var(--primary); }
+        .cat-btn.active { background: var(--primary); border-color: var(--primary); color: var(--dark); }
 
         /* MENU GRID */
         .menu-grid {
             display: grid; grid-template-columns: 1fr 1fr;
-            gap: 12px; padding: 12px; max-width: 600px; width: 100%;
+            gap: 15px; padding: 15px; max-width: 600px; width: 100%;
             box-sizing: border-box;
         }
         .card {
             background: #fff; border-radius: 20px; overflow: hidden;
             display: flex; flex-direction: column;
             box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-            animation: fadeIn 0.5s ease-out;
+            transition: 0.3s;
         }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        .img-container {
-            width: 100%; aspect-ratio: 1 / 1;
-            overflow: hidden; cursor: pointer;
-            background: #f9f9f9;
-        }
-        .card img {
-            width: 100%; height: 100%; object-fit: cover;
-            transition: transform 0.5s ease;
-        }
+        .img-container { width: 100%; aspect-ratio: 1 / 1; overflow: hidden; cursor: pointer; }
+        .card img { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; }
         .card:hover img { transform: scale(1.1); }
-
         .card-info { padding: 12px; text-align: center; }
-        .card h4 { font-size: 15px; margin: 5px 0; color: var(--dark); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .card h4 { font-size: 15px; margin: 5px 0; color: var(--dark); }
         .card b { color: var(--secondary); font-size: 14px; display: block; margin-bottom: 8px; }
 
         /* COUNTER */
-        .counter-box { display: flex; align-items: center; justify-content: center; gap: 15px; }
+        .counter-box { display: flex; align-items: center; justify-content: center; gap: 10px; }
         .count-btn {
             background: var(--dark); color: white; border: none;
-            width: 32px; height: 32px; border-radius: 10px; cursor: pointer;
-            font-size: 18px; font-weight: bold; transition: 0.2s;
+            width: 30px; height: 30px; border-radius: 8px; cursor: pointer;
+            font-size: 16px; font-weight: bold;
         }
-        .count-btn:active { transform: scale(0.8); }
 
         /* MODAL ANIMATION */
         #productModal {
             display: none; position: fixed; top: 0; left: 0;
-            width: 100%; height: 100%; background: rgba(0,0,0,0.85);
+            width: 100%; height: 100%; background: rgba(0,0,0,0.9);
             z-index: 2000; align-items: center; justify-content: center;
-            backdrop-filter: blur(8px);
-            opacity: 0; transition: opacity var(--anim-speed) ease;
+            backdrop-filter: blur(10px); opacity: 0; transition: 0.4s;
         }
         #productModal.show { display: flex; opacity: 1; }
-        
         .modal-content {
-            background: white; width: 90%; max-width: 400px;
-            border-radius: 30px; overflow: hidden; position: relative;
-            transform: scale(0.7); transition: transform var(--anim-speed) cubic-bezier(0.34, 1.56, 0.64, 1);
+            background: white; width: 85%; max-width: 380px;
+            border-radius: 25px; overflow: hidden; position: relative;
+            transform: scale(0.7); transition: 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
         #productModal.show .modal-content { transform: scale(1); }
-
-        .modal-img { width: 100%; aspect-ratio: 1/1; object-fit: cover; }
-        .modal-details { padding: 25px; }
-
-        /* ALERT ANIMATION (Bounce) */
-        #customAlert {
-            display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.5);
-            background: white; padding: 30px; border-radius: 25px; z-index: 2100;
-            text-align: center; width: 80%; max-width: 320px; box-shadow: 0 0 50px rgba(0,0,0,0.3);
-            opacity: 0; transition: all 0.4s cubic-bezier(0.68, -0.55, 0.26, 1.55);
+        .close-modal {
+            position: absolute; top: 15px; right: 15px;
+            background: rgba(255,255,255,0.9); color: var(--dark); border: none;
+            width: 35px; height: 35px; border-radius: 50%;
+            font-size: 20px; cursor: pointer; z-index: 100; font-weight: bold;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
         }
-        #customAlert.show { display: block; opacity: 1; transform: translate(-50%, -50%) scale(1); }
 
-        .overlay { 
-            display: none; position: fixed; top:0; left:0; width:100%; height:100%; 
-            background: rgba(0,0,0,0.7); z-index: 1000; opacity: 0; transition: opacity 0.3s;
-        }
-        .overlay.show { display: block; opacity: 1; }
-
-        /* BUTTONS */
-        .order-btn, .location-check-btn { transition: all 0.3s ease; }
-        .order-btn:active, .location-check-btn:active { transform: scale(0.96); }
-
-        /* BUYURTMA QISMI */
+        /* ORDER SECTION */
         .order-section {
             background: #fff; margin: 20px; padding: 25px;
             border-radius: 25px; width: 90%; max-width: 450px;
             box-sizing: border-box; box-shadow: 0 10px 30px rgba(0,0,0,0.1);
         }
-        .cart-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #eee; }
-        input { width: 100%; padding: 15px; margin: 10px 0; border: 2px solid #eee; border-radius: 12px; font-size: 16px; box-sizing: border-box; }
-        .location-check-btn { background: #f8f9fa; border: 2px dashed var(--blue); color: var(--blue); width: 100%; padding: 15px; border-radius: 12px; cursor: pointer; font-weight: bold; }
-        .location-check-btn.success { border-color: var(--green); color: var(--green); background: #eafff2; }
-        .order-btn { background: var(--blue); color: white; border: none; width: 100%; padding: 20px; border-radius: 18px; font-size: 16px; font-weight: bold; cursor: pointer; }
+        input {
+            width: 100%; padding: 15px; margin: 8px 0;
+            border: 2px solid #eee; border-radius: 12px; font-size: 16px; outline: none; box-sizing: border-box;
+        }
+        .location-check-btn {
+            background: #f8f9fa; border: 2px dashed var(--blue);
+            color: var(--blue); width: 100%; padding: 15px;
+            border-radius: 12px; margin: 15px 0 25px 0; /* ORALIG'I OCHILDI */
+            cursor: pointer; font-weight: bold; transition: 0.3s;
+        }
+        .order-btn {
+            background: var(--blue); color: white; border: none;
+            width: 100%; padding: 18px; border-radius: 15px;
+            font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.3s;
+        }
+        .order-btn:active { transform: scale(0.95); }
+
+        /* ALERT BOUNCE */
+        #customAlert {
+            display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.8);
+            background: white; padding: 30px; border-radius: 25px; z-index: 2100;
+            text-align: center; width: 80%; max-width: 320px; box-shadow: 0 0 50px rgba(0,0,0,0.4);
+            opacity: 0; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        #customAlert.show { display: block; opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        .overlay { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.7); z-index: 1000; opacity: 0; transition: 0.3s; }
+        .overlay.show { display: block; opacity: 1; }
     </style>
 </head>
 <body>
@@ -137,7 +128,6 @@
         <button class="cat-btn" onclick="filterMenu('Burgerlar', this)">🍔 Burgerlar</button>
         <button class="cat-btn" onclick="filterMenu('Ichimliklar', this)">🥤 Ichimliklar</button>
         <button class="cat-btn" onclick="filterMenu('Shirinliklar', this)">🍰 Shirinliklar</button>
-        <button class="cat-btn" onclick="filterMenu('Maxsus', this)">✨ Maxsus</button>
     </div>
 
     <div class="menu-grid" id="menuDisplay"></div>
@@ -146,11 +136,11 @@
         <div class="modal-content">
             <button class="close-modal" onclick="closeProduct()">×</button>
             <img id="viewImg" class="modal-img" src="">
-            <div class="modal-details">
-                <h2 id="viewTitle"></h2>
-                <p id="viewDesc"></p>
+            <div style="padding: 20px;">
+                <h2 id="viewTitle" style="margin: 0;"></h2>
+                <p id="viewDesc" style="color: #666; font-size: 14px;"></p>
                 <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <b id="viewPrice" style="font-size: 22px; color: var(--secondary);"></b>
+                    <b id="viewPrice" style="font-size: 20px; color: var(--secondary);"></b>
                     <div id="viewCounterPlaceholder"></div>
                 </div>
             </div>
@@ -158,9 +148,9 @@
     </div>
 
     <div class="order-section">
-        <h3>Sizning tanlovingiz 🛒</h3>
+        <h3 style="margin-top: 0;">Sizning tanlovingiz 🛒</h3>
         <div id="cartList"></div>
-        <div style="display: flex; justify-content: space-between; margin: 20px 0; font-size: 22px; font-weight: 800;">
+        <div style="display: flex; justify-content: space-between; margin: 15px 0; font-size: 20px; font-weight: 800;">
             <span>Jami:</span>
             <span><span id="totalPrice">0</span> so'm</span>
         </div>
@@ -172,10 +162,10 @@
 
     <div class="overlay" id="overlay" onclick="closeAlert()"></div>
     <div id="customAlert">
-        <div id="alertIcon" style="font-size: 50px; margin-bottom: 10px;">✅</div>
-        <h2 id="alertTitle" style="margin: 10px 0;">Xabar</h2>
-        <p id="alertMsg" style="color: #666; margin-bottom: 20px;"></p>
-        <button onclick="closeAlert()" style="background:var(--dark); color:white; border:none; padding:12px 35px; border-radius:12px; cursor:pointer; font-weight: bold;">OK</button>
+        <div id="alertIcon" style="font-size: 50px;">✅</div>
+        <h2 id="alertTitle" style="margin: 10px 0;">Tayyor</h2>
+        <p id="alertMsg" style="margin-bottom: 20px;"></p>
+        <button onclick="closeAlert()" style="background:var(--dark); color:white; border:none; padding:12px 35px; border-radius:12px; cursor:pointer;">OK</button>
     </div>
 
     <script>
@@ -183,16 +173,24 @@
         const CHAT_ID = "519326806"; 
 
         const products = [
-            { id: 1, cat: 'Burgerlar', name: 'Cheeseburger', price: 28000, img: 'Images/kolbasa.jpg', desc: 'Yumshoq bulochka, pishloq va yangi go\'shtli kotlet.' },
-            { id: 2, cat: 'Burgerlar', name: 'Double Burger', price: 42000, img: 'https://cdn-icons-png.flaticon.com/512/1161/1161695.png', desc: 'Ikki barobar katta va mazali burger.' },
-            { id: 7, cat: 'Ichimliklar', name: 'Coca-Cola 0.5', price: 8000, img: 'https://cdn-icons-png.flaticon.com/512/3122/3122045.png', desc: 'Muzdek salqinlantiruvchi ichimlik.' },
-            { id: 13, cat: 'Shirinliklar', name: 'Cheesecake', price: 25000, img: 'https://cdn-icons-png.flaticon.com/512/4359/4359656.png', desc: 'Nozik pishloqli desert.' },
-            { id: 19, cat: 'Maxsus', name: 'Combo 777', price: 55000, img: 'https://cdn-icons-png.flaticon.com/512/3050/3050130.png', desc: 'To\'liq to\'plam siz uchun.' }
+            // Burgerlar
+            { id: 1, cat: 'Burgerlar', name: 'Cheeseburger', price: 28000, img: 'Images/kolbasa.jpg', desc: 'Klassik pishloqli burger.' },
+            { id: 2, cat: 'Burgerlar', name: 'Double Burger', price: 42000, img: 'https://cdn-icons-png.flaticon.com/512/1161/1161695.png', desc: 'Ikki qavatli go\'sht.' },
+            { id: 3, cat: 'Burgerlar', name: 'Chicken Burger', price: 25000, img: 'https://cdn-icons-png.flaticon.com/512/1161/1161695.png', desc: 'Tovuqli mazali burger.' },
+            { id: 4, cat: 'Burgerlar', name: 'Hot Burger', price: 30000, img: 'https://cdn-icons-png.flaticon.com/512/1161/1161695.png', desc: 'Achchiq ta\'mli burger.' },
+            // Ichimliklar
+            { id: 5, cat: 'Ichimliklar', name: 'Coca-Cola 0.5', price: 8000, img: 'https://cdn-icons-png.flaticon.com/512/3122/3122045.png', desc: 'Muzdek salqinlik.' },
+            { id: 6, cat: 'Ichimliklar', name: 'Fanta 0.5', price: 8000, img: 'https://cdn-icons-png.flaticon.com/512/3122/3122045.png', desc: 'Apelsinli ichimlik.' },
+            { id: 7, cat: 'Ichimliklar', name: 'Sprite 0.5', price: 8000, img: 'https://cdn-icons-png.flaticon.com/512/3122/3122045.png', desc: 'Limonli ta\'m.' },
+            { id: 8, cat: 'Ichimliklar', name: 'Choy', price: 3000, img: 'https://cdn-icons-png.flaticon.com/512/3122/3122045.png', desc: 'Ko\'k yoki qora choy.' },
+            // Shirinliklar
+            { id: 9, cat: 'Shirinliklar', name: 'Cheesecake', price: 25000, img: 'https://cdn-icons-png.flaticon.com/512/4359/4359656.png', desc: 'Nozik desert.' },
+            { id: 10, cat: 'Shirinliklar', name: 'Muzqaymoq', price: 12000, img: 'https://cdn-icons-png.flaticon.com/512/4359/4359656.png', desc: 'Vannilli va shokoladli.' },
+            { id: 11, cat: 'Shirinliklar', name: 'Pahlava', price: 15000, img: 'https://cdn-icons-png.flaticon.com/512/4359/4359656.png', desc: 'Asalli shirinlik.' },
+            { id: 12, cat: 'Shirinliklar', name: 'Tort bo\'lagi', price: 20000, img: 'https://cdn-icons-png.flaticon.com/512/4359/4359656.png', desc: 'Mevali tort.' }
         ];
 
-        let cart = {}; 
-        let userCoords = null;
-        let currentCat = 'Barchasi';
+        let cart = {}; let userCoords = null; let currentCat = 'Barchasi';
 
         function renderMenu() {
             const filtered = currentCat === 'Barchasi' ? products : products.filter(p => p.cat === currentCat);
@@ -208,7 +206,7 @@
                             <b>${p.price.toLocaleString()} so'm</b>
                             <div class="counter-box">
                                 <button class="count-btn" onclick="updateQty(${p.id}, -1)">-</button>
-                                <span class="qty-label">${qty}</span>
+                                <span style="font-weight:bold">${qty}</span>
                                 <button class="count-btn" onclick="updateQty(${p.id}, 1)">+</button>
                             </div>
                         </div>
@@ -226,19 +224,16 @@
         function updateQty(id, change) {
             cart[id] = (cart[id] || 0) + change;
             if (cart[id] <= 0) delete cart[id];
-            renderMenu();
-            renderCart();
-            if(document.getElementById('productModal').style.display === 'flex') viewProduct(id);
+            renderMenu(); renderCart();
         }
 
         function renderCart() {
             const list = document.getElementById('cartList');
-            let total = 0;
-            let html = "";
+            let total = 0; let html = "";
             for (const id in cart) {
                 const p = products.find(x => x.id == id);
                 total += p.price * cart[id];
-                html += `<div class="cart-item"><span>${p.name} (x${cart[id]})</span> <span class="remove-btn" onclick="updateQty(${id}, -${cart[id]})">O'CHIRISH</span></div>`;
+                html += `<div style="display:flex; justify-content:space-between; font-size:14px; padding:5px 0;"><span>${p.name} x${cart[id]}</span> <span>${(p.price * cart[id]).toLocaleString()}</span></div>`;
             }
             list.innerHTML = html || "<p style='text-align:center; color:#999'>Savatcha bo'sh</p>";
             document.getElementById('totalPrice').innerText = total.toLocaleString();
@@ -253,9 +248,9 @@
             document.getElementById('viewPrice').innerText = p.price.toLocaleString() + " so'm";
             document.getElementById('viewCounterPlaceholder').innerHTML = `
                 <div class="counter-box">
-                    <button class="count-btn" onclick="updateQty(${p.id}, -1)">-</button>
-                    <span class="qty-label">${cart[p.id] || 0}</span>
-                    <button class="count-btn" onclick="updateQty(${p.id}, 1)">+</button>
+                    <button class="count-btn" onclick="updateQty(${p.id}, -1); viewProduct(${p.id})">-</button>
+                    <span style="font-weight:bold; font-size:18px">${cart[p.id] || 0}</span>
+                    <button class="count-btn" onclick="updateQty(${p.id}, 1); viewProduct(${p.id})">+</button>
                 </div>`;
             modal.style.display = 'flex';
             setTimeout(() => modal.classList.add('show'), 10);
@@ -274,23 +269,22 @@
                 (pos) => {
                     userCoords = { lat: pos.coords.latitude, lon: pos.coords.longitude };
                     btn.innerText = "✅ MANZIL ANIQLANDI";
-                    btn.className = "location-check-btn success";
+                    btn.className = "location-check-btn";
+                    btn.style.borderColor = "var(--green)"; btn.style.color = "var(--green)";
                 },
-                () => { showAlert("Xato", "Lokatsiya ruxsat berilmadi", "❌"); btn.innerText = "📍 MANZILNI ANIQLASH"; }
+                () => { showAlert("Xato", "Lokatsiya o'chiq", "❌"); btn.innerText = "📍 MANZILNI ANIQLASH"; }
             );
         }
 
         function sendOrder() {
             const name = document.getElementById('userName').value.trim();
             const phone = document.getElementById('userPhone').value.trim();
-            if (Object.keys(cart).length === 0 || !name || !phone || !userCoords) {
-                return showAlert("Xatolik", "Ism, tel va manzilni kiriting!", "⚠️");
-            }
+            if (Object.keys(cart).length === 0 || !name || !phone || !userCoords) return showAlert("Xatolik", "Ism, tel va manzil shart!", "⚠️");
 
             const btn = document.getElementById('submitBtn');
             btn.disabled = true; btn.innerText = "YUBORILMOQDA...";
 
-            let msg = `🚀 <b>YANGI BUYURTMA</b>\n\n👤 <b>Mijoz:</b> ${name}\n📞 <b>Tel:</b> ${phone}\n\n📦 <b>Mahsulotlar:</b>\n`;
+            let msg = `🚀 <b>YANGI BUYURTMA</b>\n👤 <b>Mijoz:</b> ${name}\n📞 <b>Tel:</b> ${phone}\n\n📦 <b>Mahsulotlar:</b>\n`;
             for (const id in cart) {
                 const p = products.find(x => x.id == id);
                 msg += `- ${p.name} (x${cart[id]})\n`;
@@ -304,11 +298,9 @@
                 body: JSON.stringify({ chat_id: CHAT_ID, text: msg, parse_mode: 'HTML', disable_web_page_preview: false })
             }).then(res => {
                 if (res.ok) {
-                    showAlert("Raxmat!", "Buyurtmangiz qabul qilindi!", "✅");
+                    showAlert("Raxmat!", "Buyurtma qabul qilindi!", "✅");
                     cart = {}; renderMenu(); renderCart();
-                    document.getElementById('userName').value = "";
-                    document.getElementById('userPhone').value = "";
-                } else { showAlert("Xato", "Telegram rad etdi!", "❌"); }
+                } else { showAlert("Xato", "Yuborilmadi", "❌"); }
             }).finally(() => { btn.disabled = false; btn.innerText = "BUYURTMA BERISH"; });
         }
 
@@ -318,24 +310,15 @@
             document.getElementById('alertTitle').innerText = t;
             document.getElementById('alertMsg').innerText = m;
             document.getElementById('alertIcon').innerText = i;
-            
-            overlay.style.display = 'block';
-            alert.style.display = 'block';
-            setTimeout(() => {
-                overlay.classList.add('show');
-                alert.classList.add('show');
-            }, 10);
+            overlay.style.display = 'block'; alert.style.display = 'block';
+            setTimeout(() => { overlay.classList.add('show'); alert.classList.add('show'); }, 10);
         }
 
         function closeAlert() {
             const alert = document.getElementById('customAlert');
             const overlay = document.getElementById('overlay');
-            alert.classList.remove('show');
-            overlay.classList.remove('show');
-            setTimeout(() => {
-                alert.style.display = 'none';
-                overlay.style.display = 'none';
-            }, 400);
+            alert.classList.remove('show'); overlay.classList.remove('show');
+            setTimeout(() => { alert.style.display = 'none'; overlay.style.display = 'none'; }, 400);
         }
 
         window.onload = renderMenu;
