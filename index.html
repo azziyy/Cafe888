@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cafe 777 - Smart Menu</title>
+    <title>Cafe 777 - Premium Menu</title>
     <style>
         :root {
             --primary: #ffbe0b;
@@ -22,7 +22,7 @@
             display: flex; flex-direction: column; align-items: center;
         }
 
-        /* KATEGORIYALAR */
+        /* NAVIGATSIYA */
         .category-nav {
             display: flex; gap: 10px; overflow-x: auto;
             width: 100%; padding: 15px; background: white;
@@ -52,53 +52,48 @@
         .img-container {
             width: 100%; aspect-ratio: 1 / 1;
             overflow: hidden; cursor: pointer;
-            background: #f9f9f9;
         }
         .card img {
             width: 100%; height: 100%; object-fit: cover;
-            transition: transform 0.3s ease;
         }
-        .card-info { padding: 12px; text-align: center; }
-        .card h4 { font-size: 15px; margin: 5px 0; color: var(--dark); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .card b { color: var(--secondary); font-size: 14px; display: block; margin-bottom: 8px; }
+
+        .card-info { padding: 10px; text-align: center; }
+        .card h4 { font-size: 15px; margin: 5px 0; color: var(--dark); height: 20px; overflow: hidden; }
+        .card b { color: var(--secondary); font-size: 14px; }
 
         /* COUNTER */
         .counter-box {
             display: flex; align-items: center; justify-content: center;
-            gap: 15px;
+            gap: 12px; margin: 10px 0;
         }
         .count-btn {
             background: var(--dark); color: white; border: none;
-            width: 32px; height: 32px; border-radius: 10px; cursor: pointer;
-            font-size: 18px; font-weight: bold;
+            width: 28px; height: 28px; border-radius: 8px; cursor: pointer;
+            font-size: 16px; font-weight: bold;
         }
-        .qty-label { font-weight: bold; font-size: 16px; min-width: 20px; }
+        .qty-label { font-weight: bold; font-size: 15px; min-width: 15px; }
 
         /* MODAL */
         #productModal {
             display: none; position: fixed; top: 0; left: 0;
             width: 100%; height: 100%; background: rgba(0,0,0,0.85);
             z-index: 2000; align-items: center; justify-content: center;
-            backdrop-filter: blur(8px);
+            backdrop-filter: blur(5px);
         }
         .modal-content {
             background: white; width: 90%; max-width: 400px;
             border-radius: 30px; overflow: hidden; position: relative;
-            animation: slideUp 0.3s ease-out;
         }
-        @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         .modal-img { width: 100%; aspect-ratio: 1/1; object-fit: cover; }
-        .modal-details { padding: 25px; }
-        .modal-details h2 { margin: 0 0 10px 0; font-size: 24px; }
-        .modal-details p { color: #666; line-height: 1.6; margin-bottom: 20px; font-size: 15px; }
+        .modal-details { padding: 20px; }
         .close-modal {
             position: absolute; top: 15px; right: 15px;
             background: rgba(0,0,0,0.5); color: white; border: none;
-            width: 40px; height: 40px; border-radius: 50%;
-            font-size: 24px; cursor: pointer; z-index: 10;
+            width: 35px; height: 35px; border-radius: 50%;
+            font-size: 20px; cursor: pointer; z-index: 10;
         }
 
-        /* BUYURTMA QISMI */
+        /* ORDER SECTION */
         .order-section {
             background: #fff; margin: 20px; padding: 25px;
             border-radius: 25px; width: 90%; max-width: 450px;
@@ -106,32 +101,24 @@
         }
         .cart-item {
             display: flex; justify-content: space-between; align-items: center;
-            padding: 12px 0; border-bottom: 1px solid #eee; font-size: 15px;
+            padding: 10px 0; border-bottom: 1px solid #eee; font-size: 14px;
         }
-        .remove-btn { color: var(--red); cursor: pointer; font-weight: bold; font-size: 13px; }
+        .remove-btn { color: var(--red); cursor: pointer; font-weight: bold; font-size: 12px; }
 
         input {
             width: 100%; padding: 15px; margin: 10px 0;
             border: 2px solid #eee; border-radius: 12px; font-size: 16px; outline: none; box-sizing: border-box;
         }
-        input:focus { border-color: var(--blue); }
-
         .location-check-btn {
             background: #f8f9fa; border: 2px dashed var(--blue);
             color: var(--blue); width: 100%; padding: 15px;
             border-radius: 12px; margin: 10px 0; cursor: pointer; font-weight: bold;
         }
         .location-check-btn.success { border-color: var(--green); color: var(--green); background: #eafff2; }
-
-        .total-box {
-            display: flex; justify-content: space-between;
-            margin: 20px 0; font-size: 22px; font-weight: 800; color: var(--dark);
-        }
         .order-btn {
             background: var(--blue); color: white; border: none;
-            width: 100%; padding: 20px; border-radius: 18px;
+            width: 100%; padding: 18px; border-radius: 15px;
             font-size: 16px; font-weight: bold; cursor: pointer;
-            transition: 0.3s; width: 100%;
         }
 
         /* ALERT */
@@ -140,7 +127,7 @@
             background: white; padding: 30px; border-radius: 25px; z-index: 2100;
             text-align: center; width: 80%; max-width: 320px; box-shadow: 0 0 50px rgba(0,0,0,0.3);
         }
-        .overlay { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.7); z-index: 1000; }
+        .overlay { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.6); z-index: 1000; }
     </style>
 </head>
 <body>
@@ -158,12 +145,12 @@
     <div id="productModal">
         <div class="modal-content">
             <button class="close-modal" onclick="closeProduct()">×</button>
-            <img id="viewImg" class="modal-img" src="">
+            <img id="viewImg" class="modal-img">
             <div class="modal-details">
                 <h2 id="viewTitle"></h2>
                 <p id="viewDesc"></p>
                 <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <b id="viewPrice" style="font-size: 22px; color: var(--secondary);"></b>
+                    <b id="viewPrice" style="font-size: 20px; color: var(--secondary);"></b>
                     <div id="viewCounterPlaceholder"></div>
                 </div>
             </div>
@@ -173,7 +160,7 @@
     <div class="order-section">
         <h3>Sizning tanlovingiz 🛒</h3>
         <div id="cartList"></div>
-        <div class="total-box">
+        <div style="display: flex; justify-content: space-between; margin: 20px 0; font-size: 20px; font-weight: 800;">
             <span>Jami:</span>
             <span><span id="totalPrice">0</span> so'm</span>
         </div>
@@ -185,10 +172,10 @@
 
     <div class="overlay" id="overlay" onclick="closeAlert()"></div>
     <div id="customAlert">
-        <div id="alertIcon" style="font-size: 50px;">✅</div>
+        <div id="alertIcon" style="font-size: 45px;">✅</div>
         <h2 id="alertTitle">Xabar</h2>
         <p id="alertMsg"></p>
-        <button onclick="closeAlert()" style="background:var(--dark); color:white; border:none; padding:12px 35px; border-radius:12px; cursor:pointer;">OK</button>
+        <button onclick="closeAlert()" style="background:var(--dark); color:white; border:none; padding:10px 30px; border-radius:10px; cursor:pointer;">OK</button>
     </div>
 
     <script>
@@ -197,11 +184,10 @@
         const CHAT_ID = "519326806"; 
 
         const products = [
-            { id: 1, cat: 'Burgerlar', name: 'Cheeseburger', price: 28000, img: 'Images/kolbasa.jpg', desc: 'Yumshoq bulochka, pishloq va yangi go\'shtli kotlet.' },
-            { id: 2, cat: 'Burgerlar', name: 'Double Burger', price: 42000, img: 'https://cdn-icons-png.flaticon.com/512/1161/1161695.png', desc: 'Ikki barobar katta va mazali burger.' },
-            { id: 7, cat: 'Ichimliklar', name: 'Coca-Cola 0.5', price: 8000, img: 'https://cdn-icons-png.flaticon.com/512/3122/3122045.png', desc: 'Muzdek salqinlantiruvchi ichimlik.' },
-            { id: 13, cat: 'Shirinliklar', name: 'Cheesecake', price: 25000, img: 'https://cdn-icons-png.flaticon.com/512/4359/4359656.png', desc: 'Nozik pishloqli desert.' },
-            { id: 19, cat: 'Maxsus', name: 'Combo 777', price: 55000, img: 'https://cdn-icons-png.flaticon.com/512/3050/3050130.png', desc: 'To\'liq to\'plam siz uchun.' }
+            { id: 1, cat: 'Burgerlar', name: 'Cheeseburger', price: 28000, img: 'Images/kolbasa.jpg', desc: 'Sifatli go\'sht va pishloq.' },
+            { id: 2, cat: 'Burgerlar', name: 'Double Burger', price: 42000, img: 'https://cdn-icons-png.flaticon.com/512/1161/1161695.png', desc: 'Ikki barobar katta burger.' },
+            { id: 7, cat: 'Ichimliklar', name: 'Coca-Cola 0.5', price: 8000, img: 'https://cdn-icons-png.flaticon.com/512/3122/3122045.png', desc: 'Muzdek ichimlik.' },
+            { id: 13, cat: 'Shirinliklar', name: 'Cheesecake', price: 25000, img: 'https://cdn-icons-png.flaticon.com/512/4359/4359656.png', desc: 'Nozik desert.' }
         ];
 
         let cart = {}; 
@@ -226,8 +212,7 @@
                                 <button class="count-btn" onclick="updateQty(${p.id}, 1)">+</button>
                             </div>
                         </div>
-                    </div>
-                `;
+                    </div>`;
             }).join('');
         }
 
@@ -252,7 +237,7 @@
             for (const id in cart) {
                 const p = products.find(x => x.id == id);
                 total += p.price * cart[id];
-                html += `<div class="cart-item"><span>${p.name} (x${cart[id]})</span> <span class="remove-btn" onclick="updateQty(${id}, -${cart[id]})">O'CHIRISH</span></div>`;
+                html += `<div class="cart-item"><span>${p.name} (x${cart[id]})</span> <span class="remove-btn" onclick="updateQty(${id}, -${cart[id]})">❌</span></div>`;
             }
             list.innerHTML = html || "<p style='text-align:center; color:#999'>Savatcha bo'sh</p>";
             document.getElementById('totalPrice').innerText = total.toLocaleString();
@@ -292,30 +277,36 @@
             const name = document.getElementById('userName').value.trim();
             const phone = document.getElementById('userPhone').value.trim();
             if (Object.keys(cart).length === 0 || !name || !phone || !userCoords) {
-                return showAlert("Xatolik", "Barcha maydonlarni to'ldiring va manzilni aniqlang!", "⚠️");
+                return showAlert("Xatolik", "Ism, tel va manzilni kiriting!", "⚠️");
             }
 
             const btn = document.getElementById('submitBtn');
             btn.disabled = true; btn.innerText = "YUBORILMOQDA...";
 
-            let msg = `🚀 <b>YANGI BUYURTMA</b>\n\n👤 <b>Mijoz:</b> ${name}\n📞 <b>Tel:</b> ${phone}\n\n`;
+            let msg = `🚀 <b>YANGI BUYURTMA</b>\n\n👤 <b>Mijoz:</b> ${name}\n📞 <b>Tel:</b> ${phone}\n\n📦 <b>Mahsulotlar:</b>\n`;
             for (const id in cart) {
                 const p = products.find(x => x.id == id);
                 msg += `- ${p.name} (x${cart[id]})\n`;
             }
-            msg += `\n💰 <b>JAMI: ${document.getElementById('totalPrice').innerText} so'm</b>\n`;
+            msg += `\n💰 <b>JAMI: ${document.getElementById('totalPrice').innerText} so'm</b>\n\n`;
+            // GOOGLE MAPS LINKI TO'G'IRLANDI:
             msg += `📍 <a href="https://www.google.com/maps?q=${userCoords.lat},${userCoords.lon}">Xaritada ko'rish</a>`;
 
             fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ chat_id: CHAT_ID, text: msg, parse_mode: 'HTML' })
+                body: JSON.stringify({ 
+                    chat_id: CHAT_ID, 
+                    text: msg, 
+                    parse_mode: 'HTML',
+                    disable_web_page_preview: false 
+                })
             }).then(res => {
                 if (res.ok) {
                     showAlert("Raxmat!", "Buyurtmangiz qabul qilindi!", "✅");
                     cart = {}; renderMenu(); renderCart();
                 } else {
-                    showAlert("Xato", "Telegramga yuborib bo'lmadi. Botga /start bosganmisiz?", "❌");
+                    showAlert("Xato", "Telegram rad etdi. Botga /start bosganmisiz?", "❌");
                 }
             }).finally(() => { btn.disabled = false; btn.innerText = "BUYURTMA BERISH"; });
         }
