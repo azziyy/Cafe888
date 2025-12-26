@@ -50,17 +50,17 @@
             position: relative;
         }
         
-        /* Faqat sahifa yuklanganda bir marta chiqadi */
-        .card.init-anim { animation: fadeIn 0.5s ease; }
+        /* Faqat yuklanganda fadeIn bo'ladi */
+        .init-anim { animation: fadeIn 0.5s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         .img-container { width: 100%; aspect-ratio: 1 / 1; overflow: hidden; cursor: pointer; }
         .card img { width: 100%; height: 100%; object-fit: cover; transition: 0.3s; }
         .card-info { padding: 12px; text-align: center; }
-        .card h4 { font-size: 15px; margin: 5px 0; color: var(--dark); }
+        .card h4 { font-size: 15px; margin: 5px 0; color: var(--dark); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .card b { color: var(--secondary); font-size: 14px; display: block; margin-bottom: 8px; }
 
-        /* COUNTER - Oddiy va tezkor */
+        /* COUNTER */
         .counter-box { display: flex; align-items: center; justify-content: center; gap: 12px; }
         .count-btn {
             background: var(--dark); color: white; border: none;
@@ -212,9 +212,9 @@
                             <h4>${p.name}</h4>
                             <b>${p.price.toLocaleString()} so'm</b>
                             <div class="counter-box">
-                                <button class="count-btn" onclick="updateQty(${p.id}, -1, this)">-</button>
+                                <button class="count-btn" onclick="updateQty(${p.id}, -1)">-</button>
                                 <span class="qty-label" id="qty-${p.id}">${qty}</span>
-                                <button class="count-btn" onclick="updateQty(${p.id}, 1, this)">+</button>
+                                <button class="count-btn" onclick="updateQty(${p.id}, 1)">+</button>
                             </div>
                         </div>
                     </div>`;
@@ -228,15 +228,14 @@
             renderMenu();
         }
 
-        function updateQty(id, change, btn) {
+        function updateQty(id, change) {
             cart[id] = (cart[id] || 0) + change;
             if (cart[id] <= 0) delete cart[id];
             
-            // Animatsiyasiz faqat raqamni yangilash
+            // Faqat raqamlarni yangilash (miltillashni oldini olish)
             const label = document.getElementById(`qty-${id}`);
             if(label) label.innerText = cart[id] || 0;
             
-            // Modal ochiq bo'lsa uni ham yangilash
             const modalLabel = document.getElementById(`mqty-${id}`);
             if(modalLabel) modalLabel.innerText = cart[id] || 0;
 
@@ -249,7 +248,10 @@
             for (const id in cart) {
                 const p = products.find(x => x.id == id);
                 total += p.price * cart[id];
-                html += `<div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid #eee;"><span>${p.name} (x${cart[id]})</span> <span>${(p.price * cart[id]).toLocaleString()}</span></div>`;
+                html += `<div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid #eee;">
+                            <span>${p.name} (x${cart[id]})</span> 
+                            <span>${(p.price * cart[id]).toLocaleString()}</span>
+                         </div>`;
             }
             list.innerHTML = html || "<p style='text-align:center; color:#999'>Savatcha bo'sh</p>";
             document.getElementById('totalPrice').innerText = total.toLocaleString();
@@ -286,15 +288,19 @@
                     userCoords = { lat: pos.coords.latitude, lon: pos.coords.longitude };
                     btn.innerText = "✅ MANZIL ANIQLANDI";
                     btn.style.borderColor = "var(--green)"; btn.style.color = "var(--green)";
+                    btn.style.background = "#eafff2";
                 },
-                () => { showAlert("Xato", "Lokatsiya ruxsat berilmadi", "❌"); btn.innerText = "📍 MANZILNI ANIQLASH"; }
+                () => { showAlert("Xato", "Lokatsiyaga ruxsat berilmadi", "❌"); btn.innerText = "📍 MANZILNI ANIQLASH"; }
             );
         }
 
-        function sendOrder() {
+        async function sendOrder() {
             const name = document.getElementById('userName').value.trim();
             const phone = document.getElementById('userPhone').value.trim();
-            if (Object.keys(cart).length === 0 || !name || !phone || !userCoords) return showAlert("Xatolik", "Barcha maydonlarni to'ldiring!", "⚠️");
+            
+            if (Object.keys(cart).length === 0 || !name || !phone || !userCoords) {
+                return showAlert("Xatolik", "Ism, tel va manzilni kiriting!", "⚠️");
+            }
 
             const btn = document.getElementById('submitBtn');
             btn.disabled = true; btn.innerText = "YUBORILMOQDA...";
@@ -305,28 +311,38 @@
                 orderItems += ` - ${p.name} (x${cart[id]})\n`;
             }
 
-            const message = `🚀 <b>YANGI BUYURTMA</b>\n\n👤 <b>Mijoz:</b> ${name}\n📞 <b>Tel:</b> ${phone}\n\n📦 <b>Mahsulotlar:</b>\n${orderItems}\n💰 <b>JAMI: ${document.getElementById('totalPrice').innerText} so'm</b>\n\n📍 <a href="https://www.google.com/maps?q=${userCoords.lat},${userCoords.lon}">Xaritada ko'rish</a>`;
+            const text = `🚀 <b>YANGI BUYURTMA</b>\n\n` +
+                         `👤 <b>Mijoz:</b> ${name}\n` +
+                         `📞 <b>Tel:</b> ${phone}\n\n` +
+                         `📦 <b>Mahsulotlar:</b>\n${orderItems}\n` +
+                         `💰 <b>JAMI: ${document.getElementById('totalPrice').innerText} so'm</b>\n\n` +
+                         `📍 <a href="https://www.google.com/maps?q=${userCoords.lat},${userCoords.lon}">Xaritada ko'rish</a>`;
 
-            fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    chat_id: CHAT_ID,
-                    text: message,
-                    parse_mode: 'HTML'
-                })
-            }).then(res => {
-                if (res.ok) {
-                    showAlert("Raxmat!", "Buyurtmangiz qabul qilindi!", "✅");
+            try {
+                const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        chat_id: CHAT_ID,
+                        text: text,
+                        parse_mode: 'HTML',
+                        disable_web_page_preview: false
+                    })
+                });
+
+                if (response.ok) {
+                    showAlert("Raxmat!", "Buyurtmangiz yuborildi!", "✅");
                     cart = {}; renderMenu(); renderCart();
-                } else { 
-                    showAlert("Xato", "Telegram botga ulanib bo'lmadi!", "❌"); 
+                    document.getElementById('userName').value = "";
+                    document.getElementById('userPhone').value = "";
+                } else {
+                    showAlert("Xato", "Botga yuborib bo'lmadi. Botni tekshiring!", "❌");
                 }
-            }).catch(() => {
+            } catch (error) {
                 showAlert("Xato", "Internet bilan muammo!", "❌");
-            }).finally(() => { 
-                btn.disabled = false; btn.innerText = "BUYURTMA BERISH"; 
-            });
+            } finally {
+                btn.disabled = false; btn.innerText = "BUYURTMA BERISH";
+            }
         }
 
         function showAlert(t, m, i) {
