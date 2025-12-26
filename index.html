@@ -34,7 +34,6 @@
             padding: 10px 18px; border-radius: 20px;
             border: 2px solid var(--primary); background: transparent;
             cursor: pointer; font-weight: 600; font-size: 14px;
-            transition: 0.3s ease;
         }
         .cat-btn.active { background: var(--primary); border-color: var(--primary); }
 
@@ -49,90 +48,80 @@
             display: flex; flex-direction: column;
             box-shadow: 0 4px 15px rgba(0,0,0,0.08);
             position: relative;
-            animation: fadeIn 0.5s ease;
         }
+        
+        /* Faqat sahifa yuklanganda bir marta chiqadi */
+        .card.init-anim { animation: fadeIn 0.5s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        .img-container {
-            width: 100%; aspect-ratio: 1 / 1;
-            overflow: hidden; cursor: pointer;
-            background: #f9f9f9;
-        }
-        .card img {
-            width: 100%; height: 100%; object-fit: cover;
-            transition: transform 0.4s ease;
-        }
-        .card:hover img { transform: scale(1.05); }
-
+        .img-container { width: 100%; aspect-ratio: 1 / 1; overflow: hidden; cursor: pointer; }
+        .card img { width: 100%; height: 100%; object-fit: cover; transition: 0.3s; }
         .card-info { padding: 12px; text-align: center; }
-        .card h4 { font-size: 15px; margin: 5px 0; color: var(--dark); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .card h4 { font-size: 15px; margin: 5px 0; color: var(--dark); }
         .card b { color: var(--secondary); font-size: 14px; display: block; margin-bottom: 8px; }
 
-        /* COUNTER */
+        /* COUNTER - Oddiy va tezkor */
         .counter-box { display: flex; align-items: center; justify-content: center; gap: 12px; }
         .count-btn {
             background: var(--dark); color: white; border: none;
             width: 32px; height: 32px; border-radius: 10px; cursor: pointer;
-            font-size: 18px; font-weight: bold; transition: 0.2s;
+            font-size: 18px; font-weight: bold;
         }
-        .count-btn:active { transform: scale(0.9); }
+        .qty-label { font-weight: bold; font-size: 16px; min-width: 20px; }
 
-        /* MODAL ANIMATION */
+        /* MODAL */
         #productModal {
             display: none; position: fixed; top: 0; left: 0;
             width: 100%; height: 100%; background: rgba(0,0,0,0.85);
             z-index: 2000; align-items: center; justify-content: center;
             backdrop-filter: blur(8px);
-            transition: opacity 0.3s ease;
         }
         .modal-content {
             background: white; width: 88%; max-width: 380px;
             border-radius: 30px; overflow: hidden; position: relative;
-            transform: scale(0.8); opacity: 0;
-            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transform: scale(0.9); transition: 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
-        #productModal.open { display: flex; opacity: 1; }
-        #productModal.open .modal-content { transform: scale(1); opacity: 1; }
+        #productModal.open { display: flex; }
+        #productModal.open .modal-content { transform: scale(1); }
 
         .close-modal {
             position: absolute; top: 15px; right: 15px;
             background: rgba(255,255,255,0.9); color: var(--dark); border: none;
             width: 35px; height: 35px; border-radius: 50%;
             font-size: 22px; cursor: pointer; z-index: 10;
-            display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            font-weight: bold; box-shadow: 0 2px 10px rgba(0,0,0,0.2);
         }
 
-        /* BUYURTMA QISMI */
+        /* ORDER SECTION */
         .order-section {
             background: #fff; margin: 20px; padding: 25px;
             border-radius: 25px; width: 90%; max-width: 450px;
             box-sizing: border-box; box-shadow: 0 10px 30px rgba(0,0,0,0.1);
         }
+        input {
+            width: 100%; padding: 15px; margin: 8px 0;
+            border: 2px solid #eee; border-radius: 12px; font-size: 16px; outline: none; box-sizing: border-box;
+        }
         .location-check-btn {
             background: #f8f9fa; border: 2px dashed var(--blue);
             color: var(--blue); width: 100%; padding: 15px;
-            border-radius: 12px; margin: 15px 0 25px 0; /* Bo'shliq qo'shildi */
-            cursor: pointer; font-weight: bold; transition: 0.3s;
+            border-radius: 12px; margin: 15px 0 25px 0;
+            cursor: pointer; font-weight: bold;
         }
         .order-btn {
             background: var(--blue); color: white; border: none;
-            width: 100%; padding: 20px; border-radius: 18px;
+            width: 100%; padding: 18px; border-radius: 15px;
             font-size: 16px; font-weight: bold; cursor: pointer;
-            transition: 0.3s;
         }
-        .order-btn:active { transform: scale(0.97); }
 
-        /* ALERT ANIMATION */
+        /* ALERT */
         #customAlert {
-            display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.5);
+            display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.8);
             background: white; padding: 30px; border-radius: 25px; z-index: 2100;
-            text-align: center; width: 80%; max-width: 320px; 
-            box-shadow: 0 0 50px rgba(0,0,0,0.3); opacity: 0;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-align: center; width: 80%; max-width: 320px; transition: 0.3s;
         }
-        #customAlert.show { display: block; opacity: 1; transform: translate(-50%, -50%) scale(1); }
-        .overlay { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.7); z-index: 1000; transition: 0.3s; }
+        #customAlert.show { display: block; transform: translate(-50%, -50%) scale(1); }
+        .overlay { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.7); z-index: 1000; }
     </style>
 </head>
 <body>
@@ -150,13 +139,13 @@
     <div id="productModal" onclick="if(event.target == this) closeProduct()">
         <div class="modal-content">
             <button class="close-modal" onclick="closeProduct()">×</button>
-            <img id="viewImg" class="modal-img" style="width:100%; aspect-ratio:1/1; object-fit:cover;" src="">
-            <div class="modal-details" style="padding:25px;">
+            <img id="viewImg" style="width:100%; aspect-ratio:1/1; object-fit:cover;">
+            <div style="padding:25px;">
                 <h2 id="viewTitle" style="margin:0 0 10px 0;"></h2>
-                <p id="viewDesc" style="color:#666; margin-bottom:20px;"></p>
+                <p id="viewDesc" style="color:#666; font-size:14px; margin-bottom:20px;"></p>
                 <div style="display: flex; justify-content: space-between; align-items: center;">
                     <b id="viewPrice" style="font-size: 22px; color: var(--secondary);"></b>
-                    <div id="viewCounterPlaceholder"></div>
+                    <div id="modalCounter"></div>
                 </div>
             </div>
         </div>
@@ -169,18 +158,18 @@
             <span>Jami:</span>
             <span><span id="totalPrice">0</span> so'm</span>
         </div>
-        <input type="text" id="userName" placeholder="Ismingiz" style="width:100%; padding:15px; margin:10px 0; border:2px solid #eee; border-radius:12px; box-sizing:border-box;">
-        <input type="tel" id="userPhone" placeholder="Telefoningiz" style="width:100%; padding:15px; margin:10px 0; border:2px solid #eee; border-radius:12px; box-sizing:border-box;">
+        <input type="text" id="userName" placeholder="Ismingiz">
+        <input type="tel" id="userPhone" placeholder="Telefoningiz">
         <button class="location-check-btn" id="locBtn" onclick="getLocation()">📍 MANZILNI ANIQLASH</button>
         <button class="order-btn" id="submitBtn" onclick="sendOrder()">BUYURTMA BERISH</button>
     </div>
 
-    <div class="overlay" id="overlay" onclick="closeAlert()"></div>
+    <div class="overlay" id="overlay"></div>
     <div id="customAlert">
         <div id="alertIcon" style="font-size: 50px;">✅</div>
         <h2 id="alertTitle">Xabar</h2>
-        <p id="alertMsg" style="margin-bottom:20px; color:#666;"></p>
-        <button onclick="closeAlert()" style="background:var(--dark); color:white; border:none; padding:12px 35px; border-radius:12px; cursor:pointer; font-weight:bold;">OK</button>
+        <p id="alertMsg" style="margin-bottom:20px;"></p>
+        <button onclick="closeAlert()" style="background:var(--dark); color:white; border:none; padding:12px 35px; border-radius:12px; cursor:pointer;">OK</button>
     </div>
 
     <script>
@@ -188,26 +177,22 @@
         const CHAT_ID = "519326806"; 
 
         const products = [
-            // Burgerlar
             { id: 1, cat: 'Burgerlar', name: 'Cheeseburger', price: 28000, img: 'Images/kolbasa.jpg', desc: 'Yumshoq bulochka va pishloq.' },
-            { id: 2, cat: 'Burgerlar', name: 'Double Burger', price: 42000, img: 'https://cdn-icons-png.flaticon.com/512/1161/1161695.png', desc: 'Ikki barobar go\'shtli kotlet.' },
-            { id: 3, cat: 'Burgerlar', name: 'Chicken Burger', price: 25000, img: 'https://cdn-icons-png.flaticon.com/512/1161/1161695.png', desc: 'Tovuq go\'shtidan tayyorlangan.' },
-            { id: 4, cat: 'Burgerlar', name: 'Mini Burger', price: 18000, img: 'https://cdn-icons-png.flaticon.com/512/1161/1161695.png', desc: 'Kichik va mazali.' },
-            // Ichimliklar
-            { id: 5, cat: 'Ichimliklar', name: 'Coca-Cola 0.5', price: 8000, img: 'https://cdn-icons-png.flaticon.com/512/3122/3122045.png', desc: 'Muzdek salqinlik.' },
-            { id: 6, cat: 'Ichimliklar', name: 'Fanta 0.5', price: 8000, img: 'https://cdn-icons-png.flaticon.com/512/3122/3122045.png', desc: 'Apelsin ta\'mi.' },
-            { id: 7, cat: 'Ichimliklar', name: 'Sprite 0.5', price: 8000, img: 'https://cdn-icons-png.flaticon.com/512/3122/3122045.png', desc: 'Limonli tetiklik.' },
-            { id: 8, cat: 'Ichimliklar', name: 'Choy 0.5', price: 4000, img: 'https://cdn-icons-png.flaticon.com/512/3122/3122045.png', desc: 'Issiq yoki sovuq choy.' },
-            // Shirinliklar
-            { id: 9, cat: 'Shirinliklar', name: 'Cheesecake', price: 25000, img: 'https://cdn-icons-png.flaticon.com/512/4359/4359656.png', desc: 'Nozik pishloqli desert.' },
-            { id: 10, cat: 'Shirinliklar', name: 'Muzqaymoq', price: 10000, img: 'https://cdn-icons-png.flaticon.com/512/4359/4359656.png', desc: 'Shokoladli va vannilli.' },
-            { id: 11, cat: 'Shirinliklar', name: 'Pahlava', price: 15000, img: 'https://cdn-icons-png.flaticon.com/512/4359/4359656.png', desc: 'Asalli milliy shirinlik.' },
-            { id: 12, cat: 'Shirinliklar', name: 'Tort Bo\'lagi', price: 20000, img: 'https://cdn-icons-png.flaticon.com/512/4359/4359656.png', desc: 'Mevali va kremali.' },
-            // Maxsus
-            { id: 13, cat: 'Maxsus', name: 'Combo 777', price: 55000, img: 'https://cdn-icons-png.flaticon.com/512/3050/3050130.png', desc: 'Burger + Kola + Fri.' },
-            { id: 14, cat: 'Maxsus', name: 'Big Family', price: 120000, img: 'https://cdn-icons-png.flaticon.com/512/3050/3050130.png', desc: 'Oila uchun katta to\'plam.' },
-            { id: 15, cat: 'Maxsus', name: 'Student Mix', price: 35000, img: 'https://cdn-icons-png.flaticon.com/512/3050/3050130.png', desc: 'Hamyonbop va to\'yimli.' },
-            { id: 16, cat: 'Maxsus', name: 'Night Combo', price: 45000, img: 'https://cdn-icons-png.flaticon.com/512/3050/3050130.png', desc: 'Tungi buyurtmalar uchun.' }
+            { id: 2, cat: 'Burgerlar', name: 'Double Burger', price: 42000, img: 'https://cdn-icons-png.flaticon.com/512/1161/1161695.png', desc: 'Ikki qavatli go\'sht.' },
+            { id: 3, cat: 'Burgerlar', name: 'Chicken Burger', price: 25000, img: 'https://cdn-icons-png.flaticon.com/512/1161/1161695.png', desc: 'Tovuqli burger.' },
+            { id: 4, cat: 'Burgerlar', name: 'Mini Burger', price: 18000, img: 'https://cdn-icons-png.flaticon.com/512/1161/1161695.png', desc: 'Bolajonlar uchun.' },
+            { id: 5, cat: 'Ichimliklar', name: 'Coca-Cola 0.5', price: 8000, img: 'https://cdn-icons-png.flaticon.com/512/3122/3122045.png', desc: 'Muzdek kola.' },
+            { id: 6, cat: 'Ichimliklar', name: 'Fanta 0.5', price: 8000, img: 'https://cdn-icons-png.flaticon.com/512/3122/3122045.png', desc: 'Apelsinli fanta.' },
+            { id: 7, cat: 'Ichimliklar', name: 'Sprite 0.5', price: 8000, img: 'https://cdn-icons-png.flaticon.com/512/3122/3122045.png', desc: 'Limonli sprite.' },
+            { id: 8, cat: 'Ichimliklar', name: 'Choy', price: 4000, img: 'https://cdn-icons-png.flaticon.com/512/3122/3122045.png', desc: 'Qora yoki ko\'k.' },
+            { id: 9, cat: 'Shirinliklar', name: 'Cheesecake', price: 25000, img: 'https://cdn-icons-png.flaticon.com/512/4359/4359656.png', desc: 'Pishloqli desert.' },
+            { id: 10, cat: 'Shirinliklar', name: 'Muzqaymoq', price: 10000, img: 'https://cdn-icons-png.flaticon.com/512/4359/4359656.png', desc: 'Muzdek lazzat.' },
+            { id: 11, cat: 'Shirinliklar', name: 'Pahlava', price: 15000, img: 'https://cdn-icons-png.flaticon.com/512/4359/4359656.png', desc: 'Asalli shirinlik.' },
+            { id: 12, cat: 'Shirinliklar', name: 'Tort', price: 20000, img: 'https://cdn-icons-png.flaticon.com/512/4359/4359656.png', desc: 'Shokoladli tort.' },
+            { id: 13, cat: 'Maxsus', name: 'Combo 777', price: 55000, img: 'https://cdn-icons-png.flaticon.com/512/3050/3050130.png', desc: 'Burger + Fri + Kola.' },
+            { id: 14, cat: 'Maxsus', name: 'Big Family', price: 120000, img: 'https://cdn-icons-png.flaticon.com/512/3050/3050130.png', desc: 'Oila uchun.' },
+            { id: 15, cat: 'Maxsus', name: 'Student', price: 35000, img: 'https://cdn-icons-png.flaticon.com/512/3050/3050130.png', desc: 'Arzon va to\'yimli.' },
+            { id: 16, cat: 'Maxsus', name: 'Night Mix', price: 45000, img: 'https://cdn-icons-png.flaticon.com/512/3050/3050130.png', desc: 'Tungi to\'plam.' }
         ];
 
         let cart = {}; 
@@ -219,7 +204,7 @@
             document.getElementById('menuDisplay').innerHTML = filtered.map(p => {
                 const qty = cart[p.id] || 0;
                 return `
-                    <div class="card">
+                    <div class="card init-anim">
                         <div class="img-container" onclick="viewProduct(${p.id})">
                             <img src="${p.img}">
                         </div>
@@ -227,9 +212,9 @@
                             <h4>${p.name}</h4>
                             <b>${p.price.toLocaleString()} so'm</b>
                             <div class="counter-box">
-                                <button class="count-btn" onclick="updateQty(${p.id}, -1)">-</button>
-                                <span class="qty-label" style="font-weight:bold">${qty}</span>
-                                <button class="count-btn" onclick="updateQty(${p.id}, 1)">+</button>
+                                <button class="count-btn" onclick="updateQty(${p.id}, -1, this)">-</button>
+                                <span class="qty-label" id="qty-${p.id}">${qty}</span>
+                                <button class="count-btn" onclick="updateQty(${p.id}, 1, this)">+</button>
                             </div>
                         </div>
                     </div>`;
@@ -243,12 +228,19 @@
             renderMenu();
         }
 
-        function updateQty(id, change) {
+        function updateQty(id, change, btn) {
             cart[id] = (cart[id] || 0) + change;
             if (cart[id] <= 0) delete cart[id];
-            renderMenu();
+            
+            // Animatsiyasiz faqat raqamni yangilash
+            const label = document.getElementById(`qty-${id}`);
+            if(label) label.innerText = cart[id] || 0;
+            
+            // Modal ochiq bo'lsa uni ham yangilash
+            const modalLabel = document.getElementById(`mqty-${id}`);
+            if(modalLabel) modalLabel.innerText = cart[id] || 0;
+
             renderCart();
-            if(document.getElementById('productModal').classList.contains('open')) viewProduct(id);
         }
 
         function renderCart() {
@@ -270,10 +262,10 @@
             document.getElementById('viewTitle').innerText = p.name;
             document.getElementById('viewDesc').innerText = p.desc;
             document.getElementById('viewPrice').innerText = p.price.toLocaleString() + " so'm";
-            document.getElementById('viewCounterPlaceholder').innerHTML = `
+            document.getElementById('modalCounter').innerHTML = `
                 <div class="counter-box">
                     <button class="count-btn" onclick="updateQty(${p.id}, -1)">-</button>
-                    <span style="font-weight:bold; font-size:20px;">${cart[p.id] || 0}</span>
+                    <span class="qty-label" id="mqty-${p.id}">${cart[p.id] || 0}</span>
                     <button class="count-btn" onclick="updateQty(${p.id}, 1)">+</button>
                 </div>`;
             modal.style.display = 'flex';
@@ -307,32 +299,42 @@
             const btn = document.getElementById('submitBtn');
             btn.disabled = true; btn.innerText = "YUBORILMOQDA...";
 
-            let msg = `🚀 <b>YANGI BUYURTMA</b>\n\n👤 <b>Mijoz:</b> ${name}\n📞 <b>Tel:</b> ${phone}\n\n`;
+            let orderItems = "";
             for (const id in cart) {
                 const p = products.find(x => x.id == id);
-                msg += `- ${p.name} (x${cart[id]})\n`;
+                orderItems += ` - ${p.name} (x${cart[id]})\n`;
             }
-            msg += `\n💰 <b>JAMI: ${document.getElementById('totalPrice').innerText} so'm</b>\n`;
-            msg += `📍 <a href="https://www.google.com/maps?q=${userCoords.lat},${userCoords.lon}">Xaritada ko'rish</a>`;
+
+            const message = `🚀 <b>YANGI BUYURTMA</b>\n\n👤 <b>Mijoz:</b> ${name}\n📞 <b>Tel:</b> ${phone}\n\n📦 <b>Mahsulotlar:</b>\n${orderItems}\n💰 <b>JAMI: ${document.getElementById('totalPrice').innerText} so'm</b>\n\n📍 <a href="https://www.google.com/maps?q=${userCoords.lat},${userCoords.lon}">Xaritada ko'rish</a>`;
 
             fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ chat_id: CHAT_ID, text: msg, parse_mode: 'HTML' })
+                body: JSON.stringify({
+                    chat_id: CHAT_ID,
+                    text: message,
+                    parse_mode: 'HTML'
+                })
             }).then(res => {
                 if (res.ok) {
                     showAlert("Raxmat!", "Buyurtmangiz qabul qilindi!", "✅");
                     cart = {}; renderMenu(); renderCart();
-                } else { showAlert("Xato", "Xatolik yuz berdi", "❌"); }
-            }).finally(() => { btn.disabled = false; btn.innerText = "BUYURTMA BERISH"; });
+                } else { 
+                    showAlert("Xato", "Telegram botga ulanib bo'lmadi!", "❌"); 
+                }
+            }).catch(() => {
+                showAlert("Xato", "Internet bilan muammo!", "❌");
+            }).finally(() => { 
+                btn.disabled = false; btn.innerText = "BUYURTMA BERISH"; 
+            });
         }
 
         function showAlert(t, m, i) {
-            const alert = document.getElementById('customAlert');
             document.getElementById('alertTitle').innerText = t;
             document.getElementById('alertMsg').innerText = m;
             document.getElementById('alertIcon').innerText = i;
             document.getElementById('overlay').style.display = 'block';
+            const alert = document.getElementById('customAlert');
             alert.style.display = 'block';
             setTimeout(() => alert.classList.add('show'), 10);
         }
