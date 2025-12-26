@@ -13,6 +13,7 @@
             --green: #2ecc71;
             --red: #ff4757;
             --gray: #f0f2f5;
+            --anim-speed: 0.4s;
         }
 
         body {
@@ -34,7 +35,9 @@
             padding: 10px 18px; border-radius: 20px;
             border: 2px solid var(--primary); background: transparent;
             cursor: pointer; font-weight: 600; font-size: 14px;
+            transition: all 0.2s ease;
         }
+        .cat-btn:active { transform: scale(0.9); }
         .cat-btn.active { background: var(--primary); border-color: var(--primary); }
 
         /* MENU GRID */
@@ -47,8 +50,10 @@
             background: #fff; border-radius: 20px; overflow: hidden;
             display: flex; flex-direction: column;
             box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-            position: relative;
+            animation: fadeIn 0.5s ease-out;
         }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
         .img-container {
             width: 100%; aspect-ratio: 1 / 1;
             overflow: hidden; cursor: pointer;
@@ -56,47 +61,61 @@
         }
         .card img {
             width: 100%; height: 100%; object-fit: cover;
-            transition: transform 0.3s ease;
+            transition: transform 0.5s ease;
         }
+        .card:hover img { transform: scale(1.1); }
+
         .card-info { padding: 12px; text-align: center; }
         .card h4 { font-size: 15px; margin: 5px 0; color: var(--dark); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .card b { color: var(--secondary); font-size: 14px; display: block; margin-bottom: 8px; }
 
         /* COUNTER */
-        .counter-box {
-            display: flex; align-items: center; justify-content: center;
-            gap: 15px;
-        }
+        .counter-box { display: flex; align-items: center; justify-content: center; gap: 15px; }
         .count-btn {
             background: var(--dark); color: white; border: none;
             width: 32px; height: 32px; border-radius: 10px; cursor: pointer;
-            font-size: 18px; font-weight: bold;
+            font-size: 18px; font-weight: bold; transition: 0.2s;
         }
-        .qty-label { font-weight: bold; font-size: 16px; min-width: 20px; }
+        .count-btn:active { transform: scale(0.8); }
 
-        /* MODAL */
+        /* MODAL ANIMATION */
         #productModal {
             display: none; position: fixed; top: 0; left: 0;
             width: 100%; height: 100%; background: rgba(0,0,0,0.85);
             z-index: 2000; align-items: center; justify-content: center;
             backdrop-filter: blur(8px);
+            opacity: 0; transition: opacity var(--anim-speed) ease;
         }
+        #productModal.show { display: flex; opacity: 1; }
+        
         .modal-content {
             background: white; width: 90%; max-width: 400px;
             border-radius: 30px; overflow: hidden; position: relative;
-            animation: slideUp 0.3s ease-out;
+            transform: scale(0.7); transition: transform var(--anim-speed) cubic-bezier(0.34, 1.56, 0.64, 1);
         }
-        @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        #productModal.show .modal-content { transform: scale(1); }
+
         .modal-img { width: 100%; aspect-ratio: 1/1; object-fit: cover; }
         .modal-details { padding: 25px; }
-        .modal-details h2 { margin: 0 0 10px 0; font-size: 24px; }
-        .modal-details p { color: #666; line-height: 1.6; margin-bottom: 20px; font-size: 15px; }
-        .close-modal {
-            position: absolute; top: 15px; right: 15px;
-            background: rgba(0,0,0,0.5); color: white; border: none;
-            width: 40px; height: 40px; border-radius: 50%;
-            font-size: 24px; cursor: pointer; z-index: 10;
+
+        /* ALERT ANIMATION (Bounce) */
+        #customAlert {
+            display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.5);
+            background: white; padding: 30px; border-radius: 25px; z-index: 2100;
+            text-align: center; width: 80%; max-width: 320px; box-shadow: 0 0 50px rgba(0,0,0,0.3);
+            opacity: 0; transition: all 0.4s cubic-bezier(0.68, -0.55, 0.26, 1.55);
         }
+        #customAlert.show { display: block; opacity: 1; transform: translate(-50%, -50%) scale(1); }
+
+        .overlay { 
+            display: none; position: fixed; top:0; left:0; width:100%; height:100%; 
+            background: rgba(0,0,0,0.7); z-index: 1000; opacity: 0; transition: opacity 0.3s;
+        }
+        .overlay.show { display: block; opacity: 1; }
+
+        /* BUTTONS */
+        .order-btn, .location-check-btn { transition: all 0.3s ease; }
+        .order-btn:active, .location-check-btn:active { transform: scale(0.96); }
 
         /* BUYURTMA QISMI */
         .order-section {
@@ -104,43 +123,11 @@
             border-radius: 25px; width: 90%; max-width: 450px;
             box-sizing: border-box; box-shadow: 0 10px 30px rgba(0,0,0,0.1);
         }
-        .cart-item {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 12px 0; border-bottom: 1px solid #eee; font-size: 15px;
-        }
-        .remove-btn { color: var(--red); cursor: pointer; font-weight: bold; font-size: 13px; }
-
-        input {
-            width: 100%; padding: 15px; margin: 10px 0;
-            border: 2px solid #eee; border-radius: 12px; font-size: 16px; outline: none; box-sizing: border-box;
-        }
-        input:focus { border-color: var(--blue); }
-
-        .location-check-btn {
-            background: #f8f9fa; border: 2px dashed var(--blue);
-            color: var(--blue); width: 100%; padding: 15px;
-            border-radius: 12px; margin: 10px 0; cursor: pointer; font-weight: bold;
-        }
+        .cart-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #eee; }
+        input { width: 100%; padding: 15px; margin: 10px 0; border: 2px solid #eee; border-radius: 12px; font-size: 16px; box-sizing: border-box; }
+        .location-check-btn { background: #f8f9fa; border: 2px dashed var(--blue); color: var(--blue); width: 100%; padding: 15px; border-radius: 12px; cursor: pointer; font-weight: bold; }
         .location-check-btn.success { border-color: var(--green); color: var(--green); background: #eafff2; }
-
-        .total-box {
-            display: flex; justify-content: space-between;
-            margin: 20px 0; font-size: 22px; font-weight: 800; color: var(--dark);
-        }
-        .order-btn {
-            background: var(--blue); color: white; border: none;
-            width: 100%; padding: 20px; border-radius: 18px;
-            font-size: 16px; font-weight: bold; cursor: pointer;
-            transition: 0.3s; width: 100%;
-        }
-
-        /* ALERT */
-        #customAlert {
-            display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            background: white; padding: 30px; border-radius: 25px; z-index: 2100;
-            text-align: center; width: 80%; max-width: 320px; box-shadow: 0 0 50px rgba(0,0,0,0.3);
-        }
-        .overlay { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.7); z-index: 1000; }
+        .order-btn { background: var(--blue); color: white; border: none; width: 100%; padding: 20px; border-radius: 18px; font-size: 16px; font-weight: bold; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -155,7 +142,7 @@
 
     <div class="menu-grid" id="menuDisplay"></div>
 
-    <div id="productModal">
+    <div id="productModal" onclick="if(event.target == this) closeProduct()">
         <div class="modal-content">
             <button class="close-modal" onclick="closeProduct()">×</button>
             <img id="viewImg" class="modal-img" src="">
@@ -173,7 +160,7 @@
     <div class="order-section">
         <h3>Sizning tanlovingiz 🛒</h3>
         <div id="cartList"></div>
-        <div class="total-box">
+        <div style="display: flex; justify-content: space-between; margin: 20px 0; font-size: 22px; font-weight: 800;">
             <span>Jami:</span>
             <span><span id="totalPrice">0</span> so'm</span>
         </div>
@@ -185,14 +172,13 @@
 
     <div class="overlay" id="overlay" onclick="closeAlert()"></div>
     <div id="customAlert">
-        <div id="alertIcon" style="font-size: 50px;">✅</div>
-        <h2 id="alertTitle">Xabar</h2>
-        <p id="alertMsg"></p>
-        <button onclick="closeAlert()" style="background:var(--dark); color:white; border:none; padding:12px 35px; border-radius:12px; cursor:pointer;">OK</button>
+        <div id="alertIcon" style="font-size: 50px; margin-bottom: 10px;">✅</div>
+        <h2 id="alertTitle" style="margin: 10px 0;">Xabar</h2>
+        <p id="alertMsg" style="color: #666; margin-bottom: 20px;"></p>
+        <button onclick="closeAlert()" style="background:var(--dark); color:white; border:none; padding:12px 35px; border-radius:12px; cursor:pointer; font-weight: bold;">OK</button>
     </div>
 
     <script>
-        // MA'LUMOTLARINGIZ
         const BOT_TOKEN = "8032226679:AAETTGPvYZYSvF_QmdofXKibpOwt4E9Iitc"; 
         const CHAT_ID = "519326806"; 
 
@@ -226,8 +212,7 @@
                                 <button class="count-btn" onclick="updateQty(${p.id}, 1)">+</button>
                             </div>
                         </div>
-                    </div>
-                `;
+                    </div>`;
             }).join('');
         }
 
@@ -243,6 +228,7 @@
             if (cart[id] <= 0) delete cart[id];
             renderMenu();
             renderCart();
+            if(document.getElementById('productModal').style.display === 'flex') viewProduct(id);
         }
 
         function renderCart() {
@@ -260,20 +246,26 @@
 
         function viewProduct(id) {
             const p = products.find(x => x.id === id);
+            const modal = document.getElementById('productModal');
             document.getElementById('viewImg').src = p.img;
             document.getElementById('viewTitle').innerText = p.name;
             document.getElementById('viewDesc').innerText = p.desc;
             document.getElementById('viewPrice').innerText = p.price.toLocaleString() + " so'm";
             document.getElementById('viewCounterPlaceholder').innerHTML = `
                 <div class="counter-box">
-                    <button class="count-btn" onclick="updateQty(${p.id}, -1); viewProduct(${p.id})">-</button>
+                    <button class="count-btn" onclick="updateQty(${p.id}, -1)">-</button>
                     <span class="qty-label">${cart[p.id] || 0}</span>
-                    <button class="count-btn" onclick="updateQty(${p.id}, 1); viewProduct(${p.id})">+</button>
+                    <button class="count-btn" onclick="updateQty(${p.id}, 1)">+</button>
                 </div>`;
-            document.getElementById('productModal').style.display = 'flex';
+            modal.style.display = 'flex';
+            setTimeout(() => modal.classList.add('show'), 10);
         }
 
-        function closeProduct() { document.getElementById('productModal').style.display = 'none'; }
+        function closeProduct() {
+            const modal = document.getElementById('productModal');
+            modal.classList.remove('show');
+            setTimeout(() => modal.style.display = 'none', 400);
+        }
 
         function getLocation() {
             const btn = document.getElementById('locBtn');
@@ -292,7 +284,7 @@
             const name = document.getElementById('userName').value.trim();
             const phone = document.getElementById('userPhone').value.trim();
             if (Object.keys(cart).length === 0 || !name || !phone || !userCoords) {
-                return showAlert("Xatolik", "Barcha maydonlarni to'ldiring va manzilni aniqlang!", "⚠️");
+                return showAlert("Xatolik", "Ism, tel va manzilni kiriting!", "⚠️");
             }
 
             const btn = document.getElementById('submitBtn');
@@ -304,42 +296,46 @@
                 msg += `- ${p.name} (x${cart[id]})\n`;
             }
             msg += `\n💰 <b>JAMI: ${document.getElementById('totalPrice').innerText} so'm</b>\n\n`;
-            
-            // TO'G'IRLANGAN LINK QISMI:
             msg += `📍 <a href="https://www.google.com/maps?q=${userCoords.lat},${userCoords.lon}">Xaritada ko'rish</a>`;
 
             fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ 
-                    chat_id: CHAT_ID, 
-                    text: msg, 
-                    parse_mode: 'HTML',
-                    disable_web_page_preview: false 
-                })
+                body: JSON.stringify({ chat_id: CHAT_ID, text: msg, parse_mode: 'HTML', disable_web_page_preview: false })
             }).then(res => {
                 if (res.ok) {
                     showAlert("Raxmat!", "Buyurtmangiz qabul qilindi!", "✅");
                     cart = {}; renderMenu(); renderCart();
                     document.getElementById('userName').value = "";
                     document.getElementById('userPhone').value = "";
-                } else {
-                    showAlert("Xato", "Telegram xabarni qabul qilmadi!", "❌");
-                }
+                } else { showAlert("Xato", "Telegram rad etdi!", "❌"); }
             }).finally(() => { btn.disabled = false; btn.innerText = "BUYURTMA BERISH"; });
         }
 
         function showAlert(t, m, i) {
+            const alert = document.getElementById('customAlert');
+            const overlay = document.getElementById('overlay');
             document.getElementById('alertTitle').innerText = t;
             document.getElementById('alertMsg').innerText = m;
             document.getElementById('alertIcon').innerText = i;
-            document.getElementById('customAlert').style.display = 'block';
-            document.getElementById('overlay').style.display = 'block';
+            
+            overlay.style.display = 'block';
+            alert.style.display = 'block';
+            setTimeout(() => {
+                overlay.classList.add('show');
+                alert.classList.add('show');
+            }, 10);
         }
 
         function closeAlert() {
-            document.getElementById('customAlert').style.display = 'none';
-            document.getElementById('overlay').style.display = 'none';
+            const alert = document.getElementById('customAlert');
+            const overlay = document.getElementById('overlay');
+            alert.classList.remove('show');
+            overlay.classList.remove('show');
+            setTimeout(() => {
+                alert.style.display = 'none';
+                overlay.style.display = 'none';
+            }, 400);
         }
 
         window.onload = renderMenu;
