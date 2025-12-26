@@ -2,7 +2,7 @@
 <html lang="uz">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Cafe 777 - Smart Menu</title>
     <style>
         :root {
@@ -15,11 +15,18 @@
             --gray: #f0f2f5;
         }
 
+        /* 1. ASOSIY TUZATISH: Barcha elementlar kengligini chegara ichida saqlash */
+        * {
+            box-sizing: border-box;
+        }
+
         body {
             font-family: 'Segoe UI', Roboto, sans-serif;
             background-color: var(--gray);
             margin: 0; padding: 0;
             display: flex; flex-direction: column; align-items: center;
+            overflow-x: hidden; /* Yon tomonga surilishni qat'iy taqiqlash */
+            width: 100vw;
         }
 
         /* KATEGORIYALAR */
@@ -28,6 +35,7 @@
             width: 100%; padding: 15px; background: white;
             white-space: nowrap; position: sticky; top: 0; z-index: 100;
             box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            -webkit-overflow-scrolling: touch;
         }
         .category-nav::-webkit-scrollbar { display: none; }
         .cat-btn {
@@ -40,7 +48,8 @@
         /* MENU GRID */
         .menu-grid {
             display: grid; grid-template-columns: 1fr 1fr;
-            gap: 12px; padding: 12px; max-width: 600px; width: 100%;
+            gap: 12px; padding: 12px; width: 100%; /* Sketchware ekraniga moslashish */
+            max-width: 600px;
             box-sizing: border-box;
         }
         .card {
@@ -50,7 +59,6 @@
             position: relative;
         }
         
-        /* Faqat yuklanganda fadeIn bo'ladi */
         .init-anim { animation: fadeIn 0.5s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
@@ -92,10 +100,11 @@
             font-weight: bold; box-shadow: 0 2px 10px rgba(0,0,0,0.2);
         }
 
-        /* ORDER SECTION */
+        /* ORDER SECTION - WebView uchun aniq o'lcham */
         .order-section {
-            background: #fff; margin: 20px; padding: 25px;
-            border-radius: 25px; width: 90%; max-width: 450px;
+            background: #fff; margin: 20px 0; padding: 25px;
+            border-radius: 25px; width: calc(100% - 24px); /* Ekrandan chiqib ketmasligi uchun */
+            max-width: 450px;
             box-sizing: border-box; box-shadow: 0 10px 30px rgba(0,0,0,0.1);
         }
         input {
@@ -118,7 +127,7 @@
         #customAlert {
             display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.8);
             background: white; padding: 30px; border-radius: 25px; z-index: 2100;
-            text-align: center; width: 80%; max-width: 320px; transition: 0.3s;
+            text-align: center; width: 85%; max-width: 320px; transition: 0.3s;
         }
         #customAlert.show { display: block; transform: translate(-50%, -50%) scale(1); }
         .overlay { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.7); z-index: 1000; }
@@ -232,7 +241,6 @@
             cart[id] = (cart[id] || 0) + change;
             if (cart[id] <= 0) delete cart[id];
             
-            // Faqat raqamlarni yangilash (miltillashni oldini olish)
             const label = document.getElementById(`qty-${id}`);
             if(label) label.innerText = cart[id] || 0;
             
