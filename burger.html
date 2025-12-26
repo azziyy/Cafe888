@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cafe 777 - Premium Order System</title>
+    <style>
+        :root {
+            --primary: #ffbe0b;
+            --secondary: #fb5607;
+            --dark: #1a1a1a;
+            --blue: #0088cc;
+            --light: #f8f9fa;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            margin: 0; padding: 0;
+            display: flex; flex-direction: column;
+            align-items: center;
+            color: var(--dark);
+        }
+
+        /* HEADER */
+        .header {
+            background-color: var(--primary);
+            width: 100%;
+            padding: 25px 0;
+            text-align: center;
+            font-size: 28px;
+            font-weight: 900;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            position: sticky; top: 0; z-index: 100;
+        }
+
+        /* KATEGORIYA FILTRI */
+        .category-nav {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            width: 100%;
+            padding: 15px;
+            background: white;
+            white-space: nowrap;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .category-nav::-webkit-scrollbar { display: none; }
+
+        .cat-btn {
+            padding: 10px 20px;
+            border-radius: 20px;
+            border: 2px solid var(--primary);
+            background: transparent;
+            cursor: pointer;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+        .cat-btn.active {
+            background: var(--primary);
+            color: black;
+        }
+
+        /* MENU GRID */
+        .menu-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            padding: 15px;
+            max-width: 600px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .card {
+            background: #fff;
+            padding: 15px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.05);
+            transition: transform 0.2s;
+        }
+        .card:active { transform: scale(0.95); }
+
+        .card img {
+            width: 100%; height: 120px;
+            object-fit: contain;
+            margin-bottom: 10px;
+        }
+
+        .card h4 { margin: 10px 0 5px 0; font-size: 16px; }
+
+        .price {
+            color: var(--secondary);
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .add-btn {
+            background: var(--dark);
+            color: white;
+            border: none;
+            width: 100%;
+            padding: 12px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        /* BUYURTMA QISMI */
+        .order-section {
+            background: #fff;
+            margin: 20px 15px 40px 15px;
+            padding: 25px;
+            border-radius: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            max-width: 500px;
+            width: 90%;
+            box-sizing: border-box;
+        }
+
+        input {
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 12px;
+            border: 2px solid #eee;
+            border-radius: 12px;
+            box-sizing: border-box;
+            font-size: 16px;
+            outline: none;
+        }
+        input:focus { border-color: var(--primary); }
+
+        .cart-item {
+            display: flex; justify-content: space-between;
+            padding: 5px 0; border-bottom: 1px dashed #eee;
+            font-size: 14px;
+        }
+
+        .total-box {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0;
+            font-size: 20px;
+            font-weight: 800;
+            border-top: 2px solid #eee;
+            padding-top: 15px;
+        }
+
+        .order-btn {
+            background: var(--blue);
+            color: white;
+            border: none;
+            width: 100%;
+            padding: 18px;
+            border-radius: 15px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 136, 204, 0.3);
+        }
+
+        /* MODAL */
+        #customAlert {
+            display: none; position: fixed;
+            top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background: white; padding: 30px; border-radius: 25px;
+            box-shadow: 0 0 50px rgba(0,0,0,0.3);
+            z-index: 1000; text-align: center; width: 80%; max-width: 320px;
+        }
+
+        .overlay {
+            display: none; position: fixed;
+            top:0; left:0; width:100%; height:100%;
+            background: rgba(0,0,0,0.6); z-index: 999;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">CAFE 777 🍔</div>
+
+    <div class="category-nav" id="catNav">
+        <button class="cat-btn active" onclick="filterMenu('Burgerlar')">🍔 Burgerlar</button>
+        <button class="cat-btn" onclick="filterMenu('Shirinliklar')">🍰 Shirinliklar</button>
+        <button class="cat-btn" onclick="filterMenu('Ichimliklar')">🥤 Ichimliklar</button>
+        <button class="cat-btn" onclick="filterMenu('Maxsus')">✨ Maxsus</button>
+    </div>
+
+    <div class="menu-grid" id="menuDisplay"></div>
+
+    <div class="order-section">
+        <h3>Sotib olish 🛒</h3>
+        <input type="text" id="userName" placeholder="Ismingiz">
+        <input type="tel" id="userPhone" placeholder="Telefoningiz (masalan: +998...)">
+        
+        <div id="cartSummary">
+            <p style="color: #999;">Savatcha hozircha bo'sh...</p>
+        </div>
+        
+        <div class="total-box">
+            <span>Jami:</span>
+            <span><span id="totalPrice">0</span> so'm</span>
+        </div>
+
+        <button class="order-btn" id="submitBtn" onclick="sendOrder()">BUYURTMA BERISH</button>
+    </div>
+
+    <div class="overlay" id="overlay"></div>
+    <div id="customAlert">
+        <div id="alertIcon" style="font-size: 50px; margin-bottom: 10px;">✅</div>
+        <h2 id="alertTitle" style="margin: 0;">Yuborildi!</h2>
+        <p id="alertMsg" style="color: #666;">Buyurtmangiz qabul qilindi.</p>
+        <button onclick="closeAlert()" style="background:var(--dark); color:white; border:none; padding:12px 35px; border-radius:12px; cursor:pointer; margin-top:10px;">OK</button>
+    </div>
+
+    <script>
+        // --- SOZLAMALAR ---
+        const BOT_TOKEN = "8032226679:AAETTGPvYZYSvF_QmdofXKibpOwt4E9Iitc"; 
+        const CHAT_ID = "519326806"; 
+
+        // --- MAHSULOTLAR BAZASI ---
+        // Yangi mahsulot qo'shish uchun shunchaki mos kategoriyaga ob'ekt qo'shing
+        const products = [
+            // BURGERLAR
+            { id: 1, cat: 'Burgerlar', name: 'Klassik Burger', price: 25000, img: 'https://cdn-icons-png.flaticon.com/512/3075/3075977.png' },
+            { id: 2, cat: 'Burgerlar', name: 'Chizburger Premium', price: 32000, img: 'https://cdn-icons-png.flaticon.com/512/5787/5787016.png' },
+            { id: 3, cat: 'Burgerlar', name: 'Double Burger', price: 45000, img: 'https://cdn-icons-png.flaticon.com/512/1161/1161695.png' },
+            { id: 4, cat: 'Burgerlar', name: 'Tovuqli Burger', price: 28000, img: 'https://cdn-icons-png.flaticon.com/512/4727/4727270.png' },
+            { id: 5, cat: 'Burgerlar', name: 'Hot-Dog Max', price: 18000, img: 'https://cdn-icons-png.flaticon.com/512/2454/2454157.png' },
+            { id: 6, cat: 'Burgerlar', name: 'Shaurma XL', price: 30000, img: 'https://cdn-icons-png.flaticon.com/512/3448/3448512.png' },
+
+            // SHIRINLIKLAR
+            { id: 7, cat: 'Shirinliklar', name: 'Cheesecake', price: 22000, img: 'https://cdn-icons-png.flaticon.com/512/4359/4359656.png' },
+            { id: 8, cat: 'Shirinliklar', name: 'Muzqaymoq', price: 12000, img: 'https://cdn-icons-png.flaticon.com/512/938/938063.png' },
+            { id: 9, cat: 'Shirinliklar', name: 'Shokoladli Tort', price: 25000, img: 'https://cdn-icons-png.flaticon.com/512/2682/2682413.png' },
+            { id: 10, cat: 'Shirinliklar', name: 'Donut (Pishiriq)', price: 10000, img: 'https://cdn-icons-png.flaticon.com/512/2362/2362327.png' },
+            { id: 11, cat: 'Shirinliklar', name: 'Maffin', price: 15000, img: 'https://cdn-icons-png.flaticon.com/512/3506/3506147.png' },
+            { id: 12, cat: 'Shirinliklar', name: 'Pechenye To`plami', price: 18000, img: 'https://cdn-icons-png.flaticon.com/512/2954/2954845.png' },
+
+            // ICHIMLIKLAR
+            { id: 13, cat: 'Ichimliklar', name: 'Coca-Cola 0.5L', price: 8000, img: 'https://cdn-icons-png.flaticon.com/512/3122/3122045.png' },
+            { id: 14, cat: 'Ichimliklar', name: 'Fanta 0.5L', price: 8000, img: 'https://cdn-icons-png.flaticon.com/512/2722/2722527.png' },
+            { id: 15, cat: 'Ichimliklar', name: 'Kofe Americano', price: 15000, img: 'https://cdn-icons-png.flaticon.com/512/630/630656.png' },
+            { id: 16, cat: 'Ichimliklar', name: 'Choy (Ko`k/Qora)', price: 5000, img: 'https://cdn-icons-png.flaticon.com/512/3063/3063784.png' },
+            { id: 17, cat: 'Ichimliklar', name: 'Limonad', price: 18000, img: 'https://cdn-icons-png.flaticon.com/512/2405/2405479.png' },
+            { id: 18, cat: 'Ichimliklar', name: 'Tabiiy Sharbat', price: 20000, img: 'https://cdn-icons-png.flaticon.com/512/2442/2442019.png' },
+
+            // MAXSUS
+            { id: 19, cat: 'Maxsus', name: 'Combo Set 1', price: 55000, img: 'https://cdn-icons-png.flaticon.com/512/3050/3050130.png' },
+            { id: 20, cat: 'Maxsus', name: 'Oilaviy Box', price: 120000, img: 'https://cdn-icons-png.flaticon.com/512/2713/2713931.png' },
+            { id: 21, cat: 'Maxsus', name: 'Fri Kartoshkasi', price: 12000, img: 'https://cdn-icons-png.flaticon.com/512/1037/1037762.png' },
+            { id: 22, cat: 'Maxsus', name: 'Naggetslar', price: 20000, img: 'https://cdn-icons-png.flaticon.com/512/599/599427.png' },
+            { id: 23, cat: 'Maxsus', name: 'Pitsa Mix', price: 65000, img: 'https://cdn-icons-png.flaticon.com/512/3595/3595455.png' },
+            { id: 24, cat: 'Maxsus', name: 'Klab Sendvich', price: 28000, img: 'https://cdn-icons-png.flaticon.com/512/6518/6518091.png' }
+        ];
+
+        let cart = [];
+        let currentCategory = 'Burgerlar';
+
+        // --- FUNKSIYALAR ---
+
+        // Menuni kategoriya bo'yicha ko'rsatish
+        function filterMenu(category) {
+            currentCategory = category;
+            
+            // Tugmalar rangini yangilash
+            document.querySelectorAll('.cat-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if(btn.innerText.includes(category)) btn.classList.add('active');
+            });
+
+            const filtered = products.filter(p => p.cat === category);
+            document.getElementById('menuDisplay').innerHTML = filtered.map(item => `
+                <div class="card">
+                    <img src="${item.img}" alt="${item.name}">
+                    <h4>${item.name}</h4>
+                    <span class="price">${item.price.toLocaleString()} so'm</span>
+                    <button class="add-btn" onclick="addToCart(${item.id})">Qo'shish +</button>
+                </div>
+            `).join('');
+        }
+
+        // Savatchaga qo'shish
+        function addToCart(pId) {
+            const product = products.find(p => p.id === pId);
+            cart.push(product);
+            updateCartUI();
+            
+            // Kichik vizual effekt (tugma rangini vaqtincha o'zgartirish)
+            const btn = event.target;
+            const originalText = btn.innerText;
+            btn.innerText = "Qo'shildi! ✅";
+            btn.style.background = "#2ecc71";
+            setTimeout(() => {
+                btn.innerText = originalText;
+                btn.style.background = "var(--dark)";
+            }, 700);
+        }
+
+        // Savatchani yangilash
+        function updateCartUI() {
+            const summary = document.getElementById('cartSummary');
+            if(cart.length === 0) {
+                summary.innerHTML = `<p style="color: #999;">Savatcha hozircha bo'sh...</p>`;
+            } else {
+                summary.innerHTML = cart.map((p, i) => `
+                    <div class="cart-item">
+                        <span>${i+1}. ${p.name}</span>
+                        <b>${p.price.toLocaleString()} so'm</b>
+                    </div>
+                `).join('');
+            }
+            
+            const total = cart.reduce((s, i) => s + i.price, 0);
+            document.getElementById('totalPrice').innerText = total.toLocaleString();
+        }
+
+        // Xabarnoma ko'rsatish
+        function showAlert(title, msg, icon) {
+            document.getElementById('alertTitle').innerText = title;
+            document.getElementById('alertMsg').innerText = msg;
+            document.getElementById('alertIcon').innerText = icon;
+            document.getElementById('customAlert').style.display = 'block';
+            document.getElementById('overlay').style.display = 'block';
+        }
+
+        function closeAlert() {
+            document.getElementById('customAlert').style.display = 'none';
+            document.getElementById('overlay').style.display = 'none';
+        }
+
+        // Telegramga buyurtma yuborish
+        function sendOrder() {
+            const name = document.getElementById('userName').value.trim();
+            const phone = document.getElementById('userPhone').value.trim();
+            const total = document.getElementById('totalPrice').innerText;
+            const btn = document.getElementById('submitBtn');
+
+            if (cart.length === 0) {
+                showAlert("Savatcha bo'sh!", "Iltimos, mahsulot tanlang.", "🛒");
+                return;
+            }
+            if (!name || !phone) {
+                showAlert("Ma'lumot kam!", "Ism va telefoningizni kiriting.", "👤");
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerText = "Yuborilmoqda... 🕒";
+
+            let text = "🚀 <b>YANGI BUYURTMA (CAFE 777)</b>\n\n";
+            text += "👤 <b>Mijoz:</b> " + name + "\n";
+            text += "📞 <b>Tel:</b> " + phone + "\n\n";
+            text += "📦 <b>Mahsulotlar:</b>\n";
+            
+            cart.forEach((item, i) => {
+                text += `${i + 1}. ${item.name} (${item.price.toLocaleString()} so'm)\n`;
+            });
+            
+            text += "\n💰 <b>JAMI: " + total + " so'm</b>";
+
+            const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent(text)}&parse_mode=HTML`;
+
+            fetch(url).then(response => {
+                if (response.ok) {
+                    showAlert("Muvaffaqiyatli!", "Buyurtmangiz qabul qilindi. Tez orada bog'lanamiz.", "✅");
+                    cart = []; 
+                    updateCartUI();
+                    document.getElementById('userName').value = "";
+                    document.getElementById('userPhone').value = "";
+                } else {
+                    showAlert("Xatolik!", "Telegram bilan aloqa o'rnatilmadi.", "❌");
+                }
+            }).catch(() => {
+                showAlert("Xatolik!", "Internet aloqasini tekshiring.", "🌐");
+            }).finally(() => {
+                btn.disabled = false;
+                btn.innerText = "BUYURTMA BERISH";
+            });
+        }
+
+        // Boshlang'ich yuklash
+        filterMenu('Burgerlar');
+    </script>
+</body>
+</html>
