@@ -15,17 +15,15 @@
             --gray: #f0f2f5;
         }
 
-        /* 1. ASOSIY TUZATISH: Barcha elementlar kengligini chegara ichida saqlash */
-        * {
-            box-sizing: border-box;
-        }
+        /* ASOSIY TUZATISH */
+        * { box-sizing: border-box; }
 
         body {
             font-family: 'Segoe UI', Roboto, sans-serif;
             background-color: var(--gray);
             margin: 0; padding: 0;
             display: flex; flex-direction: column; align-items: center;
-            overflow-x: hidden; /* Yon tomonga surilishni qat'iy taqiqlash */
+            overflow-x: hidden;
             width: 100vw;
         }
 
@@ -168,7 +166,7 @@
             <span><span id="totalPrice">0</span> so'm</span>
         </div>
         <input type="text" id="userName" placeholder="Ismingiz">
-        <input type="tel" id="userPhone" value="+998" oninput="fixPhone(this)">
+        <input type="tel" id="userPhone" value="+998 " oninput="fixPhone(this)" maxlength="17">
         <button class="location-check-btn" id="locBtn" onclick="getLocation()">📍 MANZILNI ANIQLASH</button>
         <button class="order-btn" id="submitBtn" onclick="sendOrder()">BUYURTMA BERISH</button>
     </div>
@@ -208,13 +206,29 @@
         let userCoords = null;
         let currentCat = 'Barchasi';
 
-        // Telefon kodi o'chib ketmasligini ta'minlash
+        // Telefon raqamini +998 90 123 45 67 ko'rinishida formatlash
         function fixPhone(input) {
-            if (!input.value.startsWith("+998")) {
-                input.value = "+998";
+            let val = input.value.replace(/[^\d]/g, ''); // Faqat raqamlarni olish
+            
+            if (!val.startsWith('998')) {
+                val = '998' + val;
             }
-            // Faqat raqamlarni saqlash (boshidagi + dan tashqari)
-            input.value = "+" + input.value.replace(/[^\d]/g, '');
+
+            let formatted = "+998 ";
+            if (val.length > 3) {
+                formatted += val.substring(3, 5) + (val.length > 5 ? " " : "");
+            }
+            if (val.length > 5) {
+                formatted += val.substring(5, 8) + (val.length > 8 ? " " : "");
+            }
+            if (val.length > 8) {
+                formatted += val.substring(8, 10) + (val.length > 10 ? " " : "");
+            }
+            if (val.length > 10) {
+                formatted += val.substring(10, 12);
+            }
+
+            input.value = formatted.trim();
         }
 
         function renderMenu() {
@@ -315,9 +329,9 @@
             const name = document.getElementById('userName').value.trim();
             const phone = document.getElementById('userPhone').value.trim();
             
-            // Faqat raqam terilganini tekshirish (faqat +998 bo'lsa xato beradi)
-            if (Object.keys(cart).length === 0 || !name || phone.length < 13 || !userCoords) {
-                return showAlert("Xatolik", "Ism, to'liq tel raqam va manzilni kiriting!", "⚠️");
+            // +998 90 123 45 67 uzunligi probellar bilan 17 belgi
+            if (Object.keys(cart).length === 0 || !name || phone.length < 17 || !userCoords) {
+                return showAlert("Xatolik", "Ism, to'liq telefon (17 belgi) va manzilni kiriting!", "⚠️");
             }
 
             const btn = document.getElementById('submitBtn');
@@ -343,8 +357,7 @@
                     body: JSON.stringify({
                         chat_id: CHAT_ID,
                         text: text,
-                        parse_mode: 'HTML',
-                        disable_web_page_preview: false
+                        parse_mode: 'HTML'
                     })
                 });
 
@@ -352,9 +365,9 @@
                     showAlert("Raxmat!", "Buyurtmangiz yuborildi!", "✅");
                     cart = {}; renderMenu(); renderCart();
                     document.getElementById('userName').value = "";
-                    document.getElementById('userPhone').value = "+998"; // Reset
+                    document.getElementById('userPhone').value = "+998 ";
                 } else {
-                    showAlert("Xato", "Botga yuborib bo'lmadi. Botni tekshiring!", "❌");
+                    showAlert("Xato", "Botga yuborib bo'lmadi!", "❌");
                 }
             } catch (error) {
                 showAlert("Xato", "Internet bilan muammo!", "❌");
