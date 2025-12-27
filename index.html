@@ -10,7 +10,8 @@
             --blue: #0088cc; --green: #2ecc71; --red: #ff4757; --gray: #f0f2f5;
         }
 
-        * { box-sizing: border-box; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
         body {
             font-family: 'Segoe UI', Roboto, sans-serif; background-color: var(--gray);
             margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center;
@@ -23,6 +24,9 @@
             background: white; z-index: 5000; display: none;
             flex-direction: column; align-items: center; justify-content: center; padding: 30px;
         }
+        #regScreen .logo { font-size: 80px; margin-bottom: 10px; }
+        #regScreen h2 { margin: 0; color: var(--dark); }
+        #regScreen p { color: #666; text-align: center; margin-bottom: 25px; }
 
         /* KATEGORIYALAR */
         .category-nav {
@@ -44,8 +48,10 @@
             display: grid; grid-template-columns: 1fr 1fr;
             gap: 12px; padding: 12px; width: 100%; max-width: 600px;
         }
-        .card { background: #fff; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.08); position: relative; }
-        .img-container { width: 100%; aspect-ratio: 1 / 1; overflow: hidden; cursor: pointer; }
+        .card { background: #fff; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.08); position: relative; animation: fadeIn 0.5s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .img-container { width: 100%; aspect-ratio: 1 / 1; overflow: hidden; }
         .card img { width: 100%; height: 100%; object-fit: cover; }
         .card-info { padding: 12px; text-align: center; }
         .card h4 { font-size: 15px; margin: 5px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -53,7 +59,8 @@
 
         /* COUNTER */
         .counter-box { display: flex; align-items: center; justify-content: center; gap: 12px; }
-        .count-btn { background: var(--dark); color: white; border: none; width: 32px; height: 32px; border-radius: 10px; cursor: pointer; font-size: 18px; }
+        .count-btn { background: var(--dark); color: white; border: none; width: 32px; height: 32px; border-radius: 10px; cursor: pointer; font-size: 18px; font-weight: bold; }
+        .qty-label { font-weight: bold; font-size: 16px; min-width: 15px; }
 
         /* ORDER SECTION */
         .order-section {
@@ -68,11 +75,12 @@
         .order-btn {
             background: var(--blue); color: white; border: none;
             width: 100%; padding: 18px; border-radius: 15px;
-            font-size: 16px; font-weight: bold; cursor: pointer;
+            font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.2s;
         }
+        .order-btn:active { transform: scale(0.97); }
         .edit-info-link {
             display: block; text-align: center; color: var(--blue);
-            margin-top: 15px; font-size: 14px; font-weight: 600; cursor: pointer; text-decoration: underline;
+            margin-top: 15px; font-size: 14px; font-weight: 600; cursor: pointer;
         }
 
         /* MODALS */
@@ -85,17 +93,25 @@
             background: white; width: 90%; max-width: 380px;
             border-radius: 30px; padding: 25px; position: relative;
         }
+
+        /* ALERT */
+        #customAlert {
+            display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background: white; padding: 30px; border-radius: 25px; z-index: 4100;
+            text-align: center; width: 85%; max-width: 320px; box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+        }
+        .overlay { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.7); z-index: 4000; }
     </style>
 </head>
 <body>
 
     <div id="regScreen">
-        <div style="font-size: 60px;">🍔</div>
-        <h2 style="margin-top: 10px;">Xush kelibsiz!</h2>
-        <p style="text-align: center; color: #666; margin-bottom: 25px;">Buyurtma berish uchun ma'lumotlaringizni kiriting</p>
+        <div class="logo">🍕</div>
+        <h2>Xush kelibsiz!</h2>
+        <p>Buyurtma berish uchun o'zingizni tanishtiring</p>
         <input type="text" id="regName" placeholder="Ismingiz">
         <input type="tel" id="regPhone" value="+998 " oninput="fixPhone(this)" maxlength="17">
-        <button class="order-btn" style="margin-top: 20px;" onclick="saveRegistration()">DAVOM ETISH</button>
+        <button class="order-btn" style="margin-top: 20px;" onclick="saveRegistration()">SAQLASH VA KIRISH</button>
     </div>
 
     <div class="category-nav">
@@ -115,26 +131,26 @@
             <span>Jami:</span>
             <span><span id="totalPrice">0</span> so'm</span>
         </div>
-        <button class="location-check-btn" id="locBtn" onclick="getLocation()" style="background:#f8f9fa; border:2px dashed var(--blue); color:var(--blue); width:100%; padding:15px; border-radius:12px; margin-bottom:15px; cursor:pointer; font-weight:bold;">📍 MANZILNI ANIQLASH</button>
+        <button class="order-btn" id="locBtn" onclick="getLocation()" style="background:#f8f9fa; border:2px dashed var(--blue); color:var(--blue); margin-bottom:15px;">📍 MANZILNI ANIQLASH</button>
         <button class="order-btn" id="submitBtn" onclick="sendOrder()">BUYURTMA BERISH</button>
         <span class="edit-info-link" onclick="openProfile()">✏️ Ma'lumotlarni o'zgartirish</span>
     </div>
 
     <div id="profileModal" class="custom-modal" onclick="if(event.target == this) closeProfile()">
         <div class="modal-content">
-            <h3 style="margin-top:0;">Profil ma'lumotlari</h3>
-            <label style="font-size:12px; color:#999;">Ismingiz:</label>
+            <h3 style="margin-top:0;">Profilni tahrirlash</h3>
+            <label style="font-size:12px; color:#999;">Ism:</label>
             <input type="text" id="editName">
-            <label style="font-size:12px; color:#999; margin-top:10px; display:block;">Telefon raqamingiz:</label>
+            <label style="font-size:12px; color:#999; margin-top:10px; display:block;">Tel:</label>
             <input type="tel" id="editPhone" oninput="fixPhone(this)" maxlength="17">
             <button class="order-btn" style="margin-top:20px; background:var(--dark);" onclick="updateProfile()">SAQLASH</button>
-            <button onclick="closeProfile()" style="width:100%; background:none; border:none; margin-top:10px; color:#999; cursor:pointer;">Bekor qilish</button>
+            <button onclick="closeProfile()" style="width:100%; background:none; border:none; margin-top:10px; color:#999; cursor:pointer;">Yopish</button>
         </div>
     </div>
 
-    <div class="overlay" id="overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:4000;"></div>
-    <div id="customAlert" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:white; padding:30px; border-radius:25px; z-index:4100; text-align:center; width:85%; max-width:320px;">
-        <div id="alertIcon" style="font-size:50px;">✅</div>
+    <div class="overlay" id="overlay"></div>
+    <div id="customAlert">
+        <div id="alertIcon" style="font-size: 50px;">✅</div>
         <h2 id="alertTitle">Xabar</h2>
         <p id="alertMsg" style="margin-bottom:20px;"></p>
         <button onclick="closeAlert()" style="background:var(--dark); color:white; border:none; padding:12px 35px; border-radius:12px; cursor:pointer;">OK</button>
@@ -150,14 +166,21 @@
             { id: 3, cat: 'Burgerlar', name: 'Ganburger', price: 30000, img: 'Images/gamburger.jpg' },
             { id: 4, cat: 'Burgerlar', name: 'Tuxumli Burger', price: 38000, img: 'Images/txburger.jpg' },
             { id: 5, cat: 'Ichimliklar', name: 'Kofe MacCoffee', price: 7000, img: 'Images/cofemac.jpg' },
+            { id: 6, cat: 'Ichimliklar', name: 'Cappuccino', price: 10000, img: 'Images/cofecap.jpg' },
             { id: 7, cat: 'Ichimliklar', name: 'Fanta 1.5l', price: 17000, img: 'Images/fanta1.jpg' },
             { id: 8, cat: 'Ichimliklar', name: 'Pepsi 1.5l', price: 13000, img: 'Images/pepsi15.jpg' },
-            { id: 13, cat: 'Maxsus', name: 'Combo 777', price: 55000, img: 'https://cdn-icons-png.flaticon.com/512/3050/3050130.png' }
+            { id: 9, cat: 'Shirinliklar', name: 'Malibu ', price: 25000, img: 'Images/shmalibu.jpg' },
+            { id: 10, cat: 'Shirinliklar', name: 'Qizil tort', price: 24000, img: 'Images/shqizil.jpg' },
+            { id: 11, cat: 'Shirinliklar', name: 'Choco', price: 23000, img: 'Images/shchoco.jpg' },
+            { id: 12, cat: 'Shirinliklar', name: 'Snikers Tort', price: 23000, img: 'Images/shsnik.jpg' },
+            { id: 13, cat: 'Maxsus', name: 'Combo 777', price: 55000, img: 'https://cdn-icons-png.flaticon.com/512/3050/3050130.png' },
+            { id: 14, cat: 'Maxsus', name: 'Big Family', price: 120000, img: 'https://cdn-icons-png.flaticon.com/512/3050/3050130.png' },
+            { id: 15, cat: 'Maxsus', name: 'Student', price: 35000, img: 'https://cdn-icons-png.flaticon.com/512/3050/3050130.png' },
+            { id: 16, cat: 'Maxsus', name: 'Night Mix', price: 45000, img: 'https://cdn-icons-png.flaticon.com/512/3050/3050130.png' }
         ];
 
         let cart = {}; let userCoords = null; let currentCat = 'Barchasi';
 
-        // TELEFON FORMATLASH
         function fixPhone(input) {
             let val = input.value.replace(/[^\d]/g, ''); 
             if (!val.startsWith('998')) { val = '998' + val; }
@@ -169,43 +192,37 @@
             input.value = formatted.trim();
         }
 
-        // REGISTRATION LOGIC
+        // REGISTRATION 
         function checkFirstTime() {
-            const name = localStorage.getItem('cafe777_user_name');
-            const phone = localStorage.getItem('cafe777_user_phone');
-            if (!name || !phone) {
-                document.getElementById('regScreen').style.display = 'flex';
-            }
+            const name = localStorage.getItem('cafe777_name');
+            if (!name) document.getElementById('regScreen').style.display = 'flex';
         }
 
         function saveRegistration() {
             const name = document.getElementById('regName').value.trim();
             const phone = document.getElementById('regPhone').value.trim();
-            if (name.length < 3 || phone.length < 17) {
-                return alert("Iltimos, ismingiz va telefoningizni to'liq kiriting!");
-            }
-            localStorage.setItem('cafe777_user_name', name);
-            localStorage.setItem('cafe777_user_phone', phone);
+            if (name.length < 3 || phone.length < 17) return alert("To'liq to'ldiring!");
+            localStorage.setItem('cafe777_name', name);
+            localStorage.setItem('cafe777_phone', phone);
             document.getElementById('regScreen').style.display = 'none';
         }
 
-        // PROFILE EDIT LOGIC
+        // PROFILE EDIT
         function openProfile() {
-            document.getElementById('editName').value = localStorage.getItem('cafe777_user_name');
-            document.getElementById('editPhone').value = localStorage.getItem('cafe777_user_phone');
+            document.getElementById('editName').value = localStorage.getItem('cafe777_name');
+            document.getElementById('editPhone').value = localStorage.getItem('cafe777_phone');
             document.getElementById('profileModal').style.display = 'flex';
         }
 
         function updateProfile() {
-            const name = document.getElementById('editName').value.trim();
-            const phone = document.getElementById('editPhone').value.trim();
-            if (name.length < 3 || phone.length < 17) return alert("Xato!");
-            localStorage.setItem('cafe777_user_name', name);
-            localStorage.setItem('cafe777_user_phone', phone);
+            const n = document.getElementById('editName').value.trim();
+            const p = document.getElementById('editPhone').value.trim();
+            if(n.length < 3 || p.length < 17) return alert("Xato!");
+            localStorage.setItem('cafe777_name', n);
+            localStorage.setItem('cafe777_phone', p);
             closeProfile();
-            showAlert("Tayyor", "Ma'lumotlar yangilandi!", "✅");
+            showAlert("Bajarildi", "Ma'lumotlar yangilandi!", "✅");
         }
-
         function closeProfile() { document.getElementById('profileModal').style.display = 'none'; }
 
         // MENU RENDER
@@ -269,8 +286,8 @@
         }
 
         async function sendOrder() {
-            const name = localStorage.getItem('cafe777_user_name');
-            const phone = localStorage.getItem('cafe777_user_phone').replace(/\s/g, ''); 
+            const name = localStorage.getItem('cafe777_name');
+            const phone = localStorage.getItem('cafe777_phone');
             
             if (Object.keys(cart).length === 0 || !userCoords) {
                 return showAlert("Xatolik", "Savat bo'sh yoki manzil aniqlanmagan!", "⚠️");
@@ -285,16 +302,18 @@
                 orderItems += ` - ${p.name} (x${cart[id]})\n`;
             }
 
-            const text = `🚀 <b>YANGI BUYURTMA</b>\n\n👤 <b>Mijoz:</b> ${name}\n📞 <b>Tel:</b> ${phone}\n📦 <b>Mahsulotlar:</b>\n${orderItems}\n💰 <b>JAMI: ${document.getElementById('totalPrice').innerText} so'm</b>\n\n📍 <a href="http://maps.google.com/maps?q=${userCoords.lat},${userCoords.lon}">Xaritada ko'rish</a>`;
+            const text = `🚀 <b>YANGI BUYURTMA</b>\n\n👤 <b>Mijoz:</b> ${name}\n📞 <b>Tel:</b> ${phone}\n📦 <b>Mahsulotlar:</b>\n${orderItems}\n💰 <b>JAMI: ${document.getElementById('totalPrice').innerText} so'm</b>\n\n📍 <a href="https://www.google.com/maps?q=${userCoords.lat},${userCoords.lon}">Xaritada ko'rish</a>`;
 
             try {
-                await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ chat_id: CHAT_ID, text: text, parse_mode: 'HTML' })
                 });
-                showAlert("Raxmat!", "Buyurtmangiz yuborildi!", "✅");
-                cart = {}; renderMenu(); renderCart();
+                if(res.ok) {
+                    showAlert("Raxmat!", "Buyurtmangiz yuborildi!", "✅");
+                    cart = {}; renderMenu(); renderCart();
+                }
             } catch (e) { showAlert("Xato", "Internet muammosi!", "❌"); }
             btn.disabled = false; btn.innerText = "BUYURTMA BERISH";
         }
@@ -305,7 +324,6 @@
             document.getElementById('alertIcon').innerText = i;
             document.getElementById('overlay').style.display = 'block';
             document.getElementById('customAlert').style.display = 'block';
-            document.getElementById('customAlert').classList.add('show');
         }
 
         function closeAlert() {
@@ -313,10 +331,7 @@
             document.getElementById('customAlert').style.display = 'none';
         }
 
-        window.onload = () => {
-            checkFirstTime();
-            renderMenu();
-        };
+        window.onload = () => { checkFirstTime(); renderMenu(); };
     </script>
 </body>
 </html>
