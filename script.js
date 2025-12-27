@@ -6,137 +6,45 @@ const products = [
     { id: 2, cat: 'Burgerlar', name: 'Double Burger', price: 43000, img: 'Images/bigmag.jpg', desc: 'Ikki qavatli go\'sht.' },
     { id: 3, cat: 'Burgerlar', name: 'Ganburger', price: 30000, img: 'Images/gamburger.jpg', desc: 'Odiy Gamburger.' },
     { id: 4, cat: 'Burgerlar', name: 'Tuxumli Burger', price: 38000, img: 'Images/txburger.jpg', desc: 'Tuxumli Burger.' },
-    { id: 5, cat: 'Ichimliklar', name: 'Kofe MacCoffee', price: 7000, img: 'Images/cofemac.jpg', desc: 'Issiq Va Yoqimli MacCoffee.' },
-    { id: 6, cat: 'Ichimliklar', name: 'Cappuccino', price: 10000, img: 'Images/cofecap.jpg', desc: 'CAPPUCCINO.' },
-    { id: 7, cat: 'Ichimliklar', name: 'Fanta 1.5l', price: 17000, img: 'Images/fanta1.jpg', desc: 'Apelsinlik Fanta.' },
+    { id: 5, cat: 'Ichimliklar', name: 'Kofe MacCoffee', price: 7000, img: 'Images/cofemac.jpg', desc: 'Issiq MacCoffee.' },
+    { id: 6, cat: 'Ichimliklar', name: 'Cappuccino', price: 10000, img: 'Images/cofecap.jpg', desc: 'Issiq Cappuccino.' },
+    { id: 7, cat: 'Ichimliklar', name: 'Fanta 1.5l', price: 17000, img: 'Images/fanta1.jpg', desc: 'Muzdek Fanta.' },
     { id: 8, cat: 'Ichimliklar', name: 'Pepsi 1.5l', price: 13000, img: 'Images/pepsi15.jpg', desc: 'Pepsi Cola.' },
-    { id: 9, cat: 'Shirinliklar', name: 'Malibu ', price: 25000, img: 'Images/shmalibu.jpg', desc: 'Malibu desert.' },
+    { id: 9, cat: 'Shirinliklar', name: 'Malibu', price: 25000, img: 'Images/shmalibu.jpg', desc: 'Malibu desert.' },
     { id: 10, cat: 'Shirinliklar', name: 'Qizil tort', price: 24000, img: 'Images/shqizil.jpg', desc: 'Qizil desert.' },
     { id: 11, cat: 'Shirinliklar', name: 'Choco', price: 23000, img: 'Images/shchoco.jpg', desc: 'Choco desert.' },
-    { id: 12, cat: 'Shirinliklar', name: 'Snikers Tort', price: 23000, img: 'Images/shsnik.jpg', desc: 'Shokoladli tort.' },
-    { id: 13, cat: 'Maxsus', name: 'Combo 777', price: 55000, img: 'https://cdn-icons-png.flaticon.com/512/3050/3050130.png', desc: 'Burger + Fri + Kola.' },
-    { id: 14, cat: 'Maxsus', name: 'Big Family', price: 120000, img: 'https://cdn-icons-png.flaticon.com/512/3050/3050130.png', desc: 'Oila uchun.' },
-    { id: 15, cat: 'Maxsus', name: 'Student', price: 35000, img: 'https://cdn-icons-png.flaticon.com/512/3050/3050130.png', desc: 'Arzon va to\'yimli.' },
-    { id: 16, cat: 'Maxsus', name: 'Night Mix', price: 45000, img: 'https://cdn-icons-png.flaticon.com/512/3050/3050130.png', desc: 'Tungi to\'plam.' }
+    { id: 12, cat: 'Shirinliklar', name: 'Snikers Tort', price: 23000, img: 'Images/shsnik.jpg', desc: 'Snikers desert.' }
 ];
 
 let cart = {}; let userCoords = null; let currentCat = 'Barchasi';
 
-// TELEFON RAQAM FORMATI
-function fixPhone(input) {
-    let val = input.value.replace(/[^\d]/g, ''); 
-    if (!val.startsWith('998')) { val = '998' + val; }
-    let formatted = "+998 ";
-    if (val.length > 3) formatted += val.substring(3, 5) + (val.length > 5 ? " " : "");
-    if (val.length > 5) formatted += val.substring(5, 8) + (val.length > 8 ? " " : "");
-    if (val.length > 8) formatted += val.substring(8, 10) + (val.length > 10 ? " " : "");
-    if (val.length > 10) formatted += val.substring(10, 12);
-    input.value = formatted.trim();
+// TELEFON FORMATI
+function fixPhone(i) {
+    let v = i.value.replace(/[^\d]/g, ''); if (!v.startsWith('998')) v = '998' + v;
+    let f = "+998 "; if (v.length > 3) f += v.substring(3, 5) + (v.length > 5 ? " " : "");
+    if (v.length > 5) f += v.substring(5, 8) + (v.length > 8 ? " " : "");
+    if (v.length > 8) f += v.substring(8, 10) + (v.length > 10 ? " " : "");
+    if (v.length > 10) f += v.substring(10, 12); i.value = f.trim();
 }
 
 // REGISTRATSIYA
 function checkFirstTime() {
-    if (!localStorage.getItem('c777_name')) {
-        document.getElementById('regScreen').style.display = 'flex';
-    }
+    if (!localStorage.getItem('c777_name')) document.getElementById('regScreen').style.display = 'flex';
 }
 
 function saveRegistration() {
     const n = document.getElementById('regName').value.trim();
     const p = document.getElementById('regPhone').value.trim();
-    if(n.length < 3) return alert("Ismingizni kiriting!");
-    if(p.length < 17) return alert("Raqamni to'liq kiriting!");
-    localStorage.setItem('c777_name', n);
-    localStorage.setItem('c777_phone', p);
+    if(n.length < 3 || p.length < 17) return alert("Ma'lumotlarni to'ldiring!");
+    localStorage.setItem('c777_name', n); localStorage.setItem('c777_phone', p);
     document.getElementById('regScreen').style.display = 'none';
-    showAlert("Muvaffaqiyatli!", "Xush kelibsiz!", "✅");
 }
 
-function openProfile() {
-    document.getElementById('editName').value = localStorage.getItem('c777_name');
-    document.getElementById('editPhone').value = localStorage.getItem('c777_phone');
-    document.getElementById('profileModal').classList.add('open');
-}
-
-function updateProfile() {
-    const n = document.getElementById('editName').value.trim();
-    const p = document.getElementById('editPhone').value.trim();
-    if(n.length < 3 || p.length < 17) return alert("To'ldiring!");
-    localStorage.setItem('c777_name', n);
-    localStorage.setItem('c777_phone', p);
-    closeModal('profileModal');
-    showAlert("Yangilandi", "Ma'lumotlar saqlandi", "✅");
-}
-
-function closeModal(id) {
-    document.getElementById(id).classList.remove('open');
-}
-
-// MENU RENDER
-function renderMenu() {
-    const filtered = currentCat === 'Barchasi' ? products : products.filter(p => p.cat === currentCat);
-    const display = document.getElementById('menuDisplay');
-    display.innerHTML = ''; 
-
-    filtered.forEach((p, index) => {
-        const qty = cart[p.id] || 0;
-        const card = document.createElement('div');
-        card.className = 'card';
-        card.style.animationDelay = `${index * 0.05}s`; // Har bir karta ketma-ket chiqishi uchun
-        card.innerHTML = `
-            <div class="img-container" onclick="viewProduct(${p.id})"><img src="${p.img}"></div>
-            <div class="card-info">
-                <h4>${p.name}</h4>
-                <b>${p.price.toLocaleString()} so'm</b>
-                <div class="counter-box">
-                    <button class="count-btn" onclick="updateQty(${p.id}, -1)">-</button>
-                    <span class="qty-label" id="qty-${p.id}">${qty}</span>
-                    <button class="count-btn" onclick="updateQty(${p.id}, 1)">+</button>
-                </div>
-            </div>`;
-        display.appendChild(card);
-    });
-}
-
-function filterMenu(cat, btn) {
-    currentCat = cat;
-    document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    renderMenu();
-}
-
-function updateQty(id, change) {
-    cart[id] = (cart[id] || 0) + change;
-    if (cart[id] <= 0) delete cart[id];
-    
-    // UI yangilash (miltillashsiz)
-    const label = document.getElementById(`qty-${id}`);
-    if(label) label.innerText = cart[id] || 0;
-    
-    const modalLabel = document.getElementById(`mqty-${id}`);
-    if(modalLabel) modalLabel.innerText = cart[id] || 0;
-    
-    renderCart();
-}
-
-function renderCart() {
-    const list = document.getElementById('cartList');
-    let total = 0; let html = "";
-    for (const id in cart) {
-        const p = products.find(x => x.id == id);
-        total += p.price * cart[id];
-        html += `<div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid #eee; animation: fadeIn 0.3s;">
-                    <span>${p.name} (x${cart[id]})</span> 
-                    <span>${(p.price * cart[id]).toLocaleString()}</span>
-                 </div>`;
-    }
-    list.innerHTML = html || "<p style='text-align:center; color:#999'>Savatcha bo'sh</p>";
-    document.getElementById('totalPrice').innerText = total.toLocaleString();
-}
-
+// MODALNI OCHISH (ANIMATSIYA BILAN)
 function viewProduct(id) {
     const p = products.find(x => x.id === id);
     const modal = document.getElementById('productModal');
+    
     document.getElementById('viewImg').src = p.img;
     document.getElementById('viewTitle').innerText = p.name;
     document.getElementById('viewDesc').innerText = p.desc;
@@ -147,54 +55,97 @@ function viewProduct(id) {
             <span class="qty-label" id="mqty-${p.id}">${cart[p.id] || 0}</span>
             <button class="count-btn" onclick="updateQty(${p.id}, 1)">+</button>
         </div>`;
-    modal.classList.add('open');
+
+    modal.style.display = 'flex';
+    setTimeout(() => modal.classList.add('show'), 10); // Animatsiya boshlanishi uchun
+}
+
+// MODALNI YOPISH (ANIMATSIYA BILAN)
+function closeModal(id) {
+    const modal = document.getElementById(id);
+    modal.classList.remove('show');
+    setTimeout(() => modal.style.display = 'none', 300); // Animatsiya tugagach butunlay yopish
+}
+
+// MENU RENDER
+function renderMenu() {
+    const f = currentCat === 'Barchasi' ? products : products.filter(p => p.cat === currentCat);
+    document.getElementById('menuDisplay').innerHTML = f.map((p, i) => `
+        <div class="card" style="animation-delay: ${i * 0.05}s">
+            <div class="img-container" onclick="viewProduct(${p.id})"><img src="${p.img}"></div>
+            <div class="card-info">
+                <h4>${p.name}</h4>
+                <b>${p.price.toLocaleString()} so'm</b>
+                <div class="counter-box">
+                    <button class="count-btn" onclick="updateQty(${p.id}, -1)">-</button>
+                    <span class="qty-label" id="qty-${p.id}">${cart[p.id] || 0}</span>
+                    <button class="count-btn" onclick="updateQty(${p.id}, 1)">+</button>
+                </div>
+            </div>
+        </div>`).join('');
+}
+
+function filterMenu(c, b) {
+    currentCat = c;
+    document.querySelectorAll('.cat-btn').forEach(x => x.classList.remove('active'));
+    b.classList.add('active'); renderMenu();
+}
+
+function updateQty(id, change) {
+    cart[id] = (cart[id] || 0) + change;
+    if (cart[id] <= 0) delete cart[id];
+    
+    // UI yangilash
+    if(document.getElementById(`qty-${id}`)) document.getElementById(`qty-${id}`).innerText = cart[id] || 0;
+    if(document.getElementById(`mqty-${id}`)) document.getElementById(`mqty-${id}`).innerText = cart[id] || 0;
+    
+    renderCart();
+}
+
+function renderCart() {
+    const list = document.getElementById('cartList');
+    let total = 0; let html = "";
+    for (const id in cart) {
+        const p = products.find(x => x.id == id);
+        total += p.price * cart[id];
+        html += `<div style="display:flex; justify-content:space-between; padding:5px 0; border-bottom:1px solid #eee;">
+                    <span>${p.name} (x${cart[id]})</span> 
+                    <span>${(p.price * cart[id]).toLocaleString()}</span>
+                 </div>`;
+    }
+    list.innerHTML = html || "<p style='color:#999'>Savatcha bo'sh</p>";
+    document.getElementById('totalPrice').innerText = total.toLocaleString();
 }
 
 function getLocation() {
-    const btn = document.getElementById('locBtn');
-    btn.innerText = "Aniqlanmoqda...";
+    const btn = document.getElementById('locBtn'); btn.innerText = "Aniqlanmoqda...";
     navigator.geolocation.getCurrentPosition(
-        (pos) => {
-            userCoords = { lat: pos.coords.latitude, lon: pos.coords.longitude };
+        (p) => {
+            userCoords = { lat: p.coords.latitude, lon: p.coords.longitude };
             btn.innerText = "✅ MANZIL ANIQLANDI";
             btn.style.borderColor = "var(--green)"; btn.style.color = "var(--green)";
         },
-        () => { 
-            showAlert("Xatolik", "GPS ruxsatini yoqing!", "❌"); 
-            btn.innerText = "📍 MANZILNI ANIQLASH";
-        }
+        () => { showAlert("Xato", "GPSni yoqing", "❌"); btn.innerText = "📍 MANZILNI ANIQLASH"; }
     );
 }
 
 async function sendOrder() {
-    const name = localStorage.getItem('c777_name');
-    const phone = localStorage.getItem('c777_phone');
-    
     if (Object.keys(cart).length === 0) return showAlert("Savat bo'sh", "Mahsulot tanlang", "🛒");
-    if (!userCoords) return showAlert("Manzil yo'q", "Manzilni aniqlang", "📍");
+    if (!userCoords) return showAlert("Manzil yo'q", "Lokatsiyani aniqlang", "📍");
 
-    const btn = document.getElementById('submitBtn');
-    btn.disabled = true; btn.innerText = "YUBORILMOQDA...";
+    const btn = document.getElementById('submitBtn'); btn.disabled = true;
+    let items = ""; for (const id in cart) items += `- ${products.find(x=>x.id==id).name} (x${cart[id]})\n`;
 
-    let itemsText = "";
-    for (const id in cart) {
-        itemsText += ` - ${products.find(x=>x.id==id).name} (x${cart[id]})\n`;
-    }
-
-    const message = `🚀 <b>YANGI BUYURTMA</b>\n\n👤 <b>Mijoz:</b> ${name}\n📞 <b>Tel:</b> ${phone}\n\n📦 <b>Mahsulotlar:</b>\n${itemsText}\n💰 <b>JAMI: ${document.getElementById('totalPrice').innerText} so'm</b>\n\n📍 <a href="https://www.google.com/maps?q=${userCoords.lat},${userCoords.lon}">Xaritada ko'rish</a>`;
+    const text = `🚀 <b>YANGI BUYURTMA</b>\n\n👤 ${localStorage.getItem('c777_name')}\n📞 ${localStorage.getItem('c777_phone')}\n\n📦 <b>Mahsulotlar:</b>\n${items}\n💰 JAMI: ${document.getElementById('totalPrice').innerText} so'm\n📍 <a href="https://www.google.com/maps?q=${userCoords.lat},${userCoords.lon}">Xaritada ko'rish</a>`;
 
     try {
         const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ chat_id: CHAT_ID, text: message, parse_mode: 'HTML' })
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ chat_id: CHAT_ID, text: text, parse_mode: 'HTML' })
         });
-        if (res.ok) {
-            showAlert("Raxmat!", "Buyurtma yuborildi!", "✅");
-            cart = {}; renderMenu(); renderCart();
-        }
-    } catch (e) { showAlert("Xato", "Aloqa yo'q!", "❌"); }
-    btn.disabled = false; btn.innerText = "BUYURTMA BERISH";
+        if (res.ok) { showAlert("Raxmat!", "Buyurtmangiz yuborildi!", "✅"); cart = {}; renderMenu(); renderCart(); }
+    } catch (e) { showAlert("Xato", "Internetni tekshiring", "❌"); }
+    btn.disabled = false;
 }
 
 function showAlert(t, m, i) {
@@ -202,18 +153,12 @@ function showAlert(t, m, i) {
     document.getElementById('alertMsg').innerText = m;
     document.getElementById('alertIcon').innerText = i;
     document.getElementById('overlay').style.display = 'block';
-    const alert = document.getElementById('customAlert');
-    alert.style.display = 'block';
-    setTimeout(() => alert.classList.add('show'), 10);
+    document.getElementById('customAlert').classList.add('active');
 }
 
 function closeAlert() {
-    const alert = document.getElementById('customAlert');
-    alert.classList.remove('show');
-    setTimeout(() => {
-        alert.style.display = 'none';
-        document.getElementById('overlay').style.display = 'none';
-    }, 300);
+    document.getElementById('customAlert').classList.remove('active');
+    document.getElementById('overlay').style.display = 'none';
 }
 
 window.onload = () => { checkFirstTime(); renderMenu(); };
