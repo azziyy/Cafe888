@@ -6,26 +6,26 @@
     <title>Cafe 777 - Smart Menu</title>
     <style>
         :root {
-            --primary: #ffbe0b;
-            --secondary: #fb5607;
-            --dark: #1a1a1a;
-            --blue: #0088cc;
-            --green: #2ecc71;
-            --red: #ff4757;
-            --gray: #f0f2f5;
+            --primary: #ffbe0b; --secondary: #fb5607; --dark: #1a1a1a;
+            --blue: #0088cc; --green: #2ecc71; --red: #ff4757; --gray: #f0f2f5;
         }
 
-        /* ASOSIY TUZATISH */
-        * { box-sizing: border-box; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
 
         body {
-            font-family: 'Segoe UI', Roboto, sans-serif;
-            background-color: var(--gray);
-            margin: 0; padding: 0;
-            display: flex; flex-direction: column; align-items: center;
-            overflow-x: hidden;
-            width: 100vw;
+            font-family: 'Segoe UI', Roboto, sans-serif; background-color: var(--gray);
+            margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center;
+            overflow-x: hidden; width: 100vw;
         }
+
+        /* 1. REGISTRATSIYA EKRANI */
+        #regScreen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: white; z-index: 5000; display: none;
+            flex-direction: column; align-items: center; justify-content: center; padding: 30px;
+        }
+        .reg-logo { font-size: 80px; margin-bottom: 20px; animation: bounce 2s infinite; }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
 
         /* KATEGORIYALAR */
         .category-nav {
@@ -33,105 +33,103 @@
             width: 100%; padding: 15px; background: white;
             white-space: nowrap; position: sticky; top: 0; z-index: 100;
             box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            -webkit-overflow-scrolling: touch;
         }
         .category-nav::-webkit-scrollbar { display: none; }
         .cat-btn {
             padding: 10px 18px; border-radius: 20px;
             border: 2px solid var(--primary); background: transparent;
-            cursor: pointer; font-weight: 600; font-size: 14px;
+            cursor: pointer; font-weight: 600; font-size: 14px; transition: 0.3s;
         }
-        .cat-btn.active { background: var(--primary); border-color: var(--primary); }
+        .cat-btn.active { background: var(--primary); border-color: var(--primary); box-shadow: 0 4px 10px rgba(255,190,11,0.4); }
 
         /* MENU GRID */
         .menu-grid {
             display: grid; grid-template-columns: 1fr 1fr;
-            gap: 12px; padding: 12px; width: 100%; 
-            max-width: 600px;
-            box-sizing: border-box;
+            gap: 12px; padding: 12px; width: 100%; max-width: 600px;
         }
-        .card {
-            background: #fff; border-radius: 20px; overflow: hidden;
-            display: flex; flex-direction: column;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-            position: relative;
+        .card { 
+            background: #fff; border-radius: 20px; overflow: hidden; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08); position: relative;
+            opacity: 0; transform: translateY(20px);
+            animation: cardAppear 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards;
         }
         
-        .init-anim { animation: fadeIn 0.5s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes cardAppear { to { opacity: 1; transform: translateY(0); } }
 
         .img-container { width: 100%; aspect-ratio: 1 / 1; overflow: hidden; cursor: pointer; }
-        .card img { width: 100%; height: 100%; object-fit: cover; transition: 0.3s; }
+        .card img { width: 100%; height: 100%; object-fit: cover; transition: 0.4s ease; }
+        .card:active img { transform: scale(1.05); }
+        
         .card-info { padding: 12px; text-align: center; }
         .card h4 { font-size: 15px; margin: 5px 0; color: var(--dark); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .card b { color: var(--secondary); font-size: 14px; display: block; margin-bottom: 8px; }
 
         /* COUNTER */
         .counter-box { display: flex; align-items: center; justify-content: center; gap: 12px; }
-        .count-btn {
-            background: var(--dark); color: white; border: none;
-            width: 32px; height: 32px; border-radius: 10px; cursor: pointer;
-            font-size: 18px; font-weight: bold;
+        .count-btn { 
+            background: var(--dark); color: white; border: none; 
+            width: 32px; height: 32px; border-radius: 10px; 
+            cursor: pointer; font-size: 18px; font-weight: bold; transition: 0.2s;
         }
+        .count-btn:active { transform: scale(0.9); opacity: 0.8; }
         .qty-label { font-weight: bold; font-size: 16px; min-width: 20px; }
 
-        /* MODAL */
-        #productModal {
+        /* MODALS */
+        #productModal, #profileModal {
             display: none; position: fixed; top: 0; left: 0;
             width: 100%; height: 100%; background: rgba(0,0,0,0.85);
-            z-index: 2000; align-items: center; justify-content: center;
-            backdrop-filter: blur(8px);
+            z-index: 2000; align-items: center; justify-content: center; backdrop-filter: blur(8px);
         }
         .modal-content {
             background: white; width: 88%; max-width: 380px;
             border-radius: 30px; overflow: hidden; position: relative;
-            transform: scale(0.9); transition: 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transform: scale(0.7); opacity: 0; transition: 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
-        #productModal.open { display: flex; }
-        #productModal.open .modal-content { transform: scale(1); }
+        .open { display: flex !important; }
+        .open .modal-content { transform: scale(1); opacity: 1; }
 
         .close-modal {
-            position: absolute; top: 15px; right: 15px;
-            background: rgba(255,255,255,0.9); color: var(--dark); border: none;
-            width: 35px; height: 35px; border-radius: 50%;
-            font-size: 22px; cursor: pointer; z-index: 10;
-            font-weight: bold; box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            position: absolute; top: 15px; right: 15px; background: rgba(255,255,255,0.9);
+            width: 35px; height: 35px; border-radius: 50%; border: none; 
+            font-size: 22px; cursor: pointer; z-index: 10; font-weight: bold;
         }
 
         /* ORDER SECTION */
         .order-section {
             background: #fff; margin: 20px 0; padding: 25px;
-            border-radius: 25px; width: calc(100% - 24px); 
-            max-width: 450px;
-            box-sizing: border-box; box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border-radius: 25px; width: calc(100% - 24px); max-width: 450px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
         }
-        input {
-            width: 100%; padding: 15px; margin: 8px 0;
-            border: 2px solid #eee; border-radius: 12px; font-size: 16px; outline: none; box-sizing: border-box;
-        }
-        .location-check-btn {
-            background: #f8f9fa; border: 2px dashed var(--blue);
-            color: var(--blue); width: 100%; padding: 15px;
-            border-radius: 12px; margin: 15px 0 25px 0;
-            cursor: pointer; font-weight: bold;
-        }
-        .order-btn {
-            background: var(--blue); color: white; border: none;
-            width: 100%; padding: 18px; border-radius: 15px;
-            font-size: 16px; font-weight: bold; cursor: pointer;
-        }
+        input { width: 100%; padding: 15px; margin: 8px 0; border: 2px solid #eee; border-radius: 12px; font-size: 16px; transition: 0.3s; }
+        input:focus { border-color: var(--blue); }
 
+        .location-check-btn {
+            background: #f8f9fa; border: 2px dashed var(--blue); color: var(--blue);
+            width: 100%; padding: 15px; border-radius: 12px; margin: 15px 0; cursor: pointer; font-weight: bold; transition: 0.3s;
+        }
+        .order-btn { background: var(--blue); color: white; border: none; width: 100%; padding: 18px; border-radius: 15px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        
         /* ALERT */
         #customAlert {
             display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.8);
-            background: white; padding: 30px; border-radius: 25px; z-index: 2100;
-            text-align: center; width: 85%; max-width: 320px; transition: 0.3s;
+            background: white; padding: 30px; border-radius: 25px; z-index: 6000;
+            text-align: center; width: 85%; max-width: 320px; transition: 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
         }
         #customAlert.show { display: block; transform: translate(-50%, -50%) scale(1); }
-        .overlay { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.7); z-index: 1000; }
+        .overlay { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.7); z-index: 5500; }
     </style>
 </head>
 <body>
+
+    <div id="regScreen">
+        <div class="reg-logo">🍔</div>
+        <h2>Xush kelibsiz!</h2>
+        <p style="text-align:center; color:#666; margin-bottom:20px;">Ism va telefoningizni kiriting</p>
+        <input type="text" id="regName" placeholder="Ismingiz">
+        <input type="tel" id="regPhone" value="+998 " oninput="fixPhone(this)" maxlength="17">
+        <button class="order-btn" style="margin-top:20px;" onclick="saveRegistration()">DAVOM ETISH</button>
+    </div>
 
     <div class="category-nav">
         <button class="cat-btn active" onclick="filterMenu('Barchasi', this)">📂 Barchasi</button>
@@ -143,9 +141,9 @@
 
     <div class="menu-grid" id="menuDisplay"></div>
 
-    <div id="productModal" onclick="if(event.target == this) closeProduct()">
+    <div id="productModal" onclick="if(event.target == this) closeModal('productModal')">
         <div class="modal-content">
-            <button class="close-modal" onclick="closeProduct()">×</button>
+            <button class="close-modal" onclick="closeModal('productModal')">×</button>
             <img id="viewImg" style="width:100%; aspect-ratio:1/1; object-fit:cover;">
             <div style="padding:25px;">
                 <h2 id="viewTitle" style="margin:0 0 10px 0;"></h2>
@@ -158,6 +156,16 @@
         </div>
     </div>
 
+    <div id="profileModal" onclick="if(event.target == this) closeModal('profileModal')">
+        <div class="modal-content" style="padding:25px;">
+            <button class="close-modal" onclick="closeModal('profileModal')">×</button>
+            <h3>Profilni tahrirlash</h3>
+            <input type="text" id="editName" placeholder="Ismingiz">
+            <input type="tel" id="editPhone" oninput="fixPhone(this)" maxlength="17">
+            <button class="order-btn" style="margin-top:15px; background:var(--dark);" onclick="updateProfile()">SAQLASH</button>
+        </div>
+    </div>
+
     <div class="order-section">
         <h3>Sizning tanlovingiz 🛒</h3>
         <div id="cartList"></div>
@@ -165,10 +173,9 @@
             <span>Jami:</span>
             <span><span id="totalPrice">0</span> so'm</span>
         </div>
-        <input type="text" id="userName" placeholder="Ismingiz">
-        <input type="tel" id="userPhone" value="+998 " oninput="fixPhone(this)" maxlength="17">
         <button class="location-check-btn" id="locBtn" onclick="getLocation()">📍 MANZILNI ANIQLASH</button>
         <button class="order-btn" id="submitBtn" onclick="sendOrder()">BUYURTMA BERISH</button>
+        <p onclick="openProfile()" style="text-align:center; color:var(--blue); font-weight:bold; cursor:pointer; margin-top:15px; text-decoration:underline;">✏️ Ma'lumotlarni tahrirlash</p>
     </div>
 
     <div class="overlay" id="overlay"></div>
@@ -179,207 +186,6 @@
         <button onclick="closeAlert()" style="background:var(--dark); color:white; border:none; padding:12px 35px; border-radius:12px; cursor:pointer;">OK</button>
     </div>
 
-    <script>
-        const BOT_TOKEN = "8032226679:AAETTGPvYZYSvF_QmdofXKibpOwt4E9Iitc"; 
-        const CHAT_ID = "519326806"; 
-
-        const products = [
-            { id: 1, cat: 'Burgerlar', name: 'Cheeseburger', price: 18000, img: 'Images/kolbasa.jpg', desc: 'Yumshoq bulochka va pishloq.' },
-            { id: 2, cat: 'Burgerlar', name: 'Double Burger', price: 43000, img: 'Images/bigmag.jpg', desc: 'Ikki qavatli go\'sht.' },
-            { id: 3, cat: 'Burgerlar', name: 'Ganburger', price: 30000, img: 'Images/gamburger.jpg', desc: 'Odiy Gamburger.' },
-            { id: 4, cat: 'Burgerlar', name: 'Tuxumli Burger', price: 38000, img: 'Images/txburger.jpg', desc: 'Tuxumli Burger.' },
-            { id: 5, cat: 'Ichimliklar', name: 'Kofe MacCoffee', price: 7000, img: 'Images/cofemac.jpg', desc: 'Issiq Va Yoqimli MacCoffee.' },
-            { id: 6, cat: 'Ichimliklar', name: 'Cappuccino', price: 10000, img: 'Images/cofecap.jpg', desc: 'CAPPUCCINO.' },
-            { id: 7, cat: 'Ichimliklar', name: 'Fanta 1.5l', price: 17000, img: 'Images/fanta1.jpg', desc: 'Apelsinlik Fanta.' },
-            { id: 8, cat: 'Ichimliklar', name: 'Pepsi 1.5l', price: 13000, img: 'Images/pepsi15.jpg', desc: 'Pepsi Cola.' },
-            { id: 9, cat: 'Shirinliklar', name: 'Malibu ', price: 25000, img: 'Images/shmalibu.jpg', desc: 'Malibu desert.' },
-            { id: 10, cat: 'Shirinliklar', name: 'Qizil tort', price: 24000, img: 'Images/shqizil.jpg', desc: 'Qizil desert.' },
-            { id: 11, cat: 'Shirinliklar', name: 'Choco', price: 23000, img: 'Images/shchoco.jpg', desc: 'Choco desert.' },
-            { id: 12, cat: 'Shirinliklar', name: 'Snikers Tort', price: 23000, img: 'Images/shsnik.jpg', desc: 'Shokoladli tort.' },
-            { id: 13, cat: 'Maxsus', name: 'Combo 777', price: 55000, img: 'https://cdn-icons-png.flaticon.com/512/3050/3050130.png', desc: 'Burger + Fri + Kola.' },
-            { id: 14, cat: 'Maxsus', name: 'Big Family', price: 120000, img: 'https://cdn-icons-png.flaticon.com/512/3050/3050130.png', desc: 'Oila uchun.' },
-            { id: 15, cat: 'Maxsus', name: 'Student', price: 35000, img: 'https://cdn-icons-png.flaticon.com/512/3050/3050130.png', desc: 'Arzon va to\'yimli.' },
-            { id: 16, cat: 'Maxsus', name: 'Night Mix', price: 45000, img: 'https://cdn-icons-png.flaticon.com/512/3050/3050130.png', desc: 'Tungi to\'plam.' }
-        ];
-
-        let cart = {}; 
-        let userCoords = null;
-        let currentCat = 'Barchasi';
-
-        function fixPhone(input) {
-            let val = input.value.replace(/[^\d]/g, ''); 
-            if (!val.startsWith('998')) { val = '998' + val; }
-            let formatted = "+998 ";
-            if (val.length > 3) { formatted += val.substring(3, 5) + (val.length > 5 ? " " : ""); }
-            if (val.length > 5) { formatted += val.substring(5, 8) + (val.length > 8 ? " " : ""); }
-            if (val.length > 8) { formatted += val.substring(8, 10) + (val.length > 10 ? " " : ""); }
-            if (val.length > 10) { formatted += val.substring(10, 12); }
-            input.value = formatted.trim();
-        }
-
-        function renderMenu() {
-            const filtered = currentCat === 'Barchasi' ? products : products.filter(p => p.cat === currentCat);
-            document.getElementById('menuDisplay').innerHTML = filtered.map(p => {
-                const qty = cart[p.id] || 0;
-                return `
-                    <div class="card init-anim">
-                        <div class="img-container" onclick="viewProduct(${p.id})">
-                            <img src="${p.img}">
-                        </div>
-                        <div class="card-info">
-                            <h4>${p.name}</h4>
-                            <b>${p.price.toLocaleString()} so'm</b>
-                            <div class="counter-box">
-                                <button class="count-btn" onclick="updateQty(${p.id}, -1)">-</button>
-                                <span class="qty-label" id="qty-${p.id}">${qty}</span>
-                                <button class="count-btn" onclick="updateQty(${p.id}, 1)">+</button>
-                            </div>
-                        </div>
-                    </div>`;
-            }).join('');
-        }
-
-        function filterMenu(cat, btn) {
-            currentCat = cat;
-            document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            renderMenu();
-        }
-
-        function updateQty(id, change) {
-            cart[id] = (cart[id] || 0) + change;
-            if (cart[id] <= 0) delete cart[id];
-            const label = document.getElementById(`qty-${id}`);
-            if(label) label.innerText = cart[id] || 0;
-            const modalLabel = document.getElementById(`mqty-${id}`);
-            if(modalLabel) modalLabel.innerText = cart[id] || 0;
-            renderCart();
-        }
-
-        function renderCart() {
-            const list = document.getElementById('cartList');
-            let total = 0; let html = "";
-            for (const id in cart) {
-                const p = products.find(x => x.id == id);
-                total += p.price * cart[id];
-                html += `<div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid #eee;">
-                            <span>${p.name} (x${cart[id]})</span> 
-                            <span>${(p.price * cart[id]).toLocaleString()}</span>
-                         </div>`;
-            }
-            list.innerHTML = html || "<p style='text-align:center; color:#999'>Savatcha bo'sh</p>";
-            document.getElementById('totalPrice').innerText = total.toLocaleString();
-        }
-
-        function viewProduct(id) {
-            const p = products.find(x => x.id === id);
-            const modal = document.getElementById('productModal');
-            document.getElementById('viewImg').src = p.img;
-            document.getElementById('viewTitle').innerText = p.name;
-            document.getElementById('viewDesc').innerText = p.desc;
-            document.getElementById('viewPrice').innerText = p.price.toLocaleString() + " so'm";
-            document.getElementById('modalCounter').innerHTML = `
-                <div class="counter-box">
-                    <button class="count-btn" onclick="updateQty(${p.id}, -1)">-</button>
-                    <span class="qty-label" id="mqty-${p.id}">${cart[p.id] || 0}</span>
-                    <button class="count-btn" onclick="updateQty(${p.id}, 1)">+</button>
-                </div>`;
-            modal.style.display = 'flex';
-            setTimeout(() => modal.classList.add('open'), 10);
-        }
-
-        function closeProduct() {
-            const modal = document.getElementById('productModal');
-            modal.classList.remove('open');
-            setTimeout(() => modal.style.display = 'none', 300);
-        }
-
-        function getLocation() {
-            const btn = document.getElementById('locBtn');
-            btn.innerText = "Aniqlanmoqda...";
-            navigator.geolocation.getCurrentPosition(
-                (pos) => {
-                    userCoords = { lat: pos.coords.latitude, lon: pos.coords.longitude };
-                    btn.innerText = "✅ MANZIL ANIQLANDI";
-                    btn.style.borderColor = "var(--green)"; btn.style.color = "var(--green)";
-                    btn.style.background = "#eafff2";
-                },
-                () => { showAlert("Xato", "Lokatsiyaga ruxsat berilmadi", "❌"); btn.innerText = "📍 MANZILNI ANIQLASH"; }
-            );
-        }
-
-        async function sendOrder() {
-            const name = document.getElementById('userName').value.trim();
-            const rawPhone = document.getElementById('userPhone').value;
-            // Telegramga yuborish uchun bo'shliqlarni olib tashlaymiz
-            const cleanPhone = rawPhone.replace(/\s/g, ''); 
-            
-            if (Object.keys(cart).length === 0 || !name || rawPhone.length < 17 || !userCoords) {
-                return showAlert("Xatolik", "Ism, to'liq telefon va manzilni kiriting!", "⚠️");
-            }
-
-            const btn = document.getElementById('submitBtn');
-            btn.disabled = true; btn.innerText = "YUBORILMOQDA...";
-
-            let orderItems = "";
-            for (const id in cart) {
-                const p = products.find(x => x.id == id);
-                orderItems += ` - ${p.name} (x${cart[id]})\n`;
-            }
-
-            const text = `🚀 <b>YANGI BUYURTMA</b>\n\n` +
-                         `👤 <b>Mijoz:</b> ${name}\n` +
-                         `📞 <b>Tel:</b> ${cleanPhone}\n\n` + // BU YERDA TOZA RAQAM KETADI
-                         `📦 <b>Mahsulotlar:</b>\n${orderItems}\n` +
-                         `💰 <b>JAMI: ${document.getElementById('totalPrice').innerText} so'm</b>\n\n` +
-                         `📍 <a href="https://www.google.com/maps?q=${userCoords.lat},${userCoords.lon}">Xaritada ko'rish</a>`;
-
-            try {
-                const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        chat_id: CHAT_ID,
-                        text: text,
-                        parse_mode: 'HTML'
-                    })
-                });
-
-                if (response.ok) {
-                    showAlert("Raxmat!", "Buyurtmangiz yuborildi!", "✅");
-                    cart = {}; renderMenu(); renderCart();
-                    document.getElementById('userName').value = "";
-                    document.getElementById('userPhone').value = "+998 ";
-                } else {
-                    showAlert("Xato", "Botga yuborib bo'lmadi!", "❌");
-                }
-            } catch (error) {
-                showAlert("Xato", "Internet bilan muammo!", "❌");
-            } finally {
-                btn.disabled = false; btn.innerText = "BUYURTMA BERISH";
-            }
-        }
-
-        function showAlert(t, m, i) {
-            document.getElementById('alertTitle').innerText = t;
-            document.getElementById('alertMsg').innerText = m;
-            document.getElementById('alertIcon').innerText = i;
-            document.getElementById('overlay').style.display = 'block';
-            const alert = document.getElementById('customAlert');
-            alert.style.display = 'block';
-            setTimeout(() => alert.classList.add('show'), 10);
-        }
-
-        function closeAlert() {
-            const alert = document.getElementById('customAlert');
-            alert.classList.remove('show');
-            setTimeout(() => {
-                alert.style.display = 'none';
-                document.getElementById('overlay').style.display = 'none';
-            }, 300);
-        }
-
-        window.onload = renderMenu;
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
