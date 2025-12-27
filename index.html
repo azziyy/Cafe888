@@ -6,27 +6,33 @@
     <title>Cafe 777 - Smart Menu</title>
     <style>
         :root {
-            --primary: #ffbe0b; --secondary: #fb5607; --dark: #1a1a1a;
-            --blue: #0088cc; --green: #2ecc71; --red: #ff4757; --gray: #f0f2f5;
+            --primary: #ffbe0b;
+            --secondary: #fb5607;
+            --dark: #1a1a1a;
+            --blue: #0088cc;
+            --green: #2ecc71;
+            --red: #ff4757;
+            --gray: #f0f2f5;
         }
 
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        /* ASOSIY TUZATISH */
+        * { box-sizing: border-box; }
 
         body {
-            font-family: 'Segoe UI', Roboto, sans-serif; background-color: var(--gray);
-            margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center;
-            overflow-x: hidden; width: 100vw;
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--gray);
+            margin: 0; padding: 0;
+            display: flex; flex-direction: column; align-items: center;
+            overflow-x: hidden;
+            width: 100vw;
         }
 
-        /* REGISTRATION SPLASH SCREEN */
-        #regScreen {
-            position: fixed; top:0; left:0; width:100%; height:100%;
-            background: white; z-index: 5000; display: none;
+        /* REGISTRATSIYA EKRANI */
+        #registrationScreen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: white; z-index: 9999; display: none;
             flex-direction: column; align-items: center; justify-content: center; padding: 30px;
         }
-        #regScreen .logo { font-size: 80px; margin-bottom: 10px; }
-        #regScreen h2 { margin: 0; color: var(--dark); }
-        #regScreen p { color: #666; text-align: center; margin-bottom: 25px; }
 
         /* KATEGORIYALAR */
         .category-nav {
@@ -34,6 +40,7 @@
             width: 100%; padding: 15px; background: white;
             white-space: nowrap; position: sticky; top: 0; z-index: 100;
             box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            -webkit-overflow-scrolling: touch;
         }
         .category-nav::-webkit-scrollbar { display: none; }
         .cat-btn {
@@ -46,72 +53,100 @@
         /* MENU GRID */
         .menu-grid {
             display: grid; grid-template-columns: 1fr 1fr;
-            gap: 12px; padding: 12px; width: 100%; max-width: 600px;
+            gap: 12px; padding: 12px; width: 100%; 
+            max-width: 600px;
+            box-sizing: border-box;
         }
-        .card { background: #fff; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.08); position: relative; animation: fadeIn 0.5s ease; }
+        .card {
+            background: #fff; border-radius: 20px; overflow: hidden;
+            display: flex; flex-direction: column;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            position: relative;
+        }
+        
+        .init-anim { animation: fadeIn 0.5s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        .img-container { width: 100%; aspect-ratio: 1 / 1; overflow: hidden; }
-        .card img { width: 100%; height: 100%; object-fit: cover; }
+        .img-container { width: 100%; aspect-ratio: 1 / 1; overflow: hidden; cursor: pointer; }
+        .card img { width: 100%; height: 100%; object-fit: cover; transition: 0.3s; }
         .card-info { padding: 12px; text-align: center; }
-        .card h4 { font-size: 15px; margin: 5px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .card h4 { font-size: 15px; margin: 5px 0; color: var(--dark); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .card b { color: var(--secondary); font-size: 14px; display: block; margin-bottom: 8px; }
 
         /* COUNTER */
         .counter-box { display: flex; align-items: center; justify-content: center; gap: 12px; }
-        .count-btn { background: var(--dark); color: white; border: none; width: 32px; height: 32px; border-radius: 10px; cursor: pointer; font-size: 18px; font-weight: bold; }
-        .qty-label { font-weight: bold; font-size: 16px; min-width: 15px; }
+        .count-btn {
+            background: var(--dark); color: white; border: none;
+            width: 32px; height: 32px; border-radius: 10px; cursor: pointer;
+            font-size: 18px; font-weight: bold;
+        }
+        .qty-label { font-weight: bold; font-size: 16px; min-width: 20px; }
+
+        /* MODAL */
+        #productModal, #profileModal {
+            display: none; position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%; background: rgba(0,0,0,0.85);
+            z-index: 2000; align-items: center; justify-content: center;
+            backdrop-filter: blur(8px);
+        }
+        .modal-content {
+            background: white; width: 88%; max-width: 380px;
+            border-radius: 30px; overflow: hidden; position: relative;
+            transform: scale(0.9); transition: 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        #productModal.open, #profileModal.open { display: flex; }
+        #productModal.open .modal-content, #profileModal.open .modal-content { transform: scale(1); }
+
+        .close-modal {
+            position: absolute; top: 15px; right: 15px;
+            background: rgba(255,255,255,0.9); color: var(--dark); border: none;
+            width: 35px; height: 35px; border-radius: 50%;
+            font-size: 22px; cursor: pointer; z-index: 10;
+            font-weight: bold; box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
 
         /* ORDER SECTION */
         .order-section {
             background: #fff; margin: 20px 0; padding: 25px;
-            border-radius: 25px; width: calc(100% - 24px); max-width: 450px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border-radius: 25px; width: calc(100% - 24px); 
+            max-width: 450px;
+            box-sizing: border-box; box-shadow: 0 10px 30px rgba(0,0,0,0.1);
         }
         input {
             width: 100%; padding: 15px; margin: 8px 0;
-            border: 2px solid #eee; border-radius: 12px; font-size: 16px; outline: none;
+            border: 2px solid #eee; border-radius: 12px; font-size: 16px; outline: none; box-sizing: border-box;
+        }
+        .location-check-btn {
+            background: #f8f9fa; border: 2px dashed var(--blue);
+            color: var(--blue); width: 100%; padding: 15px;
+            border-radius: 12px; margin: 15px 0 25px 0;
+            cursor: pointer; font-weight: bold;
         }
         .order-btn {
             background: var(--blue); color: white; border: none;
             width: 100%; padding: 18px; border-radius: 15px;
-            font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.2s;
-        }
-        .order-btn:active { transform: scale(0.97); }
-        .edit-info-link {
-            display: block; text-align: center; color: var(--blue);
-            margin-top: 15px; font-size: 14px; font-weight: 600; cursor: pointer;
-        }
-
-        /* MODALS */
-        .custom-modal {
-            display: none; position: fixed; top: 0; left: 0;
-            width: 100%; height: 100%; background: rgba(0,0,0,0.8);
-            z-index: 3000; align-items: center; justify-content: center; backdrop-filter: blur(5px);
-        }
-        .modal-content {
-            background: white; width: 90%; max-width: 380px;
-            border-radius: 30px; padding: 25px; position: relative;
+            font-size: 16px; font-weight: bold; cursor: pointer;
         }
 
         /* ALERT */
         #customAlert {
-            display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            background: white; padding: 30px; border-radius: 25px; z-index: 4100;
-            text-align: center; width: 85%; max-width: 320px; box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+            display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.8);
+            background: white; padding: 30px; border-radius: 25px; z-index: 2100;
+            text-align: center; width: 85%; max-width: 320px; transition: 0.3s;
         }
-        .overlay { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.7); z-index: 4000; }
+        #customAlert.show { display: block; transform: translate(-50%, -50%) scale(1); }
+        .overlay { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.7); z-index: 1000; }
     </style>
 </head>
 <body>
 
-    <div id="regScreen">
-        <div class="logo">🍕</div>
-        <h2>Xush kelibsiz!</h2>
-        <p>Buyurtma berish uchun o'zingizni tanishtiring</p>
+    <div id="registrationScreen">
+        <div style="font-size: 80px; margin-bottom: 20px;">🍕</div>
+        <h2 style="margin: 0;">Xush kelibsiz!</h2>
+        <p style="text-align: center; color: #666; margin-bottom: 30px;">Buyurtma berishni boshlash uchun ismingizni kiriting</p>
         <input type="text" id="regName" placeholder="Ismingiz">
         <input type="tel" id="regPhone" value="+998 " oninput="fixPhone(this)" maxlength="17">
-        <button class="order-btn" style="margin-top: 20px;" onclick="saveRegistration()">SAQLASH VA KIRISH</button>
+        <button class="order-btn" style="width: 100%; margin-top: 20px;" onclick="saveUser()">DAVOM ETISH</button>
     </div>
 
     <div class="category-nav">
@@ -124,6 +159,32 @@
 
     <div class="menu-grid" id="menuDisplay"></div>
 
+    <div id="productModal" onclick="if(event.target == this) closeProduct()">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeProduct()">×</button>
+            <img id="viewImg" style="width:100%; aspect-ratio:1/1; object-fit:cover;">
+            <div style="padding:25px;">
+                <h2 id="viewTitle" style="margin:0 0 10px 0;"></h2>
+                <p id="viewDesc" style="color:#666; font-size:14px; margin-bottom:20px;"></p>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <b id="viewPrice" style="font-size: 22px; color: var(--secondary);"></b>
+                    <div id="modalCounter"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="profileModal" onclick="if(event.target == this) closeProfile()">
+        <div class="modal-content" style="padding: 25px;">
+            <button class="close-modal" onclick="closeProfile()">×</button>
+            <h2 style="margin-top: 0;">Profil ma'lumotlari</h2>
+            <p style="color: #666; font-size: 14px;">Ma'lumotlaringizni shu yerdan yangilashingiz mumkin:</p>
+            <input type="text" id="editName" placeholder="Ism">
+            <input type="tel" id="editPhone" oninput="fixPhone(this)" maxlength="17">
+            <button class="order-btn" style="width: 100%; margin-top: 15px; background: var(--dark);" onclick="updateProfile()">SAQLASH</button>
+        </div>
+    </div>
+
     <div class="order-section">
         <h3>Sizning tanlovingiz 🛒</h3>
         <div id="cartList"></div>
@@ -131,21 +192,11 @@
             <span>Jami:</span>
             <span><span id="totalPrice">0</span> so'm</span>
         </div>
-        <button class="order-btn" id="locBtn" onclick="getLocation()" style="background:#f8f9fa; border:2px dashed var(--blue); color:var(--blue); margin-bottom:15px;">📍 MANZILNI ANIQLASH</button>
+        
+        <button class="location-check-btn" id="locBtn" onclick="getLocation()">📍 MANZILNI ANIQLASH</button>
         <button class="order-btn" id="submitBtn" onclick="sendOrder()">BUYURTMA BERISH</button>
-        <span class="edit-info-link" onclick="openProfile()">✏️ Ma'lumotlarni o'zgartirish</span>
-    </div>
-
-    <div id="profileModal" class="custom-modal" onclick="if(event.target == this) closeProfile()">
-        <div class="modal-content">
-            <h3 style="margin-top:0;">Profilni tahrirlash</h3>
-            <label style="font-size:12px; color:#999;">Ism:</label>
-            <input type="text" id="editName">
-            <label style="font-size:12px; color:#999; margin-top:10px; display:block;">Tel:</label>
-            <input type="tel" id="editPhone" oninput="fixPhone(this)" maxlength="17">
-            <button class="order-btn" style="margin-top:20px; background:var(--dark);" onclick="updateProfile()">SAQLASH</button>
-            <button onclick="closeProfile()" style="width:100%; background:none; border:none; margin-top:10px; color:#999; cursor:pointer;">Yopish</button>
-        </div>
+        
+        <p onclick="openProfile()" style="text-align: center; color: var(--blue); font-weight: bold; cursor: pointer; margin-top: 15px; text-decoration: underline;">✏️ Ma'lumotlarni o'zgartirish</p>
     </div>
 
     <div class="overlay" id="overlay"></div>
@@ -161,84 +212,103 @@
         const CHAT_ID = "519326806"; 
 
         const products = [
-            { id: 1, cat: 'Burgerlar', name: 'Cheeseburger', price: 18000, img: 'Images/kolbasa.jpg' },
-            { id: 2, cat: 'Burgerlar', name: 'Double Burger', price: 43000, img: 'Images/bigmag.jpg' },
-            { id: 3, cat: 'Burgerlar', name: 'Ganburger', price: 30000, img: 'Images/gamburger.jpg' },
-            { id: 4, cat: 'Burgerlar', name: 'Tuxumli Burger', price: 38000, img: 'Images/txburger.jpg' },
-            { id: 5, cat: 'Ichimliklar', name: 'Kofe MacCoffee', price: 7000, img: 'Images/cofemac.jpg' },
-            { id: 6, cat: 'Ichimliklar', name: 'Cappuccino', price: 10000, img: 'Images/cofecap.jpg' },
-            { id: 7, cat: 'Ichimliklar', name: 'Fanta 1.5l', price: 17000, img: 'Images/fanta1.jpg' },
-            { id: 8, cat: 'Ichimliklar', name: 'Pepsi 1.5l', price: 13000, img: 'Images/pepsi15.jpg' },
-            { id: 9, cat: 'Shirinliklar', name: 'Malibu ', price: 25000, img: 'Images/shmalibu.jpg' },
-            { id: 10, cat: 'Shirinliklar', name: 'Qizil tort', price: 24000, img: 'Images/shqizil.jpg' },
-            { id: 11, cat: 'Shirinliklar', name: 'Choco', price: 23000, img: 'Images/shchoco.jpg' },
-            { id: 12, cat: 'Shirinliklar', name: 'Snikers Tort', price: 23000, img: 'Images/shsnik.jpg' },
-            { id: 13, cat: 'Maxsus', name: 'Combo 777', price: 55000, img: 'https://cdn-icons-png.flaticon.com/512/3050/3050130.png' },
-            { id: 14, cat: 'Maxsus', name: 'Big Family', price: 120000, img: 'https://cdn-icons-png.flaticon.com/512/3050/3050130.png' },
-            { id: 15, cat: 'Maxsus', name: 'Student', price: 35000, img: 'https://cdn-icons-png.flaticon.com/512/3050/3050130.png' },
-            { id: 16, cat: 'Maxsus', name: 'Night Mix', price: 45000, img: 'https://cdn-icons-png.flaticon.com/512/3050/3050130.png' }
+            { id: 1, cat: 'Burgerlar', name: 'Cheeseburger', price: 18000, img: 'Images/kolbasa.jpg', desc: 'Yumshoq bulochka va pishloq.' },
+            { id: 2, cat: 'Burgerlar', name: 'Double Burger', price: 43000, img: 'Images/bigmag.jpg', desc: 'Ikki qavatli go\'sht.' },
+            { id: 3, cat: 'Burgerlar', name: 'Ganburger', price: 30000, img: 'Images/gamburger.jpg', desc: 'Odiy Gamburger.' },
+            { id: 4, cat: 'Burgerlar', name: 'Tuxumli Burger', price: 38000, img: 'Images/txburger.jpg', desc: 'Tuxumli Burger.' },
+            { id: 5, cat: 'Ichimliklar', name: 'Kofe MacCoffee', price: 7000, img: 'Images/cofemac.jpg', desc: 'Issiq Va Yoqimli MacCoffee.' },
+            { id: 6, cat: 'Ichimliklar', name: 'Cappuccino', price: 10000, img: 'Images/cofecap.jpg', desc: 'CAPPUCCINO.' },
+            { id: 7, cat: 'Ichimliklar', name: 'Fanta 1.5l', price: 17000, img: 'Images/fanta1.jpg', desc: 'Apelsinlik Fanta.' },
+            { id: 8, cat: 'Ichimliklar', name: 'Pepsi 1.5l', price: 13000, img: 'Images/pepsi15.jpg', desc: 'Pepsi Cola.' },
+            { id: 9, cat: 'Shirinliklar', name: 'Malibu ', price: 25000, img: 'Images/shmalibu.jpg', desc: 'Malibu desert.' },
+            { id: 10, cat: 'Shirinliklar', name: 'Qizil tort', price: 24000, img: 'Images/shqizil.jpg', desc: 'Qizil desert.' },
+            { id: 11, cat: 'Shirinliklar', name: 'Choco', price: 23000, img: 'Images/shchoco.jpg', desc: 'Choco desert.' },
+            { id: 12, cat: 'Shirinliklar', name: 'Snikers Tort', price: 23000, img: 'Images/shsnik.jpg', desc: 'Shokoladli tort.' },
+            { id: 13, cat: 'Maxsus', name: 'Combo 777', price: 55000, img: 'https://cdn-icons-png.flaticon.com/512/3050/3050130.png', desc: 'Burger + Fri + Kola.' },
+            { id: 14, cat: 'Maxsus', name: 'Big Family', price: 120000, img: 'https://cdn-icons-png.flaticon.com/512/3050/3050130.png', desc: 'Oila uchun.' },
+            { id: 15, cat: 'Maxsus', name: 'Student', price: 35000, img: 'https://cdn-icons-png.flaticon.com/512/3050/3050130.png', desc: 'Arzon va to\'yimli.' },
+            { id: 16, cat: 'Maxsus', name: 'Night Mix', price: 45000, img: 'https://cdn-icons-png.flaticon.com/512/3050/3050130.png', desc: 'Tungi to\'plam.' }
         ];
 
-        let cart = {}; let userCoords = null; let currentCat = 'Barchasi';
+        let cart = {}; 
+        let userCoords = null;
+        let currentCat = 'Barchasi';
 
         function fixPhone(input) {
             let val = input.value.replace(/[^\d]/g, ''); 
             if (!val.startsWith('998')) { val = '998' + val; }
             let formatted = "+998 ";
-            if (val.length > 3) formatted += val.substring(3, 5) + (val.length > 5 ? " " : "");
-            if (val.length > 5) formatted += val.substring(5, 8) + (val.length > 8 ? " " : "");
-            if (val.length > 8) formatted += val.substring(8, 10) + (val.length > 10 ? " " : "");
-            if (val.length > 10) formatted += val.substring(10, 12);
+            if (val.length > 3) { formatted += val.substring(3, 5) + (val.length > 5 ? " " : ""); }
+            if (val.length > 5) { formatted += val.substring(5, 8) + (val.length > 8 ? " " : ""); }
+            if (val.length > 8) { formatted += val.substring(8, 10) + (val.length > 10 ? " " : ""); }
+            if (val.length > 10) { formatted += val.substring(10, 12); }
             input.value = formatted.trim();
         }
 
-        // REGISTRATION 
-        function checkFirstTime() {
-            const name = localStorage.getItem('cafe777_name');
-            if (!name) document.getElementById('regScreen').style.display = 'flex';
+        // --- REGISTRATSIYA LOGIKASI ---
+        function checkUser() {
+            const savedName = localStorage.getItem('user_name');
+            if (!savedName) {
+                document.getElementById('registrationScreen').style.display = 'flex';
+            }
         }
 
-        function saveRegistration() {
+        function saveUser() {
             const name = document.getElementById('regName').value.trim();
             const phone = document.getElementById('regPhone').value.trim();
-            if (name.length < 3 || phone.length < 17) return alert("To'liq to'ldiring!");
-            localStorage.setItem('cafe777_name', name);
-            localStorage.setItem('cafe777_phone', phone);
-            document.getElementById('regScreen').style.display = 'none';
+            if (name.length < 3 || phone.length < 17) {
+                alert("Ism va telefonni to'liq kiriting!");
+                return;
+            }
+            localStorage.setItem('user_name', name);
+            localStorage.setItem('user_phone', phone);
+            document.getElementById('registrationScreen').style.display = 'none';
+            showAlert("Xush kelibsiz!", "Ma'lumotlaringiz saqlandi.", "✅");
         }
 
-        // PROFILE EDIT
         function openProfile() {
-            document.getElementById('editName').value = localStorage.getItem('cafe777_name');
-            document.getElementById('editPhone').value = localStorage.getItem('cafe777_phone');
-            document.getElementById('profileModal').style.display = 'flex';
+            document.getElementById('editName').value = localStorage.getItem('user_name');
+            document.getElementById('editPhone').value = localStorage.getItem('user_phone');
+            const modal = document.getElementById('profileModal');
+            modal.style.display = 'flex';
+            setTimeout(() => modal.classList.add('open'), 10);
+        }
+
+        function closeProfile() {
+            const modal = document.getElementById('profileModal');
+            modal.classList.remove('open');
+            setTimeout(() => modal.style.display = 'none', 300);
         }
 
         function updateProfile() {
             const n = document.getElementById('editName').value.trim();
             const p = document.getElementById('editPhone').value.trim();
-            if(n.length < 3 || p.length < 17) return alert("Xato!");
-            localStorage.setItem('cafe777_name', n);
-            localStorage.setItem('cafe777_phone', p);
+            if (n.length < 3 || p.length < 17) {
+                alert("Xato! Ma'lumotlarni to'ldiring.");
+                return;
+            }
+            localStorage.setItem('user_name', n);
+            localStorage.setItem('user_phone', p);
             closeProfile();
             showAlert("Bajarildi", "Ma'lumotlar yangilandi!", "✅");
         }
-        function closeProfile() { document.getElementById('profileModal').style.display = 'none'; }
+        // ------------------------------
 
-        // MENU RENDER
         function renderMenu() {
             const filtered = currentCat === 'Barchasi' ? products : products.filter(p => p.cat === currentCat);
             document.getElementById('menuDisplay').innerHTML = filtered.map(p => {
                 const qty = cart[p.id] || 0;
                 return `
-                    <div class="card">
-                        <div class="img-container"><img src="${p.img}"></div>
+                    <div class="card init-anim">
+                        <div class="img-container" onclick="viewProduct(${p.id})">
+                            <img src="${p.img}">
+                        </div>
                         <div class="card-info">
                             <h4>${p.name}</h4>
                             <b>${p.price.toLocaleString()} so'm</b>
                             <div class="counter-box">
                                 <button class="count-btn" onclick="updateQty(${p.id}, -1)">-</button>
-                                <span class="qty-label">${qty}</span>
+                                <span class="qty-label" id="qty-${p.id}">${qty}</span>
                                 <button class="count-btn" onclick="updateQty(${p.id}, 1)">+</button>
                             </div>
                         </div>
@@ -256,7 +326,11 @@
         function updateQty(id, change) {
             cart[id] = (cart[id] || 0) + change;
             if (cart[id] <= 0) delete cart[id];
-            renderMenu(); renderCart();
+            const label = document.getElementById(`qty-${id}`);
+            if(label) label.innerText = cart[id] || 0;
+            const modalLabel = document.getElementById(`mqty-${id}`);
+            if(modalLabel) modalLabel.innerText = cart[id] || 0;
+            renderCart();
         }
 
         function renderCart() {
@@ -274,64 +348,50 @@
             document.getElementById('totalPrice').innerText = total.toLocaleString();
         }
 
+        function viewProduct(id) {
+            const p = products.find(x => x.id === id);
+            const modal = document.getElementById('productModal');
+            document.getElementById('viewImg').src = p.img;
+            document.getElementById('viewTitle').innerText = p.name;
+            document.getElementById('viewDesc').innerText = p.desc;
+            document.getElementById('viewPrice').innerText = p.price.toLocaleString() + " so'm";
+            document.getElementById('modalCounter').innerHTML = `
+                <div class="counter-box">
+                    <button class="count-btn" onclick="updateQty(${p.id}, -1)">-</button>
+                    <span class="qty-label" id="mqty-${p.id}">${cart[p.id] || 0}</span>
+                    <button class="count-btn" onclick="updateQty(${p.id}, 1)">+</button>
+                </div>`;
+            modal.style.display = 'flex';
+            setTimeout(() => modal.classList.add('open'), 10);
+        }
+
+        function closeProduct() {
+            const modal = document.getElementById('productModal');
+            modal.classList.remove('open');
+            setTimeout(() => modal.style.display = 'none', 300);
+        }
+
         function getLocation() {
-            const btn = document.getElementById('locBtn'); btn.innerText = "Aniqlanmoqda...";
+            const btn = document.getElementById('locBtn');
+            btn.innerText = "Aniqlanmoqda...";
             navigator.geolocation.getCurrentPosition(
                 (pos) => {
                     userCoords = { lat: pos.coords.latitude, lon: pos.coords.longitude };
-                    btn.innerText = "✅ MANZIL ANIQLANDI"; btn.style.color = "var(--green)";
+                    btn.innerText = "✅ MANZIL ANIQLANDI";
+                    btn.style.borderColor = "var(--green)"; btn.style.color = "var(--green)";
+                    btn.style.background = "#eafff2";
                 },
-                () => { showAlert("Xato", "Lokatsiya ruxsat berilmadi", "❌"); btn.innerText = "📍 MANZILNI ANIQLASH"; }
+                () => { showAlert("Xato", "Lokatsiyaga ruxsat berilmadi", "❌"); btn.innerText = "📍 MANZILNI ANIQLASH"; }
             );
         }
 
         async function sendOrder() {
-            const name = localStorage.getItem('cafe777_name');
-            const phone = localStorage.getItem('cafe777_phone');
+            const name = localStorage.getItem('user_name');
+            const phone = localStorage.getItem('user_phone').replace(/\s/g, ''); 
             
             if (Object.keys(cart).length === 0 || !userCoords) {
                 return showAlert("Xatolik", "Savat bo'sh yoki manzil aniqlanmagan!", "⚠️");
             }
 
             const btn = document.getElementById('submitBtn');
-            btn.disabled = true; btn.innerText = "YUBORILMOQDA...";
-
-            let orderItems = "";
-            for (const id in cart) {
-                const p = products.find(x => x.id == id);
-                orderItems += ` - ${p.name} (x${cart[id]})\n`;
-            }
-
-            const text = `🚀 <b>YANGI BUYURTMA</b>\n\n👤 <b>Mijoz:</b> ${name}\n📞 <b>Tel:</b> ${phone}\n📦 <b>Mahsulotlar:</b>\n${orderItems}\n💰 <b>JAMI: ${document.getElementById('totalPrice').innerText} so'm</b>\n\n📍 <a href="https://www.google.com/maps?q=${userCoords.lat},${userCoords.lon}">Xaritada ko'rish</a>`;
-
-            try {
-                const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ chat_id: CHAT_ID, text: text, parse_mode: 'HTML' })
-                });
-                if(res.ok) {
-                    showAlert("Raxmat!", "Buyurtmangiz yuborildi!", "✅");
-                    cart = {}; renderMenu(); renderCart();
-                }
-            } catch (e) { showAlert("Xato", "Internet muammosi!", "❌"); }
-            btn.disabled = false; btn.innerText = "BUYURTMA BERISH";
-        }
-
-        function showAlert(t, m, i) {
-            document.getElementById('alertTitle').innerText = t;
-            document.getElementById('alertMsg').innerText = m;
-            document.getElementById('alertIcon').innerText = i;
-            document.getElementById('overlay').style.display = 'block';
-            document.getElementById('customAlert').style.display = 'block';
-        }
-
-        function closeAlert() {
-            document.getElementById('overlay').style.display = 'none';
-            document.getElementById('customAlert').style.display = 'none';
-        }
-
-        window.onload = () => { checkFirstTime(); renderMenu(); };
-    </script>
-</body>
-</html>
+            btn.disabled = true; btn.inn
