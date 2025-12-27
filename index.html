@@ -376,7 +376,12 @@
                 itemsText += ` - ${products.find(x=>x.id==id).name} (x${cart[id]})\n`;
             }
 
-            const message = `🚀 YANGI BUYURTMA\n\n👤 Mijoz: ${localStorage.getItem('c777_name')}\n📞 Tel: ${localStorage.getItem('c777_phone')}\n\n📦 Mahsulotlar:\n${itemsText}\n💰 JAMI: ${document.getElementById('totalPrice').innerText} so'm\n\n📍 Manzil: https://www.google.com/maps?q=${userCoords.lat},${userCoords.lon}`;
+            // Raqamni bot uchun tayyorlash
+const rawPhone = localStorage.getItem('c777_phone');
+const cleanPhone = rawPhone.replace(/\s+/g, ''); // Bo'shliqlarni olib tashlaydi
+
+const message = `🚀 YANGI BUYURTMA\n\n👤 Mijoz: ${localStorage.getItem('c777_name')}\n📞 Tel: ${cleanPhone}\n\n📦 Mahsulotlar:\n${itemsText}\n💰 JAMI: ${document.getElementById('totalPrice').innerText} so'm\n\n📍 Manzil: https://www.google.com/maps?q=${userCoords.lat},${userCoords.lon}`;
+
 
             try {
                 const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
