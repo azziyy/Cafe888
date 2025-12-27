@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Cafe 777 - Professional Menu</title>
+    <title>Cafe 777 - Premium Menu</title>
     <style>
         :root {
             --primary: #ffbe0b; --secondary: #fb5607; --dark: #1a1a1a;
@@ -18,12 +18,14 @@
             overflow-x: hidden; width: 100vw;
         }
 
-        /* REGISTRATSIYA */
+        /* REGISTRATSIYA EKRANI */
         #regScreen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: white; z-index: 5000; display: none;
             flex-direction: column; align-items: center; justify-content: center; padding: 30px;
         }
+        .reg-logo { font-size: 80px; margin-bottom: 20px; animation: bounce 2s infinite; }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
 
         /* KATEGORIYALAR */
         .category-nav {
@@ -35,62 +37,62 @@
         .category-nav::-webkit-scrollbar { display: none; }
         .cat-btn {
             padding: 10px 18px; border-radius: 20px;
-            border: 2px solid var(--primary); cursor: pointer; font-weight: 600; transition: 0.3s;
+            border: 2px solid var(--primary); background: transparent;
+            cursor: pointer; font-weight: 600; font-size: 14px; transition: 0.3s;
         }
-        .cat-btn.active { background: var(--primary); box-shadow: 0 4px 10px rgba(255,190,11,0.4); }
+        .cat-btn.active { background: var(--primary); border-color: var(--primary); box-shadow: 0 4px 10px rgba(255,190,11,0.4); }
 
         /* MENU GRID */
         .menu-grid {
             display: grid; grid-template-columns: 1fr 1fr;
             gap: 12px; padding: 12px; width: 100%; max-width: 600px;
+            min-height: 200px;
         }
         .card { 
             background: #fff; border-radius: 20px; overflow: hidden; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08); position: relative;
             opacity: 0; transform: translateY(20px);
-            animation: cardAppear 0.5s ease forwards;
+            animation: cardAppear 0.5s cubic-bezier(0.23, 1, 0.32, 1) forwards;
         }
         @keyframes cardAppear { to { opacity: 1; transform: translateY(0); } }
 
         .img-container { width: 100%; aspect-ratio: 1 / 1; overflow: hidden; cursor: pointer; }
-        .card img { width: 100%; height: 100%; object-fit: cover; transition: 0.3s; }
-        .card:active img { transform: scale(1.08); }
-
+        .card img { width: 100%; height: 100%; object-fit: cover; transition: 0.4s ease; }
+        .card:active img { transform: scale(1.1); }
+        
         .card-info { padding: 12px; text-align: center; }
-        .card h4 { font-size: 15px; margin: 5px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .card h4 { font-size: 15px; margin: 5px 0; color: var(--dark); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .card b { color: var(--secondary); font-size: 14px; display: block; margin-bottom: 8px; }
 
-        /* MODAL ANIMATSIYASI (MUHIM!) */
+        /* MODALS */
         .modal {
             display: none; position: fixed; top: 0; left: 0;
-            width: 100%; height: 100%; background: rgba(0,0,0,0.8);
-            z-index: 2000; align-items: center; justify-content: center; 
-            backdrop-filter: blur(5px); opacity: 0; transition: opacity 0.3s ease;
+            width: 100%; height: 100%; background: rgba(0,0,0,0.85);
+            z-index: 2000; align-items: center; justify-content: center; backdrop-filter: blur(8px);
+            opacity: 0; transition: opacity 0.3s ease;
         }
         .modal-content {
-            background: white; width: 90%; max-width: 400px;
+            background: white; width: 88%; max-width: 380px;
             border-radius: 30px; overflow: hidden; position: relative;
-            transform: scale(0.5) translateY(100px); opacity: 0;
+            transform: scale(0.7) translateY(50px); opacity: 0;
             transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
-
-        /* MODAL OCHILGANDA */
-        .modal.show { display: flex; opacity: 1; }
-        .modal.show .modal-content { transform: scale(1) translateY(0); opacity: 1; }
+        .modal.open { display: flex !important; opacity: 1; }
+        .modal.open .modal-content { transform: scale(1) translateY(0); opacity: 1; }
 
         .close-modal {
             position: absolute; top: 15px; right: 15px; background: white;
             width: 35px; height: 35px; border-radius: 50%; border: none; 
-            font-size: 20px; cursor: pointer; z-index: 10; font-weight: bold;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            font-size: 22px; cursor: pointer; z-index: 10; font-weight: bold;
         }
 
         /* COUNTER */
-        .counter-box { display: flex; align-items: center; justify-content: center; gap: 15px; }
+        .counter-box { display: flex; align-items: center; justify-content: center; gap: 12px; }
         .count-btn { 
             background: var(--dark); color: white; border: none; 
             width: 35px; height: 35px; border-radius: 10px; cursor: pointer; font-size: 18px;
         }
+        .qty-label { font-weight: bold; font-size: 16px; min-width: 20px; text-align: center; }
 
         /* ORDER SECTION */
         .order-section {
@@ -98,26 +100,28 @@
             border-radius: 25px; width: calc(100% - 40px); max-width: 450px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
         }
-        input { width: 100%; padding: 15px; margin: 8px 0; border: 2px solid #eee; border-radius: 12px; }
+        input { width: 100%; padding: 15px; margin: 8px 0; border: 2px solid #eee; border-radius: 12px; font-size: 16px; }
         .order-btn { background: var(--blue); color: white; border: none; width: 100%; padding: 18px; border-radius: 15px; font-weight: bold; cursor: pointer; }
 
         /* ALERT */
         #customAlert {
             display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.8);
             background: white; padding: 30px; border-radius: 25px; z-index: 6000;
-            text-align: center; width: 85%; max-width: 320px; transition: 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            text-align: center; width: 85%; max-width: 320px; transition: 0.3s;
         }
         #customAlert.active { display: block; transform: translate(-50%, -50%) scale(1); }
-        .overlay { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.6); z-index: 5500; }
+        .overlay { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.7); z-index: 5500; }
     </style>
 </head>
 <body>
 
     <div id="regScreen">
-        <h2 style="margin-bottom:20px;">Xush kelibsiz!</h2>
+        <div class="reg-logo">🍔</div>
+        <h2>Xush kelibsiz!</h2>
+        <p style="color:#666; margin-bottom:20px;">Ism va telefoningizni kiriting</p>
         <input type="text" id="regName" placeholder="Ismingiz">
         <input type="tel" id="regPhone" value="+998 " oninput="fixPhone(this)" maxlength="17">
-        <button class="order-btn" style="margin-top:20px;" onclick="saveRegistration()">KIRISH</button>
+        <button class="order-btn" style="margin-top:20px;" onclick="saveRegistration()">DAVOM ETISH</button>
     </div>
 
     <div class="category-nav">
@@ -131,13 +135,13 @@
 
     <div id="productModal" class="modal" onclick="if(event.target == this) closeModal('productModal')">
         <div class="modal-content">
-            <button class="close-modal" onclick="closeModal('productModal')">✕</button>
+            <button class="close-modal" onclick="closeModal('productModal')">×</button>
             <img id="viewImg" style="width:100%; aspect-ratio:1/1; object-fit:cover;">
             <div style="padding:25px;">
                 <h2 id="viewTitle" style="margin:0 0 10px 0;"></h2>
                 <p id="viewDesc" style="color:#666; font-size:14px; margin-bottom:20px;"></p>
                 <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <b id="viewPrice" style="font-size: 20px; color: var(--secondary);"></b>
+                    <b id="viewPrice" style="font-size: 22px; color: var(--secondary);"></b>
                     <div id="modalCounter"></div>
                 </div>
             </div>
@@ -147,20 +151,20 @@
     <div class="order-section">
         <h3>Savat 🛒</h3>
         <div id="cartList"></div>
-        <div style="display:flex; justify-content:space-between; margin:20px 0; font-size:20px; font-weight:bold;">
+        <div style="display:flex; justify-content:space-between; margin:20px 0; font-size:22px; font-weight:800;">
             <span>Jami:</span>
             <span><span id="totalPrice">0</span> so'm</span>
         </div>
-        <button class="order-btn" style="background:#f8f9fa; color:var(--blue); border:2px dashed var(--blue); margin-bottom:10px;" onclick="getLocation()" id="locBtn">📍 MANZILNI ANIQLASH</button>
+        <button class="order-btn" style="background:#f8f9fa; color:var(--blue); border:2px dashed var(--blue); margin-bottom:10px;" id="locBtn" onclick="getLocation()">📍 MANZILNI ANIQLASH</button>
         <button class="order-btn" id="submitBtn" onclick="sendOrder()">BUYURTMA BERISH</button>
     </div>
 
     <div class="overlay" id="overlay"></div>
     <div id="customAlert">
-        <div id="alertIcon" style="font-size: 40px; margin-bottom:10px;">✅</div>
-        <h3 id="alertTitle" style="margin:0"></h3>
-        <p id="alertMsg" style="color:#666; margin:10px 0 20px 0;"></p>
-        <button onclick="closeAlert()" style="background:var(--dark); color:white; border:none; padding:10px 30px; border-radius:10px; cursor:pointer;">OK</button>
+        <div id="alertIcon" style="font-size: 50px;">✅</div>
+        <h2 id="alertTitle" style="margin:0"></h2>
+        <p id="alertMsg" style="margin:10px 0 20px 0; color:#666;"></p>
+        <button onclick="closeAlert()" style="background:var(--dark); color:white; border:none; padding:12px 35px; border-radius:12px; cursor:pointer;">OK</button>
     </div>
 
     <script src="script.js"></script>
