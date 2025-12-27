@@ -27,13 +27,6 @@
             width: 100vw;
         }
 
-        /* REGISTRATSIYA EKRANI */
-        #registrationScreen {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: white; z-index: 9999; display: none;
-            flex-direction: column; align-items: center; justify-content: center; padding: 30px;
-        }
-
         /* KATEGORIYALAR */
         .category-nav {
             display: flex; gap: 10px; overflow-x: auto;
@@ -83,7 +76,7 @@
         .qty-label { font-weight: bold; font-size: 16px; min-width: 20px; }
 
         /* MODAL */
-        #productModal, #profileModal {
+        #productModal {
             display: none; position: fixed; top: 0; left: 0;
             width: 100%; height: 100%; background: rgba(0,0,0,0.85);
             z-index: 2000; align-items: center; justify-content: center;
@@ -94,8 +87,8 @@
             border-radius: 30px; overflow: hidden; position: relative;
             transform: scale(0.9); transition: 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
-        #productModal.open, #profileModal.open { display: flex; }
-        #productModal.open .modal-content, #profileModal.open .modal-content { transform: scale(1); }
+        #productModal.open { display: flex; }
+        #productModal.open .modal-content { transform: scale(1); }
 
         .close-modal {
             position: absolute; top: 15px; right: 15px;
@@ -140,15 +133,6 @@
 </head>
 <body>
 
-    <div id="registrationScreen">
-        <div style="font-size: 80px; margin-bottom: 20px;">🍕</div>
-        <h2 style="margin: 0;">Xush kelibsiz!</h2>
-        <p style="text-align: center; color: #666; margin-bottom: 30px;">Buyurtma berishni boshlash uchun ismingizni kiriting</p>
-        <input type="text" id="regName" placeholder="Ismingiz">
-        <input type="tel" id="regPhone" value="+998 " oninput="fixPhone(this)" maxlength="17">
-        <button class="order-btn" style="width: 100%; margin-top: 20px;" onclick="saveUser()">DAVOM ETISH</button>
-    </div>
-
     <div class="category-nav">
         <button class="cat-btn active" onclick="filterMenu('Barchasi', this)">📂 Barchasi</button>
         <button class="cat-btn" onclick="filterMenu('Burgerlar', this)">🍔 Burgerlar</button>
@@ -174,17 +158,6 @@
         </div>
     </div>
 
-    <div id="profileModal" onclick="if(event.target == this) closeProfile()">
-        <div class="modal-content" style="padding: 25px;">
-            <button class="close-modal" onclick="closeProfile()">×</button>
-            <h2 style="margin-top: 0;">Profil ma'lumotlari</h2>
-            <p style="color: #666; font-size: 14px;">Ma'lumotlaringizni shu yerdan yangilashingiz mumkin:</p>
-            <input type="text" id="editName" placeholder="Ism">
-            <input type="tel" id="editPhone" oninput="fixPhone(this)" maxlength="17">
-            <button class="order-btn" style="width: 100%; margin-top: 15px; background: var(--dark);" onclick="updateProfile()">SAQLASH</button>
-        </div>
-    </div>
-
     <div class="order-section">
         <h3>Sizning tanlovingiz 🛒</h3>
         <div id="cartList"></div>
@@ -192,11 +165,10 @@
             <span>Jami:</span>
             <span><span id="totalPrice">0</span> so'm</span>
         </div>
-        
+        <input type="text" id="userName" placeholder="Ismingiz">
+        <input type="tel" id="userPhone" value="+998 " oninput="fixPhone(this)" maxlength="17">
         <button class="location-check-btn" id="locBtn" onclick="getLocation()">📍 MANZILNI ANIQLASH</button>
         <button class="order-btn" id="submitBtn" onclick="sendOrder()">BUYURTMA BERISH</button>
-        
-        <p onclick="openProfile()" style="text-align: center; color: var(--blue); font-weight: bold; cursor: pointer; margin-top: 15px; text-decoration: underline;">✏️ Ma'lumotlarni o'zgartirish</p>
     </div>
 
     <div class="overlay" id="overlay"></div>
@@ -244,55 +216,6 @@
             if (val.length > 10) { formatted += val.substring(10, 12); }
             input.value = formatted.trim();
         }
-
-        // --- REGISTRATSIYA LOGIKASI ---
-        function checkUser() {
-            const savedName = localStorage.getItem('user_name');
-            if (!savedName) {
-                document.getElementById('registrationScreen').style.display = 'flex';
-            }
-        }
-
-        function saveUser() {
-            const name = document.getElementById('regName').value.trim();
-            const phone = document.getElementById('regPhone').value.trim();
-            if (name.length < 3 || phone.length < 17) {
-                alert("Ism va telefonni to'liq kiriting!");
-                return;
-            }
-            localStorage.setItem('user_name', name);
-            localStorage.setItem('user_phone', phone);
-            document.getElementById('registrationScreen').style.display = 'none';
-            showAlert("Xush kelibsiz!", "Ma'lumotlaringiz saqlandi.", "✅");
-        }
-
-        function openProfile() {
-            document.getElementById('editName').value = localStorage.getItem('user_name');
-            document.getElementById('editPhone').value = localStorage.getItem('user_phone');
-            const modal = document.getElementById('profileModal');
-            modal.style.display = 'flex';
-            setTimeout(() => modal.classList.add('open'), 10);
-        }
-
-        function closeProfile() {
-            const modal = document.getElementById('profileModal');
-            modal.classList.remove('open');
-            setTimeout(() => modal.style.display = 'none', 300);
-        }
-
-        function updateProfile() {
-            const n = document.getElementById('editName').value.trim();
-            const p = document.getElementById('editPhone').value.trim();
-            if (n.length < 3 || p.length < 17) {
-                alert("Xato! Ma'lumotlarni to'ldiring.");
-                return;
-            }
-            localStorage.setItem('user_name', n);
-            localStorage.setItem('user_phone', p);
-            closeProfile();
-            showAlert("Bajarildi", "Ma'lumotlar yangilandi!", "✅");
-        }
-        // ------------------------------
 
         function renderMenu() {
             const filtered = currentCat === 'Barchasi' ? products : products.filter(p => p.cat === currentCat);
@@ -386,12 +309,77 @@
         }
 
         async function sendOrder() {
-            const name = localStorage.getItem('user_name');
-            const phone = localStorage.getItem('user_phone').replace(/\s/g, ''); 
+            const name = document.getElementById('userName').value.trim();
+            const rawPhone = document.getElementById('userPhone').value;
+            // Telegramga yuborish uchun bo'shliqlarni olib tashlaymiz
+            const cleanPhone = rawPhone.replace(/\s/g, ''); 
             
-            if (Object.keys(cart).length === 0 || !userCoords) {
-                return showAlert("Xatolik", "Savat bo'sh yoki manzil aniqlanmagan!", "⚠️");
+            if (Object.keys(cart).length === 0 || !name || rawPhone.length < 17 || !userCoords) {
+                return showAlert("Xatolik", "Ism, to'liq telefon va manzilni kiriting!", "⚠️");
             }
 
             const btn = document.getElementById('submitBtn');
-            btn.disabled = true; btn.inn
+            btn.disabled = true; btn.innerText = "YUBORILMOQDA...";
+
+            let orderItems = "";
+            for (const id in cart) {
+                const p = products.find(x => x.id == id);
+                orderItems += ` - ${p.name} (x${cart[id]})\n`;
+            }
+
+            const text = `🚀 <b>YANGI BUYURTMA</b>\n\n` +
+                         `👤 <b>Mijoz:</b> ${name}\n` +
+                         `📞 <b>Tel:</b> ${cleanPhone}\n\n` + // BU YERDA TOZA RAQAM KETADI
+                         `📦 <b>Mahsulotlar:</b>\n${orderItems}\n` +
+                         `💰 <b>JAMI: ${document.getElementById('totalPrice').innerText} so'm</b>\n\n` +
+                         `📍 <a href="https://www.google.com/maps?q=${userCoords.lat},${userCoords.lon}">Xaritada ko'rish</a>`;
+
+            try {
+                const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        chat_id: CHAT_ID,
+                        text: text,
+                        parse_mode: 'HTML'
+                    })
+                });
+
+                if (response.ok) {
+                    showAlert("Raxmat!", "Buyurtmangiz yuborildi!", "✅");
+                    cart = {}; renderMenu(); renderCart();
+                    document.getElementById('userName').value = "";
+                    document.getElementById('userPhone').value = "+998 ";
+                } else {
+                    showAlert("Xato", "Botga yuborib bo'lmadi!", "❌");
+                }
+            } catch (error) {
+                showAlert("Xato", "Internet bilan muammo!", "❌");
+            } finally {
+                btn.disabled = false; btn.innerText = "BUYURTMA BERISH";
+            }
+        }
+
+        function showAlert(t, m, i) {
+            document.getElementById('alertTitle').innerText = t;
+            document.getElementById('alertMsg').innerText = m;
+            document.getElementById('alertIcon').innerText = i;
+            document.getElementById('overlay').style.display = 'block';
+            const alert = document.getElementById('customAlert');
+            alert.style.display = 'block';
+            setTimeout(() => alert.classList.add('show'), 10);
+        }
+
+        function closeAlert() {
+            const alert = document.getElementById('customAlert');
+            alert.classList.remove('show');
+            setTimeout(() => {
+                alert.style.display = 'none';
+                document.getElementById('overlay').style.display = 'none';
+            }, 300);
+        }
+
+        window.onload = renderMenu;
+    </script>
+</body>
+</html>
