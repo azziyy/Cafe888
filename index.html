@@ -226,15 +226,25 @@
         }
 
         function saveRegistration() {
-            const n = document.getElementById('regName').value.trim();
-            const p = document.getElementById('regPhone').value.trim();
-            if(n.length < 3) return alert("Ismingizni kiriting!");
-            if(p.length < 17) return alert("Raqamni to'liq kiriting!");
-            localStorage.setItem('c777_name', n);
-            localStorage.setItem('c777_phone', p);
-            document.getElementById('regScreen').style.display = 'none';
-            showAlert("Xush kelibsiz!", "Muvaffaqiyatli ro'yxatdan o'tdingiz!", "✅");
-        }
+    const n = document.getElementById('regName').value.trim();
+    const p = document.getElementById('regPhone').value.trim();
+    
+    if(n.length < 3) {
+        showAlert("Xatolik", "Ismingizni kiriting!", "👤");
+        return;
+    }
+    // Raqam "+998 00 000 00 00" formatida bo'lgani uchun uzunligi 17 bo'lishi kerak
+    if(p.length < 17) {
+        showAlert("Xatolik", "Raqamni to'liq kiriting!", "📞");
+        return;
+    }
+    
+    localStorage.setItem('c777_name', n);
+    localStorage.setItem('c777_phone', p);
+    document.getElementById('regScreen').style.display = 'none';
+    showAlert("Xush kelibsiz!", "Muvaffaqiyatli ro'yxatdan o'tdingiz!", "✅");
+}
+
 
         function openModal(id) {
             const el = document.getElementById(id);
