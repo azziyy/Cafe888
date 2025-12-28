@@ -345,7 +345,7 @@
             let items = "";
             for(let id in cart) items += `- ${products.find(x=>x.id==id).name} x${cart[id]}\n`;
             const cleanPhone = localStorage.getItem('c777_phone').replace(/\s+/g, '');
-            const msg = `🚀 YANGI BUYURTMA\n👤: ${localStorage.getItem('c777_name')}\n📞: ${cleanPhone}\n\n${items}\n💰 JAMI: ${document.getElementById('totalPrice').innerText}\n📍 Manzil: https://www.google.com/maps?q=${userCoords.lat},${userCoords.lon}`;
+            const msg = `🚀 YANGI BUYURTMA\n👤: ${localStorage.getItem('c777_name')}\n📞: ${cleanPhone}\n\n${items}\n💰 JAMI: ${document.getElementById('totalPrice').innerText}\n\n📍 Manzil: https://www.google.com/maps?q=${userCoords.lat},${userCoords.lon}`;
 
             try {
                 await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
