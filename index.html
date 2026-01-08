@@ -594,46 +594,76 @@
             `).join('') || `<p style="text-align:center; color:var(--gray); padding:40px;">Hali buyurtmalar yo'q.</p>`;
         }
 
-        // --- STATUSLARNI SINXRONLASH ---
-        async function startSync() {
-            setInterval(async () => {
-                for (let i = 0; i < state.history.length; i++) {
-                    let order = state.history[i];
-                    if (order.status.includes("Yetkazildi")) continue;
-                    try {
-                        let res = await fetch(`${SCRIPT_URL}?orderId=${order.id}`);
-                        let data = await res.json();
-                        if (data.status && data.status !== order.status) {
-                            state.history[i].status = data.status;
-                            localStorage.setItem('cafe777_history', JSON.stringify(state.history));
-                            renderHistory();
-                        }
-                    } catch (e) {}
+        // --- STATUSLARNI VA CHATNI SINXRONLASH ---
+async function startSync() {
+    setInterval(async () => {
+        // 1. Statuslarni yangilash
+        for (let i = 0; i < state.history.length; i++) {
+            let order = state.history[i];
+            if (order.status.includes("Yetkazildi")) continue;
+            
+            try {
+                let res = await fetch(`${SCRIPT_URL}?orderId=${order.id}`);
+                let data = await res.json(); 
+                if (data.status && data.status !== order.status) {
+                    state.history[i].status = data.status;
+                    localStorage.setItem('cafe777_history', JSON.stringify(state.history));
+                    renderHistory(); 
                 }
-            }, 5000);
+            } catch (e) { console.log("Status sync error"); }
         }
 
-        // --- CHAT ---
-        async function sendMessage() {
-            let input = document.getElementById('chatInput');
-            if (!input.value.trim()) return;
-            
-            let text = input.value;
-            input.value = "";
-            
-            // UI-da ko'rsatish
-            let box = document.getElementById('chatMessages');
-            box.innerHTML += `<div class="message sent">${text}</div>`;
-            box.scrollTop = box.scrollHeight;
-
-            // Jadvalga va Adminbotga yuborish
-            fetch(`${SCRIPT_URL}?method=sendMsg&userId=${state.user.id}&text=${encodeURIComponent(text)}`);
-            fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ chat_id: ADMIN_CHAT_ID, text: `💬 XABAR: ${state.user.name}\n🆔 ID: ${state.user.id}\n\n${text}` })
-            });
+        // 2. Chat xabarlarini yangilash (faqat chat sahifasi ochiq bo'lsa)
+        if (document.getElementById('p-chat').classList.contains('active')) {
+            loadChat();
         }
-    </script>
+    }, 4000); 
+}
+
+async function loadChat() {
+    try {
+        let res = await fetch(`${SCRIPT_URL}?method=getMsgs&userId=${state.user.id}`);
+        let msgs = await res.json();
+        let chatBox = document.getElementById('chatMessages');
+        chatBox.innerHTML = msgs.map(m => `
+            <div class="message ${m.sender === 'me' ? 'sent' : 'received'}">
+                ${m.text}
+            </div>
+        `).join('');
+        chatBox.scrollTop = chatBox.scrollHeight;
+    } catch (e) { }
+}
+
+// --- CHAT XABAR YUBORISH ---
+async function sendMessage() {
+    let input = document.getElementById('chatInput');
+    if (!input.value.trim()) return;
+    
+    let text = input.value;
+    input.value = "";
+    
+    // UI-da darhol ko'rsatish
+    let box = document.getElementById('chatMessages');
+    box.innerHTML += `<div class="message sent">${text}</div>`;
+    box.scrollTop = box.scrollHeight;
+
+    // Jadvalga va Telegram botga yuborish
+    try {
+        await fetch(`${SCRIPT_URL}?method=sendMsg&userId=${state.user.id}&text=${encodeURIComponent(text)}`);
+        await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                chat_id: ADMIN_CHAT_ID, 
+                text: `💬 XABAR: ${state.user.name}\n🆔 ID: ${state.user.id}\n\n${text}` 
+            })
+        });
+    } catch (e) { console.error("Message send error"); }
+}
+
+// Dastur yuklanganda sinxronizatsiyani boshlash
+// Buni loadMenu funksiyasining oxiriga yoki window.onload ichiga qo'shing
+startSync(); 
+</script>
 </body>
 </html>
