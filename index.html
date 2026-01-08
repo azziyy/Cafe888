@@ -36,7 +36,7 @@
         .page { display: none; padding: 20px; animation: fadeIn 0.5s ease-out; }
         .page.active { display: block; }
 
-        /* --- Reg Card --- */
+        /* --- Kirish qismi --- */
         .reg-container {
             height: 100vh;
             display: flex;
@@ -69,9 +69,17 @@
             transition: 0.3s;
             outline: none;
         }
+        .input-group input:focus { border-color: var(--secondary); }
 
-        /* --- Header va Menu --- */
-        .header-top { padding: 20px; background: var(--white); display: flex; justify-content: space-between; align-items: center; }
+        /* --- Header va Kategoriyalar --- */
+        .header-top {
+            padding: 20px;
+            background: var(--white);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
         .cat-container {
             display: flex;
             overflow-x: auto;
@@ -82,6 +90,7 @@
             top: 0;
             z-index: 100;
             scrollbar-width: none;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
         }
         .cat-container::-webkit-scrollbar { display: none; }
         .cat-item {
@@ -89,27 +98,46 @@
             background: #f0f2f5;
             border-radius: 25px;
             white-space: nowrap;
+            cursor: pointer;
+            transition: 0.4s;
             font-size: 14px;
             font-weight: 600;
             color: var(--gray);
         }
-        .cat-item.active { background: var(--secondary); color: var(--white); }
+        .cat-item.active {
+            background: var(--secondary);
+            color: var(--white);
+            box-shadow: 0 8px 15px rgba(251, 86, 7, 0.3);
+            transform: translateY(-2px);
+        }
 
+        /* --- Mahsulotlar --- */
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 5px; }
         .card {
             background: var(--white);
             border-radius: 25px;
             overflow: hidden;
             box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+            transition: 0.3s;
             position: relative;
         }
-        .card img { width: 100%; aspect-ratio: 1/1; object-fit: cover; }
+        .card img { width: 100%; aspect-ratio: 1/1; object-fit: cover; cursor: pointer; }
         .card-info { padding: 12px; }
-        .card-name { font-size: 14px; font-weight: 700; height: 40px; margin-bottom: 5px; }
-        .card-price { color: var(--secondary); font-weight: 800; }
+        .card-name { font-size: 14px; font-weight: 700; height: 40px; overflow: hidden; margin-bottom: 5px; line-height: 1.3; }
+        .card-price { color: var(--secondary); font-weight: 800; font-size: 15px; margin-bottom: 10px; }
 
-        /* --- Buttons --- */
-        .cart-btn-init { width: 100%; background: var(--dark); color: var(--white); border: none; border-radius: 12px; padding: 10px; font-weight: 700; }
+        .cart-btn-init {
+            width: 100%;
+            background: var(--dark);
+            color: var(--white);
+            border: none;
+            border-radius: 12px;
+            padding: 10px;
+            font-weight: 700;
+            font-size: 13px;
+            cursor: pointer;
+        }
+        
         .qty-control {
             display: flex;
             align-items: center;
@@ -119,38 +147,73 @@
             color: var(--white);
             padding: 4px;
         }
-        .qty-btn { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.1); border-radius: 10px; }
+        .qty-btn { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.1); border-radius: 10px; cursor: pointer; }
+
+        /* --- Modal --- */
+        .modal {
+            position: fixed;
+            top:0; left:0; width:100%; height:100%;
+            background: rgba(0,0,0,0.95);
+            z-index: 2000;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .modal img { max-width: 100%; max-height: 60vh; border-radius: 20px; }
+        .close-modal { position: absolute; top: 40px; right: 25px; color: var(--white); font-size: 35px; }
 
         /* --- Navbar --- */
         .navbar {
-            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-            width: 90%; background: var(--white); display: flex; padding: 12px;
-            border-radius: 25px; box-shadow: 0 15px 35px rgba(0,0,0,0.15); z-index: 1000;
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            background: var(--white);
+            display: flex;
+            padding: 12px;
+            border-radius: 25px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+            z-index: 1000;
         }
         .nav-item { flex: 1; text-align: center; font-size: 10px; color: var(--gray); font-weight: 700; }
         .nav-item.active { color: var(--secondary); }
         .nav-item i { font-size: 22px; display: block; margin-bottom: 4px; }
 
         /* --- Chat --- */
-        .chat-container { background: #e5ddd5; height: calc(100vh - 280px); border-radius: 20px; display: flex; flex-direction: column; overflow: hidden; }
+        .chat-container {
+            background: #e5ddd5;
+            height: calc(100vh - 280px);
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
         .chat-messages { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 10px; }
         .message { padding: 10px 15px; border-radius: 15px; max-width: 80%; font-size: 14px; }
-        .message.sent { align-self: flex-end; background: #dcf8c6; border-bottom-right-radius: 2px; }
-        .message.received { align-self: flex-start; background: var(--white); border-bottom-left-radius: 2px; }
+        .message.sent { align-self: flex-end; background: #dcf8c6; }
+        .message.received { align-self: flex-start; background: var(--white); }
 
-        /* --- Modal & Status --- */
-        .modal { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.9); z-index: 2000; display: none; flex-direction: column; align-items: center; justify-content: center; }
-        .modal img { max-width: 90%; border-radius: 20px; }
-        .status-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 3000; }
+        .status-overlay {
+            position: fixed;
+            top:0; left:0; width:100%; height:100%;
+            background: rgba(0,0,0,0.7);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 3000;
+        }
         .status-card { background: var(--white); padding: 30px; border-radius: 25px; text-align: center; width: 80%; }
     </style>
 </head>
 <body>
 
     <div id="imgModal" class="modal">
-        <span style="position:absolute; top:40px; right:25px; color:white; font-size:40px;" onclick="closeModal()">×</span>
+        <span class="close-modal" onclick="closeModal()">×</span>
         <img id="modalImg" src="">
-        <div style="color:white; text-align:center; margin-top:15px;">
+        <div class="modal-details" style="color:white; text-align:center; margin-top:15px;">
             <h2 id="modalTitle"></h2>
             <p id="modalDesc"></p>
         </div>
@@ -159,8 +222,8 @@
     <div id="statusOverlay" class="status-overlay">
         <div class="status-card">
             <div id="statusIcon" style="font-size: 50px; margin-bottom: 15px;">⌛</div>
-            <h3 id="statusTitle">Iltimos, kuting...</h3>
-            <p id="statusMsg">Buyurtmangiz yuborilmoqda.</p>
+            <h3 id="statusTitle">So'rov yuborilmoqda...</h3>
+            <p id="statusMsg">Iltimos, kuting.</p>
         </div>
     </div>
 
@@ -168,58 +231,52 @@
         <div class="reg-container">
             <div class="reg-card">
                 <div style="font-size: 60px;">🍔</div>
-                <h2 style="font-weight: 800;">Cafe 777</h2>
+                <h2>Cafe 777</h2>
                 <div class="input-group">
                     <label>Ismingiz</label>
-                    <input type="text" id="userName" placeholder="Ismingizni yozing">
+                    <input type="text" id="userName" placeholder="Azizbek">
                 </div>
                 <div class="input-group">
                     <label>Telefon raqamingiz</label>
                     <input type="tel" id="userPhone" value="+998 ">
                 </div>
-                <button onclick="saveUser()" class="cart-btn-init" style="padding:15px; background:var(--secondary);">KIRISH</button>
+                <button onclick="saveUser()" class="cart-btn-init" style="padding: 18px; background: var(--secondary);">KIRISH</button>
             </div>
         </div>
     </div>
 
     <div id="app" style="display: none;">
         <div id="p-home" class="page">
-            <div class="header-top">
-                <h2 style="font-weight: 800;">Menyu</h2>
-            </div>
+            <div class="header-top"><h2>Menyu</h2></div>
             <div class="cat-container" id="catBox"></div>
             <div class="grid" id="menuGrid"></div>
         </div>
 
         <div id="p-cart" class="page">
-            <h2 style="font-weight: 800;">Savat 🛒</h2>
+            <h2>Savat 🛒</h2>
             <div id="cartList"></div>
-            <div id="cartEmpty" style="text-align: center; padding: 40px;">
-                <div style="font-size: 50px;">🛒</div>
-                <p style="color: var(--gray);">Savatingiz bo'sh</p>
-            </div>
-            <div id="cartSummary" style="display: none;">
-                <div style="display: flex; justify-content: space-between; margin: 20px 0;">
-                    <span style="font-weight: 600;">Jami:</span>
-                    <span id="totalPrice" style="font-weight: 800; color: var(--secondary);">0 so'm</span>
+            <div id="cartEmpty" style="text-align:center; padding:40px; display:none;">🛒 Savat bo'sh</div>
+            <div id="cartSummary" style="background:white; padding:20px; border-radius:20px; margin-top:20px;">
+                <div style="display:flex; justify-content:space-between; margin-bottom:15px;">
+                    <b>Jami:</b> <span id="totalPrice" style="color:var(--secondary); font-weight:800;">0 so'm</span>
                 </div>
-                <button onclick="getLocation()" id="locBtn" style="width:100%; padding:15px; background:var(--success); color:white; border:none; border-radius:12px; margin-bottom:10px; font-weight:700;">ANIQLASH 📍</button>
-                <button onclick="submitOrder()" style="width:100%; padding:15px; background:var(--dark); color:white; border:none; border-radius:12px; font-weight:700;">YUBORISH 🚀</button>
+                <button onclick="getLocation()" id="locBtn" style="width:100%; padding:12px; background:var(--success); color:white; border:none; border-radius:10px; margin-bottom:10px;">📍 MANZILNI ANIQLASH</button>
+                <button onclick="submitOrder()" style="width:100%; padding:15px; background:var(--dark); color:white; border:none; border-radius:10px;">🚀 BUYURTMA BERISH</button>
             </div>
         </div>
 
         <div id="p-history" class="page">
-            <h2 style="font-weight: 800;">Tarix 📜</h2>
+            <h2>Tarix 📜</h2>
             <div id="historyList"></div>
         </div>
 
         <div id="p-chat" class="page">
-            <h2 style="font-weight: 800;">Chat 💬</h2>
+            <h2>Chat 💬</h2>
             <div class="chat-container">
                 <div class="chat-messages" id="chatMessages"></div>
-                <div style="padding: 10px; background: white; display: flex; gap: 10px;">
-                    <input type="text" id="chatInput" placeholder="Xabar..." style="flex:1; border:none; background:#eee; padding:12px; border-radius:12px; outline:none;">
-                    <button onclick="sendMessage()" style="background:var(--accent); color:white; border:none; width:45px; border-radius:12px;"><i class="fa-solid fa-paper-plane"></i></button>
+                <div style="padding:15px; display:flex; gap:10px; background:white;">
+                    <input type="text" id="chatInput" placeholder="Xabar..." style="flex:1; border:none; background:#eee; padding:10px; border-radius:10px;">
+                    <button onclick="sendMessage()" style="background:var(--accent); color:white; border:none; width:45px; border-radius:10px;"><i class="fa-solid fa-paper-plane"></i></button>
                 </div>
             </div>
         </div>
@@ -227,52 +284,50 @@
         <nav class="navbar">
             <div class="nav-item active" onclick="navigate('home', this)"><i class="fa-solid fa-burger"></i>Menyu</div>
             <div class="nav-item" onclick="navigate('cart', this)"><i class="fa-solid fa-cart-shopping"></i>Savat</div>
-            <div class="nav-item" onclick="navigate('history', this)"><i class="fa-solid fa-clock-rotate-left"></i>Tarix</div>
-            <div class="nav-item" onclick="navigate('chat', this)"><i class="fa-solid fa-comment-dots"></i>Chat</div>
+            <div class="nav-item" onclick="navigate('history', this)"><i class="fa-solid fa-history"></i>Tarix</div>
+            <div class="nav-item" onclick="navigate('chat', this)"><i class="fa-solid fa-comment"></i>Chat</div>
         </nav>
     </div>
 
     <script>
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwD567o5ewgtXUAKEaq1zLuMGzscI6JV5K5xSiI7S5lKa3fJkAaivwNEYxwS2T_vmlp/exec";
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx2Sj5RC_hJt-kYAytsVBwnTHUpKtjqVhs3LKehmtoMkmeSa7KAcEWSMCqzK0-HdW15wQ/exec";
         const PRODUCTS_ID = "1j6VojbeSYWgYj3UY98xCxHLCzHcGlEg0nXjYwHDkKQk";
-        const ADMIN_CHAT_ID = "519326806";
         const BOT_TOKEN = "8032226679:AAETTGPvYZYSvF_QmdofXKibpOwt4E9Iitc";
+        const ADMIN_CHAT_ID = "519326806";
 
         let state = {
-            products: [], cart: {}, activeCat: 'Hammasi', location: null,
-            history: JSON.parse(localStorage.getItem('cafe777_history') || '[]'),
-            user: JSON.parse(localStorage.getItem('cafe777_user') || 'null')
+            products: [],
+            cart: {},
+            activeCat: 'Hammasi',
+            location: null,
+            user: JSON.parse(localStorage.getItem('cafe777_user')),
+            history: JSON.parse(localStorage.getItem('cafe777_history') || '[]')
         };
 
         window.onload = () => {
-            if (state.user) { showApp(); loadMenu(); startSync(); }
-            document.getElementById('userPhone').addEventListener('input', (e) => {
-                let x = e.target.value.replace(/\D/g, '').match(/(\d{0,3})(\d{0,2})(\d{0,3})(\d{0,2})(\d{0,2})/);
-                e.target.value = !x[2] ? "+998 " : "+998 " + x[2] + (x[3] ? " " + x[3] : "") + (x[4] ? " " + x[4] : "") + (x[5] ? " " + x[5] : "");
-            });
+            if(state.user) { showApp(); loadMenu(); startSync(); }
         };
+
+        function saveUser() {
+            let n = document.getElementById('userName').value;
+            let p = document.getElementById('userPhone').value;
+            if(n.length < 3 || p.length < 12) return alert("To'liq kiriting!");
+            state.user = { id: "ID" + Math.floor(Math.random()*9999), name: n, phone: p };
+            localStorage.setItem('cafe777_user', JSON.stringify(state.user));
+            showApp(); loadMenu();
+        }
 
         function showApp() {
             document.getElementById('p-reg').style.display = 'none';
             document.getElementById('app').style.display = 'block';
-            navigate('home', document.querySelector('.nav-item'));
-        }
-
-        function saveUser() {
-            let name = document.getElementById('userName').value;
-            let phone = document.getElementById('userPhone').value;
-            if (name.length < 3 || phone.length < 17) return alert("Ma'lumotlarni to'ldiring!");
-            state.user = { id: name.slice(0,3).toUpperCase() + Math.floor(1000+Math.random()*9000), name, phone };
-            localStorage.setItem('cafe777_user', JSON.stringify(state.user));
-            showApp(); loadMenu();
         }
 
         async function loadMenu() {
             const res = await fetch(`https://docs.google.com/spreadsheets/d/${PRODUCTS_ID}/gviz/tq?tqx=out:json`);
             const text = await res.text();
             const json = JSON.parse(text.substring(47).slice(0, -2));
-            state.products = json.table.rows.map((row, i) => ({
-                id: i, cat: row.c[1]?.v || "Boshqa", name: row.c[2]?.v, price: row.c[3]?.v, img: row.c[4]?.v, desc: row.c[5]?.v
+            state.products = json.table.rows.map((r, i) => ({
+                id: i, cat: r.c[1]?.v, name: r.c[2]?.v, price: r.c[3]?.v, img: r.c[4]?.v, desc: r.c[5]?.v
             }));
             renderCategories(); renderMenu();
         }
@@ -280,37 +335,120 @@
         function renderCategories() {
             let cats = ['Hammasi', ...new Set(state.products.map(p => p.cat))];
             document.getElementById('catBox').innerHTML = cats.map(c => 
-                `<div class="cat-item ${state.activeCat === c ? 'active' : ''}" onclick="filterCat('${c}')">${c}</div>`
+                `<div class="cat-item ${state.activeCat === c ? 'active' : ''}" onclick="state.activeCat='${c}'; renderCategories(); renderMenu();">${c}</div>`
             ).join('');
         }
 
-        function filterCat(cat) { state.activeCat = cat; renderCategories(); renderMenu(); }
-
         function renderMenu() {
-            let filtered = state.activeCat === 'Hammasi' ? state.products : state.products.filter(p => p.cat === state.activeCat);
-            document.getElementById('menuGrid').innerHTML = filtered.map(p => `
+            let items = state.activeCat === 'Hammasi' ? state.products : state.products.filter(p => p.cat === state.activeCat);
+            document.getElementById('menuGrid').innerHTML = items.map(p => `
                 <div class="card">
                     <img src="${p.img}" onclick="openModal(${p.id})">
                     <div class="card-info">
                         <div class="card-name">${p.name}</div>
                         <div class="card-price">${p.price.toLocaleString()} so'm</div>
-                        <div id="btn-${p.id}">${state.cart[p.id] ? renderQty(p.id) : `<button class="cart-btn-init" onclick="updateQty(${p.id}, 1)">Savatga</button>`}</div>
+                        <div id="btn-${p.id}">
+                            ${state.cart[p.id] ? renderQty(p.id) : `<button class="cart-btn-init" onclick="updateQty(${p.id},1)">Savatga</button>`}
+                        </div>
                     </div>
-                </div>`).join('');
+                </div>
+            `).join('');
         }
 
         function renderQty(id) {
             return `<div class="qty-control">
-                <div class="qty-btn" onclick="updateQty(${id}, -1)">-</div>
-                <span>${state.cart[id]}</span>
-                <div class="qty-btn" onclick="updateQty(${id}, 1)">+</div>
+                <div class="qty-btn" onclick="updateQty(${id},-1)">-</div>
+                <b>${state.cart[id]}</b>
+                <div class="qty-btn" onclick="updateQty(${id},1)">+</div>
             </div>`;
         }
 
-        function updateQty(id, delta) {
-            state.cart[id] = (state.cart[id] || 0) + delta;
-            if (state.cart[id] <= 0) delete state.cart[id];
+        function updateQty(id, d) {
+            state.cart[id] = (state.cart[id] || 0) + d;
+            if(state.cart[id] <= 0) delete state.cart[id];
             renderMenu(); updateCartUI();
+        }
+
+        function updateCartUI() {
+            let list = document.getElementById('cartList');
+            let total = 0;
+            let keys = Object.keys(state.cart);
+            
+            if(keys.length === 0) {
+                list.innerHTML = "";
+                document.getElementById('cartEmpty').style.display = 'block';
+                document.getElementById('cartSummary').style.display = 'none';
+                return;
+            }
+            
+            document.getElementById('cartEmpty').style.display = 'none';
+            document.getElementById('cartSummary').style.display = 'block';
+            
+            list.innerHTML = keys.map(id => {
+                let p = state.products[id];
+                total += p.price * state.cart[id];
+                return `<div style="display:flex; justify-content:space-between; padding:10px; background:white; margin-bottom:5px; border-radius:10px;">
+                    <span>${p.name} (x${state.cart[id]})</span>
+                    <b>${(p.price * state.cart[id]).toLocaleString()}</b>
+                </div>`;
+            }).join('');
+            document.getElementById('totalPrice').innerText = total.toLocaleString() + " so'm";
+        }
+
+        function getLocation() {
+            navigator.geolocation.getCurrentPosition(p => {
+                state.location = `https://www.google.com/maps?q=${p.coords.latitude},${p.coords.longitude}`;
+                document.getElementById('locBtn').innerText = "✅ MANZIL SAQLANDI";
+                document.getElementById('locBtn').style.background = "#06d6a0";
+            });
+        }
+
+        async function submitOrder() {
+            if(!state.location) return alert("Manzilni aniqlang!");
+            const overlay = document.getElementById('statusOverlay');
+            overlay.style.display = 'flex';
+
+            let itemsTxt = Object.keys(state.cart).map(id => `${state.products[id].name} x${state.cart[id]}`).join('\n');
+            let orderId = Math.floor(1000 + Math.random()*9000);
+
+            try {
+                // Google Sheets
+                await fetch(`${SCRIPT_URL}?method=save&orderId=${orderId}&details=${encodeURIComponent(state.user.name + "\n" + itemsTxt)}`);
+                
+                // Telegram
+                let msg = `🆕 BUYURTMA #${orderId}\n👤 ${state.user.name}\n📞 ${state.user.phone}\n📦 ${itemsTxt}\n📍 ${state.location}`;
+                await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ chat_id: ADMIN_CHAT_ID, text: msg })
+                });
+
+                state.history.unshift({ id: orderId, status: "Kutilmoqda ⏳", items: itemsTxt, total: document.getElementById('totalPrice').innerText });
+                localStorage.setItem('cafe777_history', JSON.stringify(state.history));
+                state.cart = {};
+                
+                document.getElementById('statusIcon').innerText = "✅";
+                setTimeout(() => { overlay.style.display='none'; navigate('history', document.querySelectorAll('.nav-item')[2]); }, 2000);
+            } catch(e) { alert("Xatolik!"); overlay.style.display='none'; }
+        }
+
+        function navigate(p, el) {
+            document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+            document.getElementById('p-'+p).classList.add('active');
+            el.classList.add('active');
+            if(p === 'cart') updateCartUI();
+            if(p === 'history') renderHistory();
+        }
+
+        function renderHistory() {
+            document.getElementById('historyList').innerHTML = state.history.map(h => `
+                <div style="background:white; padding:15px; border-radius:15px; margin-bottom:10px;">
+                    <div style="display:flex; justify-content:space-between;"><b>#${h.id}</b> <span>${h.status}</span></div>
+                    <small>${h.items}</small><br>
+                    <b style="color:var(--secondary);">${h.total}</b>
+                </div>
+            `).join('');
         }
 
         function openModal(id) {
@@ -320,130 +458,27 @@
             document.getElementById('modalDesc').innerText = p.desc;
             document.getElementById('imgModal').style.display = 'flex';
         }
-
         function closeModal() { document.getElementById('imgModal').style.display = 'none'; }
 
-        function updateCartUI() {
-            let list = document.getElementById('cartList');
-            let total = 0;
-            let ids = Object.keys(state.cart);
-            
-            if (ids.length === 0) {
-                list.innerHTML = "";
-                document.getElementById('cartEmpty').style.display = 'block';
-                document.getElementById('cartSummary').style.display = 'none';
-                return;
-            }
-
-            document.getElementById('cartEmpty').style.display = 'none';
-            document.getElementById('cartSummary').style.display = 'block';
-
-            list.innerHTML = ids.map(id => {
-                let p = state.products[id];
-                total += p.price * state.cart[id];
-                return `<div style="background:white; padding:10px; border-radius:15px; margin-bottom:10px; display:flex; align-items:center; gap:10px;">
-                    <img src="${p.img}" style="width:50px; height:50px; border-radius:10px;">
-                    <div style="flex:1;"><b>${p.name}</b><br><small>${p.price.toLocaleString()} x ${state.cart[id]}</small></div>
-                </div>`;
-            }).join('');
-            document.getElementById('totalPrice').innerText = total.toLocaleString() + " so'm";
-        }
-
-        function getLocation() {
-            navigator.geolocation.getCurrentPosition(pos => {
-                state.location = `https://www.google.com/maps?q=${pos.coords.latitude},${pos.coords.longitude}`;
-                document.getElementById('locBtn').innerText = "MANZIL OLINDI ✅";
-                document.getElementById('locBtn').style.background = "#06d6a0";
-            });
-        }
-
-        async function submitOrder() {
-            if (!state.location) return alert("Manzilni aniqlang!");
-            let overlay = document.getElementById('statusOverlay');
-            overlay.style.display = 'flex';
-            
-            let orderId = Math.floor(1000 + Math.random() * 9000);
-            let itemsText = Object.keys(state.cart).map(id => `• ${state.products[id].name} (x${state.cart[id]})`).join('\n');
-            let total = document.getElementById('totalPrice').innerText;
-
-            try {
-                await fetch(`${SCRIPT_URL}?method=save&orderId=${orderId}&details=${encodeURIComponent(state.user.name + "\n" + itemsText)}`);
-                let botMsg = `🆕 BUYURTMA #${orderId}\n👤 Mijoz: ${state.user.name}\n🆔 ID: ${state.user.id}\n📞 Tel: ${state.user.phone}\n\n${itemsText}\n\n💰 Jami: ${total}\n📍 Manzil: ${state.location}`;
-                
-                await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-                    method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ chat_id: ADMIN_CHAT_ID, text: botMsg, reply_markup: { inline_keyboard: [[{ text: "✅ Qabul qilish", callback_data: `status_Tayyorlanmoqda 👨‍🍳_${orderId}` }]] } })
-                });
-
-                state.history.unshift({ id: orderId, status: "Kutilmoqda ⏳", items: itemsText, total: total });
-                localStorage.setItem('cafe777_history', JSON.stringify(state.history));
-                state.cart = {};
-                
-                document.getElementById('statusIcon').innerText = "✅";
-                document.getElementById('statusTitle').innerText = "Yuborildi!";
-                setTimeout(() => { overlay.style.display = 'none'; navigate('history', document.querySelectorAll('.nav-item')[2]); renderMenu(); }, 1500);
-            } catch (e) { alert("Xatolik!"); overlay.style.display = 'none'; }
-        }
-
-        function navigate(pageId, el) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            document.getElementById('p-' + pageId).classList.add('active');
-            el.classList.add('active');
-            if (pageId === 'cart') updateCartUI();
-            if (pageId === 'history') renderHistory();
-            if (pageId === 'chat') loadMessages();
-        }
-
-        function renderHistory() {
-            document.getElementById('historyList').innerHTML = state.history.map(h => `
-                <div style="background:white; padding:15px; border-radius:15px; margin-bottom:10px;">
-                    <div style="display:flex; justify-content:space-between;"><b>#ID ${h.id}</b> <span>${h.status}</span></div>
-                    <small>${h.items.replace(/\n/g, '<br>')}</small><br><b>${h.total}</b>
-                </div>`).join('') || `<p style="text-align:center; padding:20px;">Tarix bo'sh</p>`;
-        }
-
-        async function startSync() {
-            setInterval(async () => {
-                for (let i = 0; i < state.history.length; i++) {
-                    let order = state.history[i];
-                    if (order.status.includes("Yetkazildi")) continue;
-                    try {
-                        let res = await fetch(`${SCRIPT_URL}?orderId=${order.id}`);
-                        let data = await res.json();
-                        if (data.status && data.status !== order.status) {
-                            state.history[i].status = data.status;
-                            localStorage.setItem('cafe777_history', JSON.stringify(state.history));
-                            renderHistory();
-                        }
-                    } catch (e) {}
-                }
-                if (document.getElementById('p-chat').classList.contains('active')) loadMessages();
-            }, 5000);
-        }
-
-        async function loadMessages() {
-            try {
-                const res = await fetch(`${SCRIPT_URL}?method=getMsgs&userId=${state.user.id}`);
-                const data = await res.json();
-                const box = document.getElementById('chatMessages');
-                box.innerHTML = data.map(m => `<div class="message ${m.sender === 'me' ? 'sent' : 'received'}">${m.text}</div>`).join('');
-                box.scrollTop = box.scrollHeight;
-            } catch (e) {}
-        }
-
         async function sendMessage() {
-            let input = document.getElementById('chatInput');
-            let text = input.value.trim();
-            if (!text) return;
-            input.value = "";
-            
-            fetch(`${SCRIPT_URL}?method=sendMsg&userId=${state.user.id}&text=${encodeURIComponent(text)}`);
+            let inp = document.getElementById('chatInput');
+            if(!inp.value) return;
+            let text = inp.value;
+            inp.value = "";
+            document.getElementById('chatMessages').innerHTML += `<div class="message sent">${text}</div>`;
             await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-                method: 'POST', headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ chat_id: ADMIN_CHAT_ID, text: `💬 XABAR: ${state.user.name}\n🆔 ID: ${state.user.id}\n\n${text}` })
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ chat_id: ADMIN_CHAT_ID, text: `💬 CHAT (${state.user.name}):\n${text}` })
             });
-            loadMessages();
+        }
+
+        function startSync() {
+            setInterval(async () => {
+                if(document.getElementById('p-chat').classList.contains('active')) {
+                    // Chat yangilash kodi...
+                }
+            }, 5000);
         }
     </script>
 </body>
