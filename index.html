@@ -228,7 +228,7 @@
         /* --- Chat --- */
         .chat-container {
             background: #e5ddd5;
-            height: 400px;
+            height: calc(100vh - 280px);
             border-radius: 20px;
             display: flex;
             flex-direction: column;
@@ -263,7 +263,7 @@
 <body>
 
     <div id="imgModal" class="modal">
-        <span class="close-modal" onclick="closeModal()">&times;</span>
+        <span class="close-modal" onclick="closeModal()">×</span>
         <img id="modalImg" src="">
         <div class="modal-details">
             <h2 id="modalTitle" style="margin-bottom: 5px;"></h2>
@@ -358,7 +358,7 @@
 
     <script>
         // --- KONFIGURATSIYA ---
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxj0_HwuQ_bI6W4ZmNDdD_ktletT8zgzU4PHsUcULyvWusM2tLTl5jw4C1ZJf55QKgdkg/exec";
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx_nJwnZhIglxJT67g7MnhFsX49Zm69Gv4s3SHLnFS8Q-upsibweO2StEhU2uRwMbxBBA/exec";
         const PRODUCTS_ID = "1j6VojbeSYWgYj3UY98xCxHLCzHcGlEg0nXjYwHDkKQk";
         const ADMIN_CHAT_ID = "519326806";
         const BOT_TOKEN = "8032226679:AAETTGPvYZYSvF_QmdofXKibpOwt4E9Iitc";
@@ -399,7 +399,8 @@
                 alert("Iltimos, ma'lumotlarni to'liq kiriting!");
                 return;
             }
-            let userId = name.slice(0,3).toUpperCase() + Math.floor(1000 + Math.random()*9000);
+            // ID formatini turg'un qilish (O va 0 chalkashligini oldini olish)
+            let userId = name.slice(0,3).toUpperCase().replace(/O/g, '0') + Math.floor(1000 + Math.random()*9000);
             state.user = { id: userId, name: name, phone: phone };
             localStorage.setItem('cafe777_user', JSON.stringify(state.user));
             showApp();
@@ -538,8 +539,8 @@
                 // 1. Jadvalga saqlash
                 await fetch(`${SCRIPT_URL}?method=save&orderId=${orderId}&details=${encodeURIComponent(state.user.name + "\n" + itemsText)}`);
                 
-                // 2. Telegramga yuborish
-                let botMsg = `🆕 BUYURTMA #${orderId}\n👤 Mijoz: ${state.user.name}\n📞 Tel: ${state.user.phone}\n\n${itemsText}\n\n💰 Jami: ${total}\n📍 Manzil: ${state.location}`;
+                // 2. Telegramga yuborish (Admin Reply qilishi uchun ID formatini saqlang)
+                let botMsg = `🆕 BUYURTMA #${orderId}\n👤 Mijoz: ${state.user.name}\n🆔 ID: ${state.user.id}\n📞 Tel: ${state.user.phone}\n\n${itemsText}\n\n💰 Jami: ${total}\n📍 Manzil: ${state.location}`;
                 await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -579,6 +580,7 @@
             
             if (pageId === 'cart') updateCartUI();
             if (pageId === 'history') renderHistory();
+            if (pageId === 'chat') { loadMessages(); }
         }
 
         function renderHistory() {
@@ -595,92 +597,80 @@
         }
 
         // --- STATUSLARNI VA CHATNI SINXRONLASH ---
-async function startSync() {
-    setInterval(async () => {
-        // Status yangilash
-        for (let i = 0; i < state.history.length; i++) {
-            if (state.history[i].status.includes("Yetkazildi")) continue;
-            try {
-                let res = await fetch(`${SCRIPT_URL}?orderId=${state.history[i].id}`);
-                let data = await res.json();
-                if (data.status !== state.history[i].status) {
-                    state.history[i].status = data.status;
-                    localStorage.setItem('cafe777_history', JSON.stringify(state.history));
-                    renderHistory();
+        async function startSync() {
+            setInterval(async () => {
+                // 1. Buyurtma statuslarini tekshirish
+                for (let i = 0; i < state.history.length; i++) {
+                    let order = state.history[i];
+                    if (order.status.includes("Yetkazildi")) continue;
+                    try {
+                        let res = await fetch(`${SCRIPT_URL}?orderId=${order.id}`);
+                        let data = await res.json();
+                        if (data.status && data.status !== order.status) {
+                            state.history[i].status = data.status;
+                            localStorage.setItem('cafe777_history', JSON.stringify(state.history));
+                            renderHistory();
+                        }
+                    } catch (e) {}
                 }
-            } catch (e) {}
+                
+                // 2. Chat xabarlarini avtomatik yangilash
+                if (document.getElementById('p-chat').classList.contains('active')) {
+                    loadMessages();
+                }
+            }, 5000);
         }
-        // Chat yangilash
-        if (document.getElementById('p-chat').classList.contains('active')) loadChat();
-    }, 4000);
-}
 
-async function loadChat() {
-    try {
-        let res = await fetch(`${SCRIPT_URL}?method=getMsgs&userId=${state.user.id}`);
-        let msgs = await res.json();
-        let chatBox = document.getElementById('chatMessages');
-        let html = msgs.map(m => `<div class="message ${m.sender === 'me' ? 'sent' : 'received'}">${m.text}</div>`).join('');
-        
-        if (chatBox.innerHTML !== html) {
-            chatBox.innerHTML = html;
-            chatBox.scrollTop = chatBox.scrollHeight;
+        // --- CHAT FUNKSIYALARI ---
+        async function loadMessages() {
+            try {
+                const res = await fetch(`${SCRIPT_URL}?method=getMsgs&userId=${state.user.id}`);
+                const data = await res.json();
+                const box = document.getElementById('chatMessages');
+                
+                const newHtml = data.map(m => `
+                    <div class="message ${m.sender === 'me' ? 'sent' : 'received'}">
+                        ${m.text}
+                    </div>
+                `).join('');
+
+                if (box.innerHTML !== newHtml) {
+                    box.innerHTML = newHtml;
+                    box.scrollTop = box.scrollHeight;
+                }
+            } catch (e) { console.log("Chat yuklanmadi"); }
         }
-    } catch (e) {}
-}
 
+        async function sendMessage() {
+            let input = document.getElementById('chatInput');
+            let text = input.value.trim();
+            if (!text) return;
+            
+            input.value = "";
+            
+            // UI-da darhol ko'rsatish
+            let box = document.getElementById('chatMessages');
+            box.innerHTML += `<div class="message sent">${text}</div>`;
+            box.scrollTop = box.scrollHeight;
 
-        // 2. Chat xabarlarini yangilash (faqat chat sahifasi ochiq bo'lsa)
-        if (document.getElementById('p-chat').classList.contains('active')) {
-            loadChat();
+            // Admin reply qilishi uchun ID xabar tarkibida bo'lishi kerak
+            let telegramMsg = `💬 XABAR: ${state.user.name}\n🆔 ID: ${state.user.id}\n\n${text}`;
+
+            try {
+                // Jadvalga saqlash
+                fetch(`${SCRIPT_URL}?method=sendMsg&userId=${state.user.id}&text=${encodeURIComponent(text)}`);
+                
+                // Telegramga yuborish
+                await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        chat_id: ADMIN_CHAT_ID, 
+                        text: telegramMsg 
+                    })
+                });
+            } catch (e) { console.error("Xabar yuborishda xatolik"); }
         }
-    }, 4000); 
-}
-
-async function loadChat() {
-    try {
-        let res = await fetch(`${SCRIPT_URL}?method=getMsgs&userId=${state.user.id}`);
-        let msgs = await res.json();
-        let chatBox = document.getElementById('chatMessages');
-        chatBox.innerHTML = msgs.map(m => `
-            <div class="message ${m.sender === 'me' ? 'sent' : 'received'}">
-                ${m.text}
-            </div>
-        `).join('');
-        chatBox.scrollTop = chatBox.scrollHeight;
-    } catch (e) { }
-}
-
-// --- CHAT XABAR YUBORISH ---
-async function sendMessage() {
-    let input = document.getElementById('chatInput');
-    if (!input.value.trim()) return;
-    
-    let text = input.value;
-    input.value = "";
-    
-    // UI-da darhol ko'rsatish
-    let box = document.getElementById('chatMessages');
-    box.innerHTML += `<div class="message sent">${text}</div>`;
-    box.scrollTop = box.scrollHeight;
-
-    // Jadvalga va Telegram botga yuborish
-    try {
-        await fetch(`${SCRIPT_URL}?method=sendMsg&userId=${state.user.id}&text=${encodeURIComponent(text)}`);
-        await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ 
-                chat_id: ADMIN_CHAT_ID, 
-                text: `💬 XABAR: ${state.user.name}\n🆔 ID: ${state.user.id}\n\n${text}` 
-            })
-        });
-    } catch (e) { console.error("Message send error"); }
-}
-
-// Dastur yuklanganda sinxronizatsiyani boshlash
-// Buni loadMenu funksiyasining oxiriga yoki window.onload ichiga qo'shing
-startSync(); 
-</script>
+    </script>
 </body>
 </html>
