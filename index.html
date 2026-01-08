@@ -3,120 +3,127 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Cafe 777 - Final</title>
+    <title>Cafe 777 Premium</title>
     <style>
-        :root { --p: #ffbe0b; --s: #fb5607; --d: #1a1a1a; --b: #0088cc; --r: #ff4757; --g: #f4f7f6; }
-        * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; font-style: normal !important; }
-        body { background: var(--g); margin: 0; padding-bottom: 80px; }
+        :root { --p: #ffbe0b; --s: #fb5607; --d: #1a1a1a; --b: #0088cc; --r: #ff4757; --g: #f1f3f5; }
+        * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background: var(--g); margin: 0; padding-bottom: 90px; }
 
-        /* ANIMATSIYALAR */
-        @keyframes pop { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-        .page { display: none; padding: 20px; animation: pop 0.3s ease; }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .page { display: none; padding: 20px; animation: fadeInUp 0.4s ease; }
         .page.active { display: block; }
 
-        /* TOAST */
-        #toast { position: fixed; top: -100px; left: 50%; transform: translateX(-50%); background: var(--d); color: white; padding: 12px 25px; border-radius: 50px; z-index: 10000; transition: 0.5s; font-weight: bold; width: 80%; text-align: center; }
-        #toast.show { top: 20px; }
+        /* TOAST XABARLAR */
+        #toast { 
+            position: fixed; top: -100px; left: 50%; transform: translateX(-50%); 
+            background: var(--d); color: white; padding: 15px 25px; border-radius: 50px; 
+            z-index: 10000; transition: 0.5s; font-weight: bold; width: 85%; text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        #toast.show { top: 25px; }
 
         /* KARTALAR */
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .card { background: white; border-radius: 20px; overflow: hidden; position: relative; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
-        .heart { position: absolute; top: 10px; right: 10px; font-size: 26px; color: rgba(255,255,255,0.9); cursor: pointer; transition: 0.3s; }
-        .heart.active { color: var(--r); transform: scale(1.2); }
+        .card { background: white; border-radius: 20px; overflow: hidden; position: relative; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        .card img { width: 100%; aspect-ratio: 1/1; object-fit: cover; }
+        .heart { position: absolute; top: 10px; right: 10px; font-size: 25px; color: rgba(255,255,255,0.8); cursor: pointer; text-shadow: 0 0 5px rgba(0,0,0,0.5); }
+        .heart.active { color: var(--r); }
 
-        /* INPUTS */
-        input { width: 100%; padding: 16px; margin-bottom: 12px; border-radius: 12px; border: 2px solid #eee; font-size: 16px; outline: none; }
+        /* INPUTLAR */
+        input { width: 100%; padding: 16px; margin-bottom: 15px; border-radius: 15px; border: 2px solid #ddd; font-size: 16px; outline: none; }
         input:focus { border-color: var(--p); }
-        .btn { background: var(--d); color: white; border: none; width: 100%; padding: 16px; border-radius: 12px; font-weight: 900; cursor: pointer; }
+        .btn { background: var(--d); color: white; border: none; width: 100%; padding: 16px; border-radius: 15px; font-weight: bold; font-size: 16px; cursor: pointer; }
         .btn:active { transform: scale(0.97); }
 
-        /* NAV */
-        .nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; padding: 10px 0; border-radius: 20px 20px 0 0; box-shadow: 0 -5px 15px rgba(0,0,0,0.05); }
-        .nav-item { flex: 1; text-align: center; color: #bbb; font-size: 10px; font-weight: bold; }
+        /* NAVBAR */
+        .nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; padding: 10px 0; border-radius: 25px 25px 0 0; box-shadow: 0 -5px 15px rgba(0,0,0,0.05); }
+        .nav-item { flex: 1; text-align: center; color: #bbb; font-size: 11px; font-weight: bold; }
         .nav-item.active { color: var(--s); }
-        .nav-item b { font-size: 22px; display: block; }
+        .nav-item b { font-size: 24px; display: block; }
     </style>
 </head>
 <body>
 
-<div id="toast">Xabar</div>
+<div id="toast">Xabar!</div>
 
-<div id="p-reg" class="page active" style="text-align:center; padding-top:50px;">
+<div id="p-reg" class="page active" style="text-align: center; padding-top: 50px;">
     <h1>Cafe 777 👋</h1>
-    <input type="text" id="rName" placeholder="Ismingiz (bosh 4 ta harf ID bo'ladi)">
+    <p>Davom etish uchun ma'lumotlarni kiriting</p>
+    <input type="text" id="rName" placeholder="Ismingiz">
     <input type="tel" id="rPhone" value="+998 " maxlength="17">
-    <button class="btn" onclick="register()">KIRISH</button>
+    <button class="btn" onclick="saveReg()">TIZIMGA KIRISH</button>
 </div>
 
 <div id="app" style="display:none;">
     <div id="p-home" class="page">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-            <h2 style="margin:0;">Menu</h2>
-            <div id="uId" style="font-size:12px; font-weight:bold; background:#eee; padding:5px 10px; border-radius:8px;"></div>
+            <h2 style="margin:0;">Menu 🍔</h2>
+            <div id="uIdDisp" style="font-size:12px; font-weight:bold; background:#eee; padding:5px 10px; border-radius:8px;"></div>
         </div>
-        <div id="menu" class="grid"></div>
-    </div>
-
-    <div id="p-favs" class="page">
-        <h2>Sevimlilar ❤️</h2>
-        <div id="favs" class="grid"></div>
+        <div id="menuGrid" class="grid"></div>
     </div>
 
     <div id="p-cart" class="page">
         <h2>Savat 🛒</h2>
-        <div id="cartList" style="background:white; padding:15px; border-radius:15px; margin-bottom:15px;"></div>
-        <div style="display:flex; justify-content:space-between; font-size:20px; font-weight:bold; margin-bottom:15px;">
-            <span>Jami:</span> <span id="total">0 so'm</span>
+        <div id="cartItems" style="background:white; padding:15px; border-radius:20px; margin-bottom:15px;"></div>
+        <div style="display:flex; justify-content:space-between; font-size:20px; font-weight:900; margin-bottom:20px;">
+            <span>Jami:</span> <span id="totalPrice">0 so'm</span>
         </div>
-        <button class="btn" id="locBtn" onclick="geo()" style="background:#eef; color:#333; margin-bottom:10px;">📍 MANZILNI ANIQLASH</button>
-        <button class="btn" onclick="order()" style="background:var(--b);">BUYURTMA BERISH</button>
+        <button class="btn" id="locBtn" onclick="getLocation()" style="background:#eef; color:#333; margin-bottom:12px;">📍 MANZILNI ANIQLASH</button>
+        <button class="btn" onclick="sendOrder()" style="background:var(--b);">BUYURTMA BERISH</button>
+    </div>
+
+    <div id="p-fav" class="page">
+        <h2>Sevimlilar ❤️</h2>
+        <div id="favGrid" class="grid"></div>
     </div>
 
     <div id="p-history" class="page">
         <h2>Tarix 📜</h2>
-        <div id="history"></div>
+        <div id="historyList"></div>
     </div>
 
     <nav class="nav">
         <div class="nav-item active" onclick="nav('home', this)"><b>🏠</b>MENU</div>
-        <div class="nav-item" onclick="nav('favs', this)"><b>❤️</b>SEVIMLI</div>
+        <div class="nav-item" onclick="nav('fav', this)"><b>❤️</b>SEVIMLI</div>
         <div class="nav-item" onclick="nav('cart', this)"><b>🛒</b>SAVAT</div>
         <div class="nav-item" onclick="nav('history', this)"><b>📜</b>TARIX</div>
     </nav>
 </div>
 
 <script>
-const BOT_TOKEN = "8032226679:AAETTGPvYZYSvF_QmdofXKibpOwt4E9Iitc";
-const ADMIN_ID = "519326806";
-const SHEET_URL = "1j6VojbeSYWgYj3UY98xCxHLCzHcGlEg0nXjYwHDkKQk";
+const TOKEN = "8032226679:AAETTGPvYZYSvF_QmdofXKibpOwt4E9Iitc";
+const ADMIN = "519326806";
+const SHEET = "1j6VojbeSYWgYj3UY98xCxHLCzHcGlEg0nXjYwHDkKQk";
 
-let products = [], cart = {}, favs = [], history = [], userLoc = null;
+let products = [], cart = {}, favs = [], history = [], userLocation = null;
 
-// TELEFON FORMATLASH: +998 93 978 29 26
+// TELEFON FORMATI
 document.getElementById('rPhone').addEventListener('input', function(e) {
     let x = e.target.value.replace(/\D/g, '').match(/(\d{0,3})(\d{0,2})(\d{0,3})(\d{0,2})(\d{0,2})/);
     e.target.value = !x[2] ? "+998 " : "+998 " + x[2] + (x[3] ? " " + x[3] : "") + (x[4] ? " " + x[4] : "") + (x[5] ? " " + x[5] : "");
 });
 
-function register() {
+function saveReg() {
     let n = document.getElementById('rName').value.trim();
     let p = document.getElementById('rPhone').value.trim();
-    if(n.length < 3 || p.length < 17) return msg("Ma'lumotlarni to'ldiring!");
+    if(n.length < 3) return showMsg("Ismingizni kiriting!");
+    if(p.length < 17) return showMsg("Telefon raqami xato!");
 
     let cleanP = p.replace(/\s/g, '');
     let id = (n.substring(0,4).toUpperCase()) + (cleanP.slice(-4));
     
-    localStorage.setItem('u_id', id);
-    localStorage.setItem('u_name', n);
-    localStorage.setItem('u_phone', cleanP);
+    localStorage.setItem('u_data', JSON.stringify({id, name: n, phone: cleanP}));
     location.reload();
 }
 
 window.onload = () => {
-    if(localStorage.getItem('u_id')) {
+    let data = localStorage.getItem('u_data');
+    if(data) {
+        data = JSON.parse(data);
         document.getElementById('p-reg').style.display = 'none';
         document.getElementById('app').style.display = 'block';
-        document.getElementById('uId').innerText = "ID: " + localStorage.getItem('u_id');
+        document.getElementById('uIdDisp').innerText = "ID: " + data.id;
         favs = JSON.parse(localStorage.getItem('u_favs') || '[]');
         history = JSON.parse(localStorage.getItem('u_history') || '[]');
         loadData();
@@ -124,90 +131,97 @@ window.onload = () => {
 };
 
 async function loadData() {
-    const res = await fetch(`https://docs.google.com/spreadsheets/d/${SHEET_URL}/gviz/tq?tqx=out:json`);
+    const res = await fetch(`https://docs.google.com/spreadsheets/d/${SHEET}/gviz/tq?tqx=out:json`);
     const text = await res.text();
     const json = JSON.parse(text.substr(47).slice(0, -2));
     products = json.table.rows.map((r, i) => ({
-        id: i, cat: r.c[1]?.v, name: r.c[2]?.v, price: r.c[3]?.v, img: r.c[4]?.v
+        id: i, name: r.c[2]?.v, price: r.c[3]?.v, img: r.c[4]?.v
     }));
-    render();
+    renderMenu();
 }
 
-function render() {
-    document.getElementById('menu').innerHTML = products.map(p => `
-        <div class="card" onclick="add(${p.id})">
-            <span class="heart ${favs.includes(p.id)?'active':''}" onclick="event.stopPropagation(); fav(${p.id}, this)">❤</span>
-            <img src="${p.img}" style="width:100%; aspect-ratio:1/1; object-fit:cover;">
+function renderMenu() {
+    document.getElementById('menuGrid').innerHTML = products.map(p => `
+        <div class="card" onclick="addToCart(${p.id})">
+            <span class="heart ${favs.includes(p.id)?'active':''}" onclick="event.stopPropagation(); toggleFav(${p.id}, this)">❤</span>
+            <img src="${p.img}">
             <div style="padding:10px; text-align:center;">
-                <h4 style="margin:0; font-size:14px;">${p.name}</h4>
+                <h4 style="margin:5px 0; font-size:14px;">${p.name}</h4>
                 <b style="color:var(--s);">${p.price.toLocaleString()} so'm</b>
             </div>
         </div>`).join('');
 }
 
-function fav(id, el) {
-    if(favs.includes(id)) { favs = favs.filter(f => f !== id); el.classList.remove('active'); }
-    else { favs.push(id); el.classList.add('active'); msg("Sevimlilarga qo'shildi!"); }
+function toggleFav(id, el) {
+    if(favs.includes(id)) {
+        favs = favs.filter(f => f !== id);
+        el.classList.remove('active');
+    } else {
+        favs.push(id);
+        el.classList.add('active');
+        showMsg("Sevimli ❤️");
+    }
     localStorage.setItem('u_favs', JSON.stringify(favs));
 }
 
-function add(id) {
+function addToCart(id) {
     cart[id] = (cart[id] || 0) + 1;
-    msg("Savatga qo'shildi! 🛒");
+    showMsg("Savatga qo'shildi! 🛒");
     renderCart();
 }
 
 function renderCart() {
-    let t = 0, h = "";
+    let total = 0, html = "";
     for(let id in cart) {
-        t += products[id].price * cart[id];
-        h += `<div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+        total += products[id].price * cart[id];
+        html += `<div style="display:flex; justify-content:space-between; margin-bottom:10px; border-bottom:1px solid #eee; padding-bottom:5px;">
             <span>${products[id].name} (x${cart[id]})</span>
             <b>${(products[id].price * cart[id]).toLocaleString()}</b>
         </div>`;
     }
-    document.getElementById('cartList').innerHTML = h || "Savat bo'sh";
-    document.getElementById('total').innerText = t.toLocaleString() + " so'm";
+    document.getElementById('cartItems').innerHTML = html || "Savat bo'sh 🛒";
+    document.getElementById('totalPrice').innerText = total.toLocaleString() + " so'm";
 }
 
-function geo() {
+function getLocation() {
     document.getElementById('locBtn').innerText = "Aniqlanmoqda...";
     navigator.geolocation.getCurrentPosition(p => {
-        userLoc = `${p.coords.latitude},${p.coords.longitude}`;
+        userLocation = `${p.coords.latitude},${p.coords.longitude}`;
         document.getElementById('locBtn').innerText = "✅ MANZIL ANIQLANDI";
         document.getElementById('locBtn').style.background = "#d4edda";
     }, () => {
-        msg("GPS-ni yoqing! 📍");
+        showMsg("GPS-ni yoqing! 📍");
         document.getElementById('locBtn').innerText = "📍 MANZILNI ANIQLASH";
     });
 }
 
-function order() {
-    if(!Object.keys(cart).length) return msg("Savat bo'sh! 🛒");
-    if(!userLoc) return msg("Manzilni aniqlang! 📍");
+function sendOrder() {
+    if(!Object.keys(cart).length) return showMsg("Savat bo'sh! 🛒");
+    if(!userLocation) return showMsg("Manzilni aniqlang! 📍");
 
+    let user = JSON.parse(localStorage.getItem('u_data'));
     let orderId = Math.floor(1000 + Math.random() * 9000);
     let items = "";
     for(let id in cart) items += `• ${products[id].name} (x${cart[id]})\n`;
 
-    let text = `🆕 BUYURTMA #${orderId}\n🆔 ID: ${localStorage.getItem('u_id')}\n👤 ${localStorage.getItem('u_name')}\n📞 ${localStorage.getItem('u_phone')}\n\n${items}\n💰 Jami: ${document.getElementById('total').innerText}\n📍 Manzil: https://www.google.com/maps?q=${userLoc}`;
+    let msgText = `🆕 BUYURTMA #${orderId}\n🆔 ID: ${user.id}\n👤 ${user.name}\n📞 ${user.phone}\n\n${items}\n💰 Jami: ${document.getElementById('totalPrice').innerText}\n📍 Manzil: https://www.google.com/maps?q=${userLocation}`;
 
-    fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+    fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage`, {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({
-            chat_id: ADMIN_ID,
-            text: text,
+            chat_id: ADMIN,
+            text: msgText,
             reply_markup: {
                 inline_keyboard: [
                     [{text: "✅ Qabul qilish", callback_data: `ok_${orderId}`}],
-                    [{text: "🚚 Yetkazish", callback_data: `go_${orderId}`}]
+                    [{text: "🚚 Yo'lga chiqish", callback_data: `go_${orderId}`}]
                 ]
             }
         })
     }).then(() => {
-        msg("Yuborildi! 🚀");
-        history.unshift({id: orderId, items: items, status: "Kutilmoqda"});
+        showMsg("Buyurtma yuborildi! 🚀");
+        history.unshift({id: orderId, items, status: "Kutilmoqda"});
         localStorage.setItem('u_history', JSON.stringify(history));
         cart = {}; renderCart();
         nav('history', document.querySelectorAll('.nav-item')[3]);
@@ -219,27 +233,26 @@ function nav(id, el) {
     document.getElementById('p-' + id).classList.add('active');
     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
     el.classList.add('active');
-    if(id === 'favs') {
+    
+    if(id === 'fav') {
         let list = products.filter(p => favs.includes(p.id));
-        document.getElementById('favs').innerHTML = list.length ? list.map(p => `
+        document.getElementById('favGrid').innerHTML = list.length ? list.map(p => `
             <div class="card">
-                <span class="heart active" onclick="fav(${p.id}, this); nav('favs', document.querySelectorAll('.nav-item')[1])">❤</span>
-                <img src="${p.img}" style="width:100%;">
-                <div style="padding:10px; text-align:center;">
-                    <h4>${p.name}</h4>
-                </div>
+                <span class="heart active" onclick="toggleFav(${p.id}, this); nav('fav', document.querySelectorAll('.nav-item')[1])">❤</span>
+                <img src="${p.img}">
+                <div style="padding:10px; text-align:center;"><h4>${p.name}</h4></div>
             </div>`).join('') : "<p style='grid-column:1/3; text-align:center;'>Sevimlilar bo'sh</p>";
     }
     if(id === 'history') {
-        document.getElementById('history').innerHTML = history.map(h => `
+        document.getElementById('historyList').innerHTML = history.map(h => `
             <div style="background:white; padding:15px; border-radius:15px; margin-bottom:10px; border-left:5px solid var(--b);">
-                <b>#${h.id}</b> - <span style="color:var(--b)">${h.status}</span><br>
+                <div style="display:flex; justify-content:space-between;"><b>#${h.id}</b> <span style="color:var(--b)">${h.status}</span></div>
                 <small>${h.items.replace(/\n/g, '<br>')}</small>
-            </div>`).join('');
+            </div>`).join('') || "<p style='text-align:center;'>Tarix bo'sh</p>";
     }
 }
 
-function msg(m) {
+function showMsg(m) {
     let t = document.getElementById('toast');
     t.innerText = m; t.classList.add('show');
     setTimeout(() => t.classList.remove('show'), 3000);
