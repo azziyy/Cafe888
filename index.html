@@ -597,21 +597,38 @@
         // --- STATUSLARNI VA CHATNI SINXRONLASH ---
 async function startSync() {
     setInterval(async () => {
-        // 1. Statuslarni yangilash
+        // Status yangilash
         for (let i = 0; i < state.history.length; i++) {
-            let order = state.history[i];
-            if (order.status.includes("Yetkazildi")) continue;
-            
+            if (state.history[i].status.includes("Yetkazildi")) continue;
             try {
-                let res = await fetch(`${SCRIPT_URL}?orderId=${order.id}`);
-                let data = await res.json(); 
-                if (data.status && data.status !== order.status) {
+                let res = await fetch(`${SCRIPT_URL}?orderId=${state.history[i].id}`);
+                let data = await res.json();
+                if (data.status !== state.history[i].status) {
                     state.history[i].status = data.status;
                     localStorage.setItem('cafe777_history', JSON.stringify(state.history));
-                    renderHistory(); 
+                    renderHistory();
                 }
-            } catch (e) { console.log("Status sync error"); }
+            } catch (e) {}
         }
+        // Chat yangilash
+        if (document.getElementById('p-chat').classList.contains('active')) loadChat();
+    }, 4000);
+}
+
+async function loadChat() {
+    try {
+        let res = await fetch(`${SCRIPT_URL}?method=getMsgs&userId=${state.user.id}`);
+        let msgs = await res.json();
+        let chatBox = document.getElementById('chatMessages');
+        let html = msgs.map(m => `<div class="message ${m.sender === 'me' ? 'sent' : 'received'}">${m.text}</div>`).join('');
+        
+        if (chatBox.innerHTML !== html) {
+            chatBox.innerHTML = html;
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+    } catch (e) {}
+}
+
 
         // 2. Chat xabarlarini yangilash (faqat chat sahifasi ochiq bo'lsa)
         if (document.getElementById('p-chat').classList.contains('active')) {
