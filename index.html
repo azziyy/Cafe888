@@ -3,114 +3,93 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Cafe 777 - Premium System</title>
+    <title>Cafe 777 - Final</title>
     <style>
         :root {
             --primary: #ffbe0b; --secondary: #fb5607; --dark: #1a1a1a;
-            --blue: #0088cc; --green: #2ecc71; --red: #ff4757; --gray: #f8f9fa;
+            --blue: #0088cc; --green: #2ecc71; --red: #ff4757; --gray: #f4f7f6;
         }
 
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body {
-            font-family: 'Segoe UI', Roboto, sans-serif; background-color: var(--gray);
-            margin: 0; padding: 0; overflow-x: hidden; padding-bottom: 80px;
+        /* Barcha Italic (qiyshiq) yozuvlarni yo'qotish va tekislash */
+        * { 
+            box-sizing: border-box; 
+            -webkit-tap-highlight-color: transparent; 
+            font-style: normal !important; 
+            font-family: 'Segoe UI', sans-serif;
         }
 
-        /* 1. NAVBAR & NAVIGATION */
+        body { background-color: var(--gray); margin: 0; padding-bottom: 90px; }
+
+        /* QALQIB CHIQISH XABARI */
+        #toast {
+            position: fixed; top: -100px; left: 50%; transform: translateX(-50%);
+            background: var(--dark); color: white; padding: 14px 28px;
+            border-radius: 50px; z-index: 10000; transition: 0.5s;
+            font-weight: 600; box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        #toast.show { top: 30px; }
+
+        /* BOTTOM TOOLBAR */
         .bottom-nav {
             position: fixed; bottom: 0; width: 100%; background: white;
             display: flex; justify-content: space-around; padding: 12px 0;
-            box-shadow: 0 -5px 20px rgba(0,0,0,0.1); z-index: 1000;
-            border-top-left-radius: 20px; border-top-right-radius: 20px;
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.1); z-index: 2000;
+            border-radius: 20px 20px 0 0;
         }
-        .nav-item { 
-            text-align: center; font-size: 11px; color: #888; cursor: pointer;
-            transition: 0.3s; flex: 1;
-        }
-        .nav-item.active { color: var(--secondary); transform: translateY(-5px); }
-        .nav-item i { font-size: 22px; display: block; margin-bottom: 4px; }
+        .nav-item { text-align: center; font-size: 12px; color: #aaa; cursor: pointer; flex: 1; font-weight: 600; }
+        .nav-item.active { color: var(--secondary); }
+        .nav-item b { font-size: 20px; display: block; }
 
-        /* 2. PAGES CONTROL */
-        .page { display: none; animation: fadeIn 0.4s ease; padding: 15px; }
+        /* SAHIFALAR */
+        .page { display: none; padding: 20px; animation: fadeIn 0.3s; }
         .page.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* 3. CATEGORIES & CARDS */
-        .category-nav {
-            display: flex; gap: 10px; overflow-x: auto; padding: 10px 0;
-            position: sticky; top: 0; background: var(--gray); z-index: 90;
-        }
+        /* MENU VA KARTALAR */
+        .category-nav { display: flex; gap: 10px; overflow-x: auto; padding: 10px 0; margin-bottom: 15px; }
         .category-nav::-webkit-scrollbar { display: none; }
-        .cat-btn {
-            padding: 8px 18px; border-radius: 25px; border: none;
-            background: white; font-weight: 600; white-space: nowrap;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        }
+        .cat-btn { padding: 10px 20px; border-radius: 15px; border: none; background: white; font-weight: 700; white-space: nowrap; }
         .cat-btn.active { background: var(--primary); color: white; }
 
-        .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 10px; }
-        .card { 
-            background: white; border-radius: 20px; overflow: hidden; position: relative;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05); transition: 0.3s;
-        }
-        .card:active { transform: scale(0.96); }
-        .fav-heart {
-            position: absolute; top: 10px; right: 10px; font-size: 20px;
-            color: #ddd; cursor: pointer; z-index: 10; transition: 0.3s;
-            text-shadow: 0 0 5px rgba(0,0,0,0.2);
-        }
-        .fav-heart.active { color: var(--red); transform: scale(1.2); }
-
+        .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .card { background: white; border-radius: 20px; overflow: hidden; position: relative; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        .fav-heart { position: absolute; top: 10px; right: 10px; font-size: 22px; color: rgba(255,255,255,0.8); z-index: 5; }
+        .fav-heart.active { color: var(--red); }
         .card img { width: 100%; aspect-ratio: 1/1; object-fit: cover; }
         .card-info { padding: 12px; text-align: center; }
-        .card h4 { margin: 5px 0; font-size: 14px; height: 38px; overflow: hidden; }
-        .card b { color: var(--secondary); display: block; margin-bottom: 10px; }
-
-        /* 4. BUTTONS & UI */
-        .btn-main {
-            background: var(--dark); color: white; border: none; width: 100%;
-            padding: 15px; border-radius: 15px; font-weight: bold; margin: 5px 0;
-        }
-        .counter-box { display: flex; align-items: center; justify-content: center; gap: 12px; }
-        .c-btn { width: 32px; height: 32px; border-radius: 10px; border: none; background: #eee; font-weight: bold; }
-
-        /* 5. HISTORY & STATUS */
-        .history-card {
-            background: white; padding: 15px; border-radius: 15px; margin-bottom: 10px;
-            border-left: 5px solid var(--blue);
-        }
-        .status-badge {
-            padding: 4px 10px; border-radius: 8px; font-size: 11px; font-weight: bold;
-            float: right; text-transform: uppercase;
-        }
-        .status-pending { background: #fff3cd; color: #856404; }
-        .status-accepted { background: #d4edda; color: #155724; }
-        .status-cooking { background: #cce5ff; color: #004085; }
-        .status-shipping { background: #f8d7da; color: #721c24; }
-
-        /* 6. FULL SCREEN MODALS */
+        
+        /* MODAL */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.7); z-index: 2000; display: none; align-items: center; justify-content: center;
-            backdrop-filter: blur(5px);
+            background: rgba(0,0,0,0.8); z-index: 5000; display: none;
+            align-items: center; justify-content: center;
         }
-        .modal-body { background: white; width: 90%; max-width: 400px; border-radius: 25px; padding: 20px; position: relative; }
+        .modal-card { background: white; width: 90%; border-radius: 25px; overflow: hidden; animation: zoom 0.3s; }
+        @keyframes zoom { from { transform: scale(0.8); } to { transform: scale(1); } }
 
-        /* TOAST ANIMATION */
-        #toast {
-            position: fixed; top: -100px; left: 50%; transform: translateX(-50%);
-            background: var(--dark); color: white; padding: 12px 25px;
-            border-radius: 50px; z-index: 10000; transition: 0.5s; font-weight: 500;
-        }
-        #toast.show { top: 20px; }
+        /* TUGMALAR */
+        .btn-main { background: var(--dark); color: white; border: none; width: 100%; padding: 15px; border-radius: 15px; font-weight: 700; cursor: pointer; }
+        .c-btn { width: 35px; height: 35px; border-radius: 10px; border: none; background: #eee; font-weight: bold; }
+        
+        input { width: 100%; padding: 15px; margin-bottom: 15px; border-radius: 12px; border: 1px solid #ddd; outline: none; font-size: 16px; }
     </style>
 </head>
 <body>
 
-    <div id="toast">Xabar yuborildi!</div>
+    <div id="toast">Habar!</div>
 
-    <div id="page-home" class="page active">
-        <h2 style="margin: 0 0 10px 0;">Menu 🍔</h2>
+    <div id="regModal" class="modal-overlay" style="display: flex;">
+        <div class="modal-card" style="padding: 30px; text-align: center;">
+            <h2>Xush kelibsiz! 👋</h2>
+            <p>Ismingiz va raqamingizni kiriting</p>
+            <input type="text" id="regName" placeholder="Ismingiz">
+            <input type="tel" id="regPhone" placeholder="+998901234567">
+            <button class="btn-main" onclick="saveReg()">DAVOM ETISH</button>
+        </div>
+    </div>
+
+    <div id="page-home" class="page">
+        <h2>Menu 🍔</h2>
         <div class="category-nav" id="catNav"></div>
         <div class="menu-grid" id="menuDisplay"></div>
     </div>
@@ -118,20 +97,16 @@
     <div id="page-favs" class="page">
         <h2>Sevimlilar ❤️</h2>
         <div id="favList" class="menu-grid"></div>
-        <div id="favEmpty" style="text-align: center; margin-top: 50px; color: #999;">
-            <p style="font-size: 50px;">💔</p>
-            <p>Hech narsa yo'q</p>
-        </div>
     </div>
 
     <div id="page-cart" class="page">
         <h2>Savat 🛒</h2>
-        <div id="cartItems" style="background: white; border-radius: 20px; padding: 15px; margin-bottom: 15px;"></div>
-        <div style="font-size: 20px; font-weight: bold; margin-bottom: 20px;">
-            Jami: <span id="totalPrice" style="color: var(--secondary);">0 so'm</span>
+        <div id="cartItems" style="background: white; padding: 20px; border-radius: 20px; margin-bottom: 20px;"></div>
+        <div style="display: flex; justify-content: space-between; font-weight: 800; font-size: 20px; margin-bottom: 20px;">
+            <span>Jami:</span> <span id="totalPrice">0 so'm</span>
         </div>
-        <button class="btn-main" id="locBtn" onclick="getLocation()" style="background: #eef1f6; color: #333;">📍 MANZILNI ANQLASH</button>
-        <button class="btn-main" onclick="sendOrder()" style="background: var(--blue);">BUYURTMA BERISH</button>
+        <button class="btn-main" onclick="getLocation()" id="locBtn" style="background:#eee; color:#333; margin-bottom:10px;">📍 MANZILNI ANIQLASH</button>
+        <button class="btn-main" onclick="sendOrder()" id="orderBtn" style="background:var(--blue);">BUYURTMA BERISH</button>
     </div>
 
     <div id="page-history" class="page">
@@ -141,31 +116,31 @@
 
     <div id="page-profile" class="page">
         <h2>Profil 👤</h2>
-        <div style="background: white; padding: 20px; border-radius: 20px;">
-            <p><b>Ism:</b> <span id="pName"></span></p>
-            <p><b>Tel:</b> <span id="pPhone"></span></p>
-            <button class="btn-main" onclick="openRegModal()" style="background: #eee; color: #333;">O'ZGARTIRISH</button>
+        <div style="background: white; padding: 20px; border-radius: 20px; text-align: center;">
+            <h3 id="pName">Ism</h3>
+            <p id="pPhone">Raqam</p>
+            <button onclick="localStorage.clear(); location.reload();" style="border:none; color:red; background:none; cursor:pointer;">Chiqish</button>
         </div>
-        <h3 style="margin-top: 25px;">Adminga yozish ✍️</h3>
-        <textarea id="adminMsg" placeholder="Xabaringizni yozing..." style="width:100%; height:100px; border-radius:15px; padding:10px; border:1px solid #ddd;"></textarea>
-        <button class="btn-main" onclick="contactAdmin()" style="background: var(--dark);">XABARNI YUBORISH</button>
     </div>
 
-    <div id="regModal" class="modal-overlay" style="display: flex;">
-        <div class="modal-body">
-            <h3>Ro'yxatdan o'tish</h3>
-            <input type="text" id="regName" placeholder="Ismingiz" style="width:100%; padding:12px; margin:10px 0; border-radius:10px; border:1px solid #ddd;">
-            <input type="tel" id="regPhone" value="+998 " style="width:100%; padding:12px; margin:10px 0; border-radius:10px; border:1px solid #ddd;">
-            <button class="btn-main" onclick="saveReg()">SAQLASH</button>
+    <div id="productModal" class="modal-overlay" onclick="if(event.target==this) closeProduct()">
+        <div class="modal-card">
+            <img id="pm-img" style="width: 100%;">
+            <div style="padding: 20px;">
+                <h2 id="pm-title" style="margin:0;"></h2>
+                <p id="pm-desc" style="color:#666;"></p>
+                <b id="pm-price" style="font-size: 20px; color: var(--secondary);"></b>
+                <div id="pm-counter" style="margin-top: 15px;"></div>
+            </div>
         </div>
     </div>
 
     <div class="bottom-nav">
-        <div class="nav-item active" onclick="showPage('home', this)"><i>🏠</i>Asosiy</div>
-        <div class="nav-item" onclick="showPage('favs', this)"><i>❤️</i>Sevimlilar</div>
-        <div class="nav-item" onclick="showPage('cart', this)"><i>🛒</i>Savat</div>
-        <div class="nav-item" onclick="showPage('history', this)"><i>📜</i>Tarix</div>
-        <div class="nav-item" onclick="showPage('profile', this)"><i>👤</i>Profil</div>
+        <div class="nav-item" onclick="showPage('home', this)"><b>🏠</b>Menu</div>
+        <div class="nav-item" onclick="showPage('favs', this)"><b>❤️</b>Sevimli</div>
+        <div class="nav-item" onclick="showPage('cart', this)"><b>🛒</b>Savat</div>
+        <div class="nav-item" onclick="showPage('history', this)"><b>📜</b>Tarix</div>
+        <div class="nav-item" onclick="showPage('profile', this)"><b>👤</b>Profil</div>
     </div>
 
     <script>
@@ -175,35 +150,48 @@
 
         let products = [], cart = {}, favorites = [], history = [], userLoc = null, currentCat = 'Barchasi';
 
-        // 1. STARTUP
-        window.onload = () => {
-            const savedName = localStorage.getItem('u_name');
-            if(savedName) {
-                document.getElementById('regModal').style.display = 'none';
-                document.getElementById('pName').innerText = savedName;
-                document.getElementById('pPhone').innerText = localStorage.getItem('u_phone');
-            }
-            favorites = JSON.parse(localStorage.getItem('u_favs') || '[]');
-            history = JSON.parse(localStorage.getItem('u_history') || '[]');
-            loadData();
-            renderHistory();
-        };
+        // 1. RO'YXATDAN O'TISH FUNKSIYASI (ISHONCHLI)
+        function saveReg() {
+            const name = document.getElementById('regName').value.trim();
+            const phone = document.getElementById('regPhone').value.trim();
 
-        // 2. DATA LOADING
-        async function loadData() {
-            try {
-                const r = await fetch(`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`);
-                const t = await r.text();
-                const j = JSON.parse(t.substr(47).slice(0, -2));
-                products = j.table.rows.map((r, i) => ({
-                    id: i+1, cat: r.c[1]?.v || 'Boshqa', name: r.c[2]?.v || 'Nomsiz', 
-                    price: r.c[3]?.v || 0, img: r.c[4]?.v || '', desc: r.c[5]?.v || ''
-                }));
-                renderCategories(); renderMenu();
-            } catch (e) { showToast("Internet xatosi! 🌐"); }
+            if (name === "" || phone === "") {
+                alert("Iltimos, ma'lumotlarni to'ldiring!");
+                return;
+            }
+
+            localStorage.setItem('u_name', name);
+            localStorage.setItem('u_phone', phone);
+            
+            // Modalni yopish va asosiy sahifani ochish
+            document.getElementById('regModal').style.display = 'none';
+            showPage('home');
+            updateProfileUI();
+            loadData(); // Ma'lumotlarni yuklash
         }
 
-        function renderCategories() {
+        // AGAR OLDIN RO'YXATDAN O'TGAN BO'LSA
+        if (localStorage.getItem('u_name')) {
+            document.getElementById('regModal').style.display = 'none';
+            showPage('home');
+            updateProfileUI();
+            loadData();
+        }
+
+        async function loadData() {
+            try {
+                const res = await fetch(`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`);
+                const text = await res.text();
+                const json = JSON.parse(text.substr(47).slice(0, -2));
+                products = json.table.rows.map((r, i) => ({
+                    id: i+1, cat: r.c[1]?.v || 'Boshqa', name: r.c[2]?.v || 'Nomsiz', 
+                    price: r.c[3]?.v || 0, img: r.c[4]?.v || '', desc: r.c[5]?.v || 'Tavsif yoq'
+                }));
+                renderCats(); renderMenu();
+            } catch (e) { console.log("Xato yuklashda"); }
+        }
+
+        function renderCats() {
             const cats = ['Barchasi', ...new Set(products.map(p => p.cat))];
             document.getElementById('catNav').innerHTML = cats.map(c => 
                 `<button class="cat-btn ${currentCat===c?'active':''}" onclick="filterCat('${c}')">${c}</button>`).join('');
@@ -211,177 +199,136 @@
 
         function renderMenu() {
             const filtered = currentCat === 'Barchasi' ? products : products.filter(p => p.cat === currentCat);
-            document.getElementById('menuDisplay').innerHTML = filtered.map(p => createCard(p)).join('');
-        }
-
-        function createCard(p) {
-            const isFav = favorites.includes(p.id);
-            return `
+            document.getElementById('menuDisplay').innerHTML = filtered.map(p => `
                 <div class="card">
-                    <span class="fav-heart ${isFav?'active':''}" onclick="toggleFav(${p.id}, this)">❤</span>
-                    <img src="${p.img}">
+                    <span class="fav-heart ${favorites.includes(p.id)?'active':''}" onclick="toggleFav(${p.id}, this)">❤</span>
+                    <img src="${p.img}" onclick="openProduct(${p.id})">
                     <div class="card-info">
-                        <h4>${p.name}</h4><b>${p.price.toLocaleString()} so'm</b>
+                        <h4 onclick="openProduct(${p.id})">${p.name}</h4>
+                        <b>${p.price.toLocaleString()} so'm</b>
                         <div class="counter-box">
                             <button class="c-btn" onclick="updateQty(${p.id},-1)">-</button>
                             <span id="qty-${p.id}">${cart[p.id]||0}</span>
                             <button class="c-btn" onclick="updateQty(${p.id},1)">+</button>
                         </div>
                     </div>
+                </div>`).join('');
+        }
+
+        function openProduct(id) {
+            const p = products.find(x => x.id === id);
+            document.getElementById('pm-img').src = p.img;
+            document.getElementById('pm-title').innerText = p.name;
+            document.getElementById('pm-desc').innerText = p.desc;
+            document.getElementById('pm-price').innerText = p.price.toLocaleString() + " so'm";
+            document.getElementById('pm-counter').innerHTML = `
+                <div style="display:flex; justify-content:center; gap:20px; align-items:center;">
+                    <button class="c-btn" onclick="updateQty(${p.id},-1)">-</button>
+                    <span id="mqty-${p.id}" style="font-size:20px; font-weight:bold;">${cart[id]||0}</span>
+                    <button class="c-btn" onclick="updateQty(${p.id},1)">+</button>
                 </div>`;
+            document.getElementById('productModal').style.display = 'flex';
         }
 
-        // 3. CORE FUNCTIONS
-        function toggleFav(id, el) {
-            if(favorites.includes(id)) {
-                favorites = favorites.filter(f => f !== id);
-                el.classList.remove('active');
-            } else {
-                favorites.push(id);
-                el.classList.add('active');
-            }
-            localStorage.setItem('u_favs', JSON.stringify(favorites));
-            renderFavs();
-        }
+        function closeProduct() { document.getElementById('productModal').style.display = 'none'; }
 
-        function renderFavs() {
-            const list = products.filter(p => favorites.includes(p.id));
-            document.getElementById('favEmpty').style.display = list.length ? 'none' : 'block';
-            document.getElementById('favList').innerHTML = list.map(p => createCard(p)).join('');
-        }
-
-        function updateQty(id, change) {
-            cart[id] = (cart[id] || 0) + change;
-            if(cart[id] <= 0) delete cart[id];
-            
-            // UI Update
-            const els = document.querySelectorAll(`#qty-${id}`);
-            els.forEach(e => e.innerText = cart[id] || 0);
+        function updateQty(id, ch) {
+            cart[id] = (cart[id] || 0) + ch;
+            if (cart[id] <= 0) delete cart[id];
+            document.querySelectorAll(`#qty-${id}, #mqty-${id}`).forEach(el => el.innerText = cart[id] || 0);
             renderCart();
         }
 
         function renderCart() {
             let total = 0, html = "";
-            for(let id in cart) {
+            for (let id in cart) {
                 const p = products.find(x => x.id == id);
                 total += p.price * cart[id];
-                html += `<div style="display:flex; justify-content:space-between; margin-bottom:10px; border-bottom:1px solid #eee; padding-bottom:5px;">
+                html += `<div style="display:flex; justify-content:space-between; margin-bottom:10px;">
                     <span>${p.name} x${cart[id]}</span>
-                    <b>${(p.price*cart[id]).toLocaleString()}</b>
+                    <span>${(p.price*cart[id]).toLocaleString()} so'm</span>
                 </div>`;
             }
-            document.getElementById('cartItems').innerHTML = html || "Savat bo'sh 🛒";
+            document.getElementById('cartItems').innerHTML = html || "Savat bo'sh";
             document.getElementById('totalPrice').innerText = total.toLocaleString() + " so'm";
         }
 
-        function getLocation() {
-            const btn = document.getElementById('locBtn');
-            btn.innerText = "Aniqlanmoqda...";
-            navigator.geolocation.getCurrentPosition(p => {
-                userLoc = `${p.coords.latitude},${p.coords.longitude}`;
-                btn.innerText = "✅ MANZIL ANIQLANDI";
-                btn.style.background = "#d4edda";
-            }, () => {
-                showToast("GPSni yoqing! 📍");
-                btn.innerText = "📍 MANZILNI ANIQLASH";
+        function sendOrder() {
+            if (!Object.keys(cart).length) return showToast("Savat bo'sh!");
+            if (!userLoc) return showToast("Lokatsiya aniqlanmadi!");
+
+            const btn = document.getElementById('orderBtn');
+            btn.innerText = "Yuborilmoqda...";
+            btn.disabled = true;
+
+            const orderId = Math.floor(1000 + Math.random() * 9000);
+            let items = "";
+            for (let id in cart) items += `• ${products.find(x=>x.id==id).name} (x${cart[id]})\n`;
+
+            const text = `🆕 BUYURTMA #${orderId}\n👤 ${localStorage.getItem('u_name')}\n📞 ${localStorage.getItem('u_phone')}\n\n${items}\n📍 Lokatsiya: https://www.google.com/maps?q=${userLoc}`;
+
+            const kb = { inline_keyboard: [
+                [{text: "✅ Qabul qilish", callback_data: `ok_${orderId}`}],
+                [{text: "🚚 Yetkazish", callback_data: `go_${orderId}`}]
+            ]};
+
+            fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                method: 'POST', headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ chat_id: CHAT_ID, text: text, reply_markup: kb })
+            }).then(() => {
+                showToast("Buyurtma yuborildi! ✅");
+                history.unshift({id: orderId, items: items, status: 'Kutilmoqda'});
+                localStorage.setItem('u_history', JSON.stringify(history));
+                cart = {}; renderCart(); renderMenu(); renderHistory();
+                showPage('history');
+                btn.innerText = "BUYURTMA BERISH"; btn.disabled = false;
             });
         }
 
-        // 4. ORDER & BOT (WEBHOOK SIMULATION VIA INLINE BUTTONS)
-        async function sendOrder() {
-            if(!Object.keys(cart).length) return showToast("Savat bo'sh! 🛒");
-            if(!userLoc) return showToast("Manzilni aniqlang! 📍");
+        function showPage(pId, el) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById('page-' + pId).classList.add('active');
+            if(el) {
+                document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+                el.classList.add('active');
+            }
+        }
 
-            const orderId = Date.now().toString().slice(-6);
-            let itemsText = "";
-            for(let id in cart) itemsText += `- ${products.find(x=>x.id==id).name} (${cart[id]} dona)\n`;
+        function showToast(m) {
+            const t = document.getElementById('toast');
+            t.innerText = m; t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 3000);
+        }
 
-            const msg = `🆕 BUYURTMA #${orderId}\n👤 ${localStorage.getItem('u_name')}\n📞 ${localStorage.getItem('u_phone')}\n\n${itemsText}\n💰 Jami: ${document.getElementById('totalPrice').innerText}\n📍 Lokatsiya: https://www.google.com/maps?q=${userLoc}`;
+        function updateProfileUI() {
+            document.getElementById('pName').innerText = localStorage.getItem('u_name');
+            document.getElementById('pPhone').innerText = localStorage.getItem('u_phone');
+        }
 
-            // Admin Bot Keyboard (Bu qism Telegram Bot API orqali tugmalar chiqaradi)
-            const keyboard = {
-                inline_keyboard: [
-                    [{text: "✅ Qabul qilish", callback_data: `st_accepted_${orderId}`}],
-                    [{text: "👨‍🍳 Tayyorlanmoqda", callback_data: `st_cooking_${orderId}`}],
-                    [{text: "🚚 Yetkazilmoqda", callback_data: `st_shipping_${orderId}`}]
-                ]
-            };
+        function filterCat(c) { currentCat = c; renderCats(); renderMenu(); }
 
-            try {
-                await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({ chat_id: CHAT_ID, text: msg, reply_markup: keyboard })
-                });
+        function getLocation() {
+            navigator.geolocation.getCurrentPosition(p => {
+                userLoc = `${p.coords.latitude},${p.coords.longitude}`;
+                document.getElementById('locBtn').innerText = "✅ MANZIL ANIQLANDI";
+                document.getElementById('locBtn').style.background = "#d4edda";
+            });
+        }
 
-                // Save to history
-                history.unshift({ id: orderId, time: new Date().toLocaleTimeString(), items: itemsText, status: 'pending' });
-                localStorage.setItem('u_history', JSON.stringify(history));
-                
-                showToast("Buyurtma yuborildi! 🚀");
-                cart = {}; renderCart(); renderMenu(); renderHistory();
-                showPage('history');
-            } catch (e) { showToast("Xatolik! ❌"); }
+        function toggleFav(id, el) {
+            if(favorites.includes(id)) {
+                favorites = favorites.filter(f => f !== id); el.classList.remove('active');
+            } else {
+                favorites.push(id); el.classList.add('active');
+            }
+            localStorage.setItem('u_favs', JSON.stringify(favorites));
         }
 
         function renderHistory() {
             document.getElementById('orderHistory').innerHTML = history.map(h => `
-                <div class="history-card">
-                    <span class="status-badge status-${h.status}">${h.status === 'pending' ? 'Kutilmoqda' : h.status}</span>
-                    <small>${h.time}</small>
-                    <div style="font-weight:bold; margin-top:5px;">ID: #${h.id}</div>
-                    <div style="font-size:13px; color:#666; white-space:pre-line;">${h.items}</div>
-                </div>
-            `).join('');
-        }
-
-        async function contactAdmin() {
-            const msg = document.getElementById('adminMsg').value;
-            if(!msg) return showToast("Xabarni yozing!");
-            const text = `💬 ADMINGA XABAR\nKimdan: ${localStorage.getItem('u_name')}\n\n${msg}`;
-            await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ chat_id: CHAT_ID, text: text })
-            });
-            showToast("Xabar yuborildi! ✅");
-            document.getElementById('adminMsg').value = "";
-        }
-
-        // 5. UTILS
-        function showPage(pageId, navEl) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.getElementById('page-' + pageId).classList.add('active');
-            if(navEl) {
-                document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-                navEl.classList.add('active');
-            }
-            if(pageId === 'favs') renderFavs();
-        }
-
-        function filterCat(c) {
-            currentCat = c;
-            renderCategories(); renderMenu();
-        }
-
-        function saveReg() {
-            const n = document.getElementById('regName').value;
-            const p = document.getElementById('regPhone').value;
-            if(n.length < 3 || p.length < 10) return showToast("Ma'lumotlar xato!");
-            localStorage.setItem('u_name', n);
-            localStorage.setItem('u_phone', p);
-            document.getElementById('regModal').style.display = 'none';
-            document.getElementById('pName').innerText = n;
-            document.getElementById('pPhone').innerText = p;
-            showToast("Xush kelibsiz! ✨");
-        }
-
-        function openRegModal() { document.getElementById('regModal').style.display = 'flex'; }
-
-        function showToast(msg) {
-            const t = document.getElementById('toast');
-            t.innerText = msg; t.classList.add('show');
-            setTimeout(() => t.classList.remove('show'), 3000);
+                <div style="background:white; padding:15px; border-radius:15px; margin-bottom:10px; border-left:5px solid var(--blue);">
+                    <b>#${h.id}</b><br><small>${h.items}</small><br><b>Holat: ${h.status}</b>
+                </div>`).join('');
         }
     </script>
 </body>
