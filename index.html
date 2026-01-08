@@ -3,393 +3,267 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Cafe 777 Premium</title>
+    <title>Cafe 777 - Mukammal Tizim</title>
     <style>
-        :root {
-            --primary: #ffbe0b; --secondary: #fb5607; --dark: #1a1a1a;
-            --blue: #0088cc; --red: #ff4757; --gray: #f4f7f6; --green: #2ecc71;
-        }
-
-        * { box-sizing: border-box; font-style: normal !important; font-family: 'Segoe UI', sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background-color: var(--gray); margin: 0; padding-bottom: 90px; overflow-x: hidden; }
+        :root { --p: #ffbe0b; --s: #fb5607; --d: #1a1a1a; --b: #0088cc; --r: #ff4757; --g: #f4f7f6; }
+        * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background: var(--g); margin: 0; padding-bottom: 90px; overflow-x: hidden; }
 
         /* ANIMATSIYALAR */
-        @keyframes popIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
-
-        /* TOAST XABAR */
-        #toast {
-            position: fixed; top: -100px; left: 50%; transform: translateX(-50%);
-            background: var(--dark); color: white; padding: 12px 25px;
-            border-radius: 50px; z-index: 10000; transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
-            font-weight: 600; text-align: center; width: 80%;
-        }
-        #toast.show { top: 30px; }
-
-        /* NAVIGATION (TOOLBAR) */
-        .bottom-nav {
-            position: fixed; bottom: 0; width: 100%; background: white;
-            display: flex; justify-content: space-around; padding: 10px 0;
-            box-shadow: 0 -5px 15px rgba(0,0,0,0.05); z-index: 2000;
-            border-radius: 20px 20px 0 0;
-        }
-        .nav-item { text-align: center; color: #bbb; cursor: pointer; flex: 1; transition: 0.3s; font-weight: bold; font-size: 11px; }
-        .nav-item.active { color: var(--secondary); transform: translateY(-3px); }
-        .nav-item b { font-size: 22px; display: block; margin-bottom: 2px; }
-
-        /* SAHIFALAR */
-        .page { display: none; padding: 20px; animation: slideUp 0.4s ease-out; }
+        @keyframes slide { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .page { display: none; padding: 20px; animation: slide 0.4s ease; }
         .page.active { display: block; }
 
-        /* KATEGORIYALAR */
-        .cat-nav { display: flex; gap: 10px; overflow-x: auto; padding: 10px 0; }
-        .cat-nav::-webkit-scrollbar { display: none; }
-        .cat-btn { padding: 8px 18px; border-radius: 15px; border: none; background: white; font-weight: bold; white-space: nowrap; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        .cat-btn.active { background: var(--primary); color: white; }
+        /* TOAST XABARLAR */
+        #toast { position: fixed; top: -100px; left: 50%; transform: translateX(-50%); background: var(--d); color: white; padding: 14px 25px; border-radius: 50px; z-index: 10000; transition: 0.5s; font-weight: 600; text-align: center; width: 85%; box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
+        #toast.show { top: 25px; }
 
-        /* KARTALAR */
+        /* KARTALAR VA SEVIMLILAR */
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .card { background: white; border-radius: 20px; overflow: hidden; position: relative; box-shadow: 0 5px 15px rgba(0,0,0,0.03); transition: 0.3s; animation: popIn 0.3s; }
-        .card img { width: 100%; aspect-ratio: 1/1; object-fit: cover; }
-        .heart { position: absolute; top: 10px; right: 10px; font-size: 24px; color: rgba(255,255,255,0.8); z-index: 10; cursor: pointer; transition: 0.3s; }
-        .heart.active { color: var(--red); transform: scale(1.2); }
+        .card { background: white; border-radius: 20px; overflow: hidden; position: relative; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        .heart { position: absolute; top: 10px; right: 10px; font-size: 26px; color: rgba(255,255,255,0.9); transition: 0.3s; cursor: pointer; text-shadow: 0 0 5px rgba(0,0,0,0.3); z-index: 5; }
+        .heart.active { color: var(--r); transform: scale(1.2); }
 
-        /* INPUTLAR VA TUGMALAR */
-        input, textarea { width: 100%; padding: 15px; margin-bottom: 12px; border-radius: 15px; border: 2px solid #eee; font-size: 16px; outline: none; }
-        input:focus { border-color: var(--primary); }
-        .btn { background: var(--dark); color: white; border: none; width: 100%; padding: 15px; border-radius: 15px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        /* FORM ELEMENTLARI */
+        input { width: 100%; padding: 16px; margin-bottom: 15px; border-radius: 15px; border: 2px solid #eee; font-size: 16px; outline: none; transition: 0.3s; }
+        input:focus { border-color: var(--p); background: #fff; }
+        .btn { background: var(--d); color: white; border: none; width: 100%; padding: 16px; border-radius: 15px; font-weight: 800; cursor: pointer; transition: 0.2s; }
         .btn:active { transform: scale(0.96); }
-        .btn:disabled { background: #ccc; cursor: not-allowed; }
 
-        /* MODAL */
-        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 5000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
-        .modal { background: white; width: 90%; border-radius: 25px; overflow: hidden; animation: popIn 0.3s; }
+        /* TOOLBAR */
+        .nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; padding: 12px 0; border-radius: 25px 25px 0 0; box-shadow: 0 -5px 20px rgba(0,0,0,0.08); z-index: 1000; }
+        .nav-item { flex: 1; text-align: center; color: #bbb; font-size: 10px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .nav-item.active { color: var(--s); transform: translateY(-3px); }
+        .nav-item b { font-size: 24px; display: block; margin-bottom: 2px; }
     </style>
 </head>
 <body>
 
-    <div id="toast">Xabar!</div>
+<div id="toast">Xabar!</div>
 
-    <div id="regModal" class="overlay" style="display: flex;">
-        <div class="modal" style="padding: 30px; text-align: center;">
-            <h2 style="margin-top:0;">Xush kelibsiz! 👋</h2>
-            <p style="font-size: 14px; color: #777; margin-bottom: 20px;">Iltimos, ma'lumotlaringizni kiriting</p>
-            <input type="text" id="rName" placeholder="Ismingiz (masalan: Aziz)">
-            <input type="tel" id="rPhone" value="+998 " maxlength="17" placeholder="+998 90 123 45 67">
-            <button class="btn" onclick="register()">TIZIMGA KIRISH</button>
-        </div>
-    </div>
+<div id="p-reg" class="page active" style="text-align: center; padding-top: 60px;">
+    <h1 style="margin-bottom: 10px;">Xush kelibsiz! 👋</h1>
+    <p style="color: #666; margin-bottom: 30px;">Davom etish uchun ro'yxatdan o'ting</p>
+    <input type="text" id="regName" placeholder="Ismingiz">
+    <input type="tel" id="regPhone" value="+998 " maxlength="17">
+    <button class="btn" onclick="handleRegister()">TIZIMGA KIRISH</button>
+</div>
 
-    <div id="p-home" class="page active">
-        <div style="display:flex; justify-content:space-between; align-items:center;">
+<div id="mainApp" style="display: none;">
+    <div id="p-home" class="page">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
             <h2 style="margin:0;">Menu 🍔</h2>
-            <div id="myId" style="background:#eee; padding:5px 12px; border-radius:10px; font-weight:bold; font-size:11px; color:#555;"></div>
+            <span id="displayId" style="background:#eee; padding:6px 12px; border-radius:10px; font-weight:bold; font-size:12px;"></span>
         </div>
-        <div class="cat-nav" id="catList"></div>
-        <div class="grid" id="menuList"></div>
+        <div id="menuGrid" class="grid"></div>
     </div>
 
     <div id="p-favs" class="page">
         <h2>Sevimlilar ❤️</h2>
-        <div class="grid" id="favDisplay"></div>
+        <div id="favGrid" class="grid"></div>
     </div>
 
     <div id="p-cart" class="page">
         <h2>Savat 🛒</h2>
-        <div id="cartBox" style="background:white; padding:20px; border-radius:20px; margin-bottom:15px; min-height: 100px; display: flex; flex-direction: column; justify-content: center;"></div>
-        <div style="display:flex; justify-content:space-between; font-weight:800; font-size:20px; margin-bottom:20px; padding: 0 10px;">
-            <span>Jami:</span> <span id="totalPrice" style="color:var(--secondary);">0 so'm</span>
+        <div id="cartContent" style="background:white; padding:20px; border-radius:20px; margin-bottom:15px;"></div>
+        <div style="display:flex; justify-content:space-between; font-size:22px; font-weight:900; margin-bottom:20px; padding:0 10px;">
+            <span>Jami:</span> <span id="cartTotal" style="color:var(--s);">0 so'm</span>
         </div>
-        <button class="btn" onclick="getLocation()" id="locBtn" style="background:#eef1f6; color:#333; margin-bottom:12px; display: flex; align-items: center; justify-content: center; gap: 10px;">
-            <span>📍</span> <span id="locTxt">MANZILNI ANIQLASH</span>
-        </button>
-        <button class="btn" onclick="order()" id="oBtn" style="background:var(--blue);">BUYURTMA BERISH</button>
+        <button class="btn" id="btnLoc" onclick="getGeo()" style="background:#eef1f6; color:#333; margin-bottom:12px;">📍 MANZILNI ANIQLASH</button>
+        <button class="btn" onclick="sendOrder()" style="background:var(--b);">BUYURTMA BERISH</button>
     </div>
 
     <div id="p-history" class="page">
         <h2>Tarix 📜</h2>
-        <div id="historyList"></div>
+        <div id="historyContent"></div>
     </div>
 
-    <div id="p-chat" class="page">
-        <h2>Chat 💬</h2>
-        <div id="chatDisplay" style="height:250px; background:white; border-radius:20px; padding:15px; overflow-y:auto; margin-bottom:15px; border: 1px solid #eee;"></div>
-        <textarea id="chatInput" placeholder="Xabarni yozing..."></textarea>
-        <button class="btn" onclick="sendChat()">YUBORISH</button>
-    </div>
+    <nav class="nav">
+        <div class="nav-item active" onclick="showPage('home', this)"><b>🏠</b>MENU</div>
+        <div class="nav-item" onclick="showPage('favs', this)"><b>❤️</b>SEVIMLI</div>
+        <div class="nav-item" onclick="showPage('cart', this)"><b>🛒</b>SAVAT</div>
+        <div class="nav-item" onclick="showPage('history', this)"><b>📜</b>TARIX</div>
+    </nav>
+</div>
 
-    <div id="prodModal" class="overlay" onclick="if(event.target==this) this.style.display='none'">
-        <div class="modal">
-            <img id="mImg" style="width:100%; aspect-ratio:1/1; object-fit:cover;">
-            <div style="padding:20px;">
-                <h2 id="mTitle" style="margin:0;"></h2>
-                <p id="mDesc" style="color:#666; margin:10px 0; font-size:14px;"></p>
-                <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <b id="mPrice" style="color:var(--secondary); font-size:20px;"></b>
-                    <button class="btn" onclick="addToCartModal()" style="width:auto; padding:10px 20px;">Savatga qo'shish</button>
-                </div>
+<script>
+const BOT_TOKEN = "8032226679:AAETTGPvYZYSvF_QmdofXKibpOwt4E9Iitc";
+const ADMIN_ID = "519326806";
+const SHEET_URL = "1j6VojbeSYWgYj3UY98xCxHLCzHcGlEg0nXjYwHDkKQk";
+
+let products = [], cart = {}, favs = [], history = [], userLocation = null;
+
+// TELEFON FORMATLASH: +998 93 978 29 26
+document.getElementById('regPhone').addEventListener('input', function (e) {
+    let v = e.target.value.replace(/\D/g, '').substring(3);
+    let res = "+998 ";
+    if(v.length > 0) res += v.substring(0, 2);
+    if(v.length > 2) res += " " + v.substring(2, 5);
+    if(v.length > 5) res += " " + v.substring(5, 7);
+    if(v.length > 7) res += " " + v.substring(7, 9);
+    e.target.value = res;
+});
+
+function handleRegister() {
+    let name = document.getElementById('regName').value.trim();
+    let phone = document.getElementById('regPhone').value.trim();
+
+    if(name.length < 3) return showMsg("Ismingizni kiriting! 👤");
+    if(phone.length < 17) return showMsg("Telefon raqamni to'liq kiriting! 📞");
+
+    let cleanPhone = phone.replace(/\s/g, '');
+    let id = (name.substring(0,4).toUpperCase()) + (cleanPhone.slice(-4));
+    
+    localStorage.setItem('u_id', id);
+    localStorage.setItem('u_name', name);
+    localStorage.setItem('u_phone', cleanPhone);
+    location.reload();
+}
+
+window.onload = () => {
+    if(localStorage.getItem('u_id')) {
+        document.getElementById('p-reg').style.display = 'none';
+        document.getElementById('mainApp').style.display = 'block';
+        document.getElementById('displayId').innerText = "ID: " + localStorage.getItem('u_id');
+        favs = JSON.parse(localStorage.getItem('u_favs') || '[]');
+        history = JSON.parse(localStorage.getItem('u_history') || '[]');
+        fetchProducts();
+        showPage('home', document.querySelector('.nav-item'));
+    }
+};
+
+async function fetchProducts() {
+    const res = await fetch(`https://docs.google.com/spreadsheets/d/${SHEET_URL}/gviz/tq?tqx=out:json`);
+    const text = await res.text();
+    const json = JSON.parse(text.substr(47).slice(0, -2));
+    products = json.table.rows.map((r, i) => ({
+        id: i, cat: r.c[1]?.v, name: r.c[2]?.v, price: r.c[3]?.v, img: r.c[4]?.v
+    }));
+    renderMenu();
+}
+
+function renderMenu() {
+    document.getElementById('menuGrid').innerHTML = products.map(p => `
+        <div class="card" onclick="addToCart(${p.id})">
+            <span class="heart ${favs.includes(p.id)?'active':''}" onclick="event.stopPropagation(); toggleFav(${p.id}, this)">❤</span>
+            <img src="${p.img}" style="width:100%; aspect-ratio:1/1; object-fit:cover;">
+            <div style="padding:12px; text-align:center;">
+                <h4 style="margin:0; font-size:14px; height:34px; overflow:hidden;">${p.name}</h4>
+                <b style="color:var(--s); display:block; margin-top:5px;">${p.price.toLocaleString()} so'm</b>
             </div>
-        </div>
-    </div>
+        </div>`).join('');
+}
 
-    <div class="bottom-nav">
-        <div class="nav-item active" onclick="nav('home', this)"><b>🏠</b>MENU</div>
-        <div class="nav-item" onclick="nav('favs', this)"><b>❤️</b>SEVIMLI</div>
-        <div class="nav-item" onclick="nav('cart', this)"><b>🛒</b>SAVAT</div>
-        <div class="nav-item" onclick="nav('history', this)"><b>📜</b>TARIX</div>
-        <div class="nav-item" onclick="nav('chat', this)"><b>💬</b>CHAT</div>
-    </div>
+function toggleFav(id, el) {
+    if(favs.includes(id)) {
+        favs = favs.filter(f => f !== id);
+        el.classList.remove('active');
+    } else {
+        favs.push(id);
+        el.classList.add('active');
+        showMsg("Sevimlilarga qo'shildi! ❤️");
+    }
+    localStorage.setItem('u_favs', JSON.stringify(favs));
+}
 
-    <script>
-        const TOKEN = "8032226679:AAETTGPvYZYSvF_QmdofXKibpOwt4E9Iitc";
-        const ADMIN = "519326806";
-        const SHEET = "1j6VojbeSYWgYj3UY98xCxHLCzHcGlEg0nXjYwHDkKQk";
+function addToCart(id) {
+    cart[id] = (cart[id] || 0) + 1;
+    showMsg("Savatga qo'shildi! 🛒");
+    renderCart();
+}
 
-        let products = [], cart = {}, favs = [], history = [], currentProduct = null, userLoc = null;
+function renderCart() {
+    let total = 0, html = "";
+    for(let id in cart) {
+        let p = products[id];
+        total += p.price * cart[id];
+        html += `<div style="display:flex; justify-content:space-between; margin-bottom:12px; border-bottom:1px solid #eee; padding-bottom:8px;">
+            <span>${p.name} (x${cart[id]})</span>
+            <b>${(p.price * cart[id]).toLocaleString()}</b>
+        </div>`;
+    }
+    document.getElementById('cartContent').innerHTML = html || "Savat bo'sh 🛒";
+    document.getElementById('cartTotal').innerText = total.toLocaleString() + " so'm";
+}
 
-        // 1. TELEFON FORMATI ( +998 90 123 45 67 )
-        document.getElementById('rPhone').addEventListener('input', function(e) {
-            let x = e.target.value.replace(/\D/g, '').match(/(\d{0,3})(\d{0,2})(\d{0,3})(\d{0,2})(\d{0,2})/);
-            e.target.value = !x[2] ? "+998 " : "+998 " + x[2] + (x[3] ? " " + x[3] : "") + (x[4] ? " " + x[4] : "") + (x[5] ? " " + x[5] : "");
-        });
+function getGeo() {
+    document.getElementById('btnLoc').innerText = "Aniqlanmoqda...";
+    navigator.geolocation.getCurrentPosition(p => {
+        userLocation = `${p.coords.latitude},${p.coords.longitude}`;
+        document.getElementById('btnLoc').innerText = "✅ MANZIL ANIQLANDI";
+        document.getElementById('btnLoc').style.background = "#d4edda";
+    }, () => {
+        showMsg("GPS ruxsatini yoqing! 📍");
+        document.getElementById('btnLoc').innerText = "📍 MANZILNI ANIQLASH";
+    });
+}
 
-        // 2. RO'YXATDAN O'TISH + VALIDATSIYA
-        function register() {
-            let n = document.getElementById('rName').value.trim();
-            let p = document.getElementById('rPhone').value.trim();
-            
-            if(n.length < 3) return showToast("Ismingizni to'liq kiriting! 👤");
-            if(p.length < 17) return showToast("Telefon raqamingiz xato! 📞");
+function sendOrder() {
+    if(!Object.keys(cart).length) return showMsg("Savat bo'sh! 🛒");
+    if(!userLocation) return showMsg("Avval manzilni aniqlang! 📍");
 
-            let cleanPhone = p.replace(/\s/g, '');
-            let id = (n.substring(0,4).toUpperCase()) + (cleanPhone.slice(-4));
-            
-            localStorage.setItem('u_id', id);
-            localStorage.setItem('u_name', n);
-            localStorage.setItem('u_phone', cleanPhone);
-            location.reload();
-        }
+    let orderId = Math.floor(1000 + Math.random() * 9000);
+    let items = "";
+    for(let id in cart) items += `• ${products[id].name} (x${cart[id]})\n`;
 
-        window.onload = () => {
-            if(localStorage.getItem('u_id')) {
-                document.getElementById('regModal').style.display = 'none';
-                document.getElementById('myId').innerText = "ID: " + localStorage.getItem('u_id');
-                favs = JSON.parse(localStorage.getItem('u_favs') || '[]');
-                history = JSON.parse(localStorage.getItem('u_history') || '[]');
-                loadData();
-                renderCart();
+    let text = `🆕 BUYURTMA #${orderId}\n🆔 ID: ${localStorage.getItem('u_id')}\n👤 ${localStorage.getItem('u_name')}\n📞 ${localStorage.getItem('u_phone')}\n\n${items}\n💰 Jami: ${document.getElementById('cartTotal').innerText}\n📍 Manzil: https://www.google.com/maps?q=${userLocation}`;
+
+    fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+            chat_id: ADMIN_ID,
+            text: text,
+            reply_markup: {
+                inline_keyboard: [
+                    [{text: "✅ Qabul qilish", callback_data: `ok_${orderId}`}],
+                    [{text: "🚚 Yetkazish", callback_data: `go_${orderId}`}]
+                ]
             }
-        };
+        })
+    }).then(() => {
+        showMsg("Buyurtma yuborildi! 🚀");
+        history.unshift({id: orderId, items: items, status: "Kutilmoqda"});
+        localStorage.setItem('u_history', JSON.stringify(history));
+        cart = {}; renderCart(); renderHistory();
+        showPage('history', document.querySelectorAll('.nav-item')[3]);
+    });
+}
 
-        async function loadData() {
-            try {
-                const r = await fetch(`https://docs.google.com/spreadsheets/d/${SHEET}/gviz/tq?tqx=out:json`);
-                const t = await r.text();
-                const j = JSON.parse(t.substr(47).slice(0, -2));
-                products = j.table.rows.map((r, i) => ({
-                    id: i, cat: r.c[1]?.v || 'Boshqa', name: r.c[2]?.v || 'Nomsiz', 
-                    price: r.c[3]?.v || 0, img: r.c[4]?.v || '', desc: r.c[5]?.v || 'Tavsif mavjud emas.'
-                }));
-                renderCats(); renderMenu();
-            } catch (e) { showToast("Tarmoq xatosi! 🌐"); }
-        }
+function showPage(id, el) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById('p-' + id).classList.add('active');
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    el.classList.add('active');
+    if(id === 'favs') {
+        let list = products.filter(p => favs.includes(p.id));
+        document.getElementById('favGrid').innerHTML = list.length ? list.map(p => `
+            <div class="card">
+                <span class="heart active" onclick="toggleFav(${p.id}, this); showPage('favs', document.querySelectorAll('.nav-item')[1])">❤</span>
+                <img src="${p.img}" style="width:100%;">
+                <div style="padding:10px; text-align:center;">
+                    <h4>${p.name}</h4>
+                    <button class="btn" onclick="addToCart(${p.id})" style="padding:8px;">SAVATGA</button>
+                </div>
+            </div>`).join('') : "<p style='grid-column:1/3; text-align:center; padding:50px;'>Sevimlilar bo'sh</p>";
+    }
+}
 
-        function renderCats() {
-            let cats = ['Barchasi', ...new Set(products.map(p => p.cat))];
-            document.getElementById('catList').innerHTML = cats.map(c => `<button class="cat-btn" onclick="filterCat('${c}', this)">${c}</button>`).join('');
-            document.querySelector('.cat-btn').classList.add('active');
-        }
+function renderHistory() {
+    document.getElementById('historyContent').innerHTML = history.length ? history.map(h => `
+        <div style="background:white; padding:15px; border-radius:15px; margin-bottom:10px; border-left:5px solid var(--b);">
+            <div style="display:flex; justify-content:space-between;">
+                <b>#${h.id}</b> <span style="color:var(--b); font-weight:bold;">${h.status}</span>
+            </div>
+            <p style="font-size:13px; color:#555; margin:10px 0;">${h.items.replace(/\n/g, '<br>')}</p>
+        </div>`).join('') : "<p style='text-align:center; padding:50px;'>Buyurtmalar tarixi bo'sh</p>";
+}
 
-        function renderMenu(data = products) {
-            document.getElementById('menuList').innerHTML = data.map(p => `
-                <div class="card" onclick="openProduct(${p.id})">
-                    <span class="heart ${favs.includes(p.id)?'active':''}" onclick="event.stopPropagation(); toggleFav(${p.id}, this)">❤</span>
-                    <img src="${p.img}">
-                    <div style="padding:12px; text-align:center;">
-                        <h4 style="margin:0; font-size:14px; height:35px; overflow:hidden;">${p.name}</h4>
-                        <b style="color:var(--secondary); display:block; margin:5px 0;">${p.price.toLocaleString()} so'm</b>
-                    </div>
-                </div>`).join('');
-        }
-
-        function toggleFav(id, el) {
-            if(favs.includes(id)) {
-                favs = favs.filter(f => f !== id);
-                el.classList.remove('active');
-                showToast("Sevimli ro'yxatidan o'chirildi");
-            } else {
-                favs.push(id);
-                el.classList.add('active');
-                showToast("Sevimli ro'yxatiga qo'shildi ❤️");
-            }
-            localStorage.setItem('u_favs', JSON.stringify(favs));
-            if(document.getElementById('p-favs').classList.contains('active')) renderFavs();
-        }
-
-        function renderFavs() {
-            let data = products.filter(p => favs.includes(p.id));
-            document.getElementById('favDisplay').innerHTML = data.length ? data.map(p => `
-                <div class="card" onclick="openProduct(${p.id})">
-                    <span class="heart active" onclick="event.stopPropagation(); toggleFav(${p.id}, this)">❤</span>
-                    <img src="${p.img}">
-                    <div style="padding:10px; text-align:center;">
-                        <h4>${p.name}</h4>
-                        <b>${p.price.toLocaleString()} so'm</b>
-                    </div>
-                </div>`).join('') : "<div style='grid-column: 1/3; text-align:center; padding-top:50px; color:#999;'>Sevimlilar ro'yxati bo'sh</div>";
-        }
-
-        function openProduct(id) {
-            currentProduct = products[id];
-            document.getElementById('mImg').src = currentProduct.img;
-            document.getElementById('mTitle').innerText = currentProduct.name;
-            document.getElementById('mDesc').innerText = currentProduct.desc;
-            document.getElementById('mPrice').innerText = currentProduct.price.toLocaleString() + " so'm";
-            document.getElementById('prodModal').style.display = 'flex';
-        }
-
-        function addToCartModal() {
-            cart[currentProduct.id] = (cart[currentProduct.id] || 0) + 1;
-            document.getElementById('prodModal').style.display = 'none';
-            showToast("Savatga qo'shildi! 🛒");
-            renderCart();
-        }
-
-        function renderCart() {
-            let total = 0, html = "";
-            let keys = Object.keys(cart);
-            if(keys.length === 0) {
-                document.getElementById('cartBox').innerHTML = "<div style='text-align:center; color:#999;'>Savat bo'sh 🛒</div>";
-            } else {
-                for(let id in cart) {
-                    let p = products[id];
-                    total += p.price * cart[id];
-                    html += `<div style="display:flex; justify-content:space-between; margin-bottom:10px; border-bottom:1px solid #eee; padding-bottom:10px; align-items:center;">
-                        <div style="font-weight:600;">${p.name} <br> <span style="font-weight:400; font-size:12px; color:#777;">${p.price.toLocaleString()} x ${cart[id]}</span></div>
-                        <div style="display:flex; align-items:center; gap:10px;">
-                            <button onclick="updateQty(${id}, -1)" style="border:none; border-radius:5px; padding:5px 10px;">-</button>
-                            <b>${(p.price * cart[id]).toLocaleString()}</b>
-                            <button onclick="updateQty(${id}, 1)" style="border:none; border-radius:5px; padding:5px 10px;">+</button>
-                        </div>
-                    </div>`;
-                }
-                document.getElementById('cartBox').innerHTML = html;
-            }
-            document.getElementById('totalPrice').innerText = total.toLocaleString() + " so'm";
-        }
-
-        function updateQty(id, ch) {
-            cart[id] = (cart[id] || 0) + ch;
-            if(cart[id] <= 0) delete cart[id];
-            renderCart();
-        }
-
-        // 3. MANZILNI ANIQLASH FUNKSIYASI
-        function getLocation() {
-            const txt = document.getElementById('locTxt');
-            const btn = document.getElementById('locBtn');
-            txt.innerText = "ANIQLANMOQDA...";
-            
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition((p) => {
-                    userLoc = `${p.coords.latitude},${p.coords.longitude}`;
-                    txt.innerText = "MANZIL ANIQLANDI ✅";
-                    btn.style.background = "#d4edda";
-                    showToast("Manzil muvaffaqiyatli aniqlandi! 📍");
-                }, () => {
-                    showToast("GPS-ga ruxsat berilmagan! ❌");
-                    txt.innerText = "MANZILNI ANIQLASH";
-                });
-            } else {
-                showToast("Brauzeringiz GPS-ni qo'llab-quvvatlamaydi!");
-            }
-        }
-
-        // 4. BUYURTMA BERISH VA OGOHLANTIRISHLAR
-        function order() {
-            if(Object.keys(cart).length === 0) return showToast("Savat bo'sh, mahsulot tanlang! 🛒");
-            if(!userLoc) return showToast("Iltimos, avval manzilni aniqlang! 📍");
-
-            let btn = document.getElementById('oBtn');
-            btn.innerText = "YUBORILMOQDA..."; btn.disabled = true;
-
-            let orderId = Math.floor(1000 + Math.random() * 9000);
-            let items = "";
-            for(let id in cart) items += `• ${products[id].name} (x${cart[id]})\n`;
-
-            let text = `🆕 BUYURTMA #${orderId}\n🆔 ID: ${localStorage.getItem('u_id')}\n👤 ${localStorage.getItem('u_name')}\n📞 ${localStorage.getItem('u_phone')}\n\n${items}\n💰 Jami: ${document.getElementById('totalPrice').innerText}\n📍 Manzil: https://www.google.com/maps?q=${userLoc}`;
-
-            let kb = { inline_keyboard: [
-                [{text: "✅ Qabul qilish", callback_data: `ok_${orderId}`}],
-                [{text: "🚚 Yetkazish", callback_data: `go_${orderId}`}]
-            ]};
-
-            fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage`, {
-                method: 'POST', headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ chat_id: ADMIN, text: text, reply_markup: kb })
-            }).then(() => {
-                showToast("Buyurtma yuborildi! 🚀");
-                history.unshift({id: orderId, items: items, status: 'Kutilmoqda'});
-                localStorage.setItem('u_history', JSON.stringify(history));
-                
-                // Simulyatsiya: Bir ozdan keyin status o'zgarishi (Demo uchun)
-                setTimeout(() => {
-                    history[0].status = "Qabul qilindi ✅";
-                    localStorage.setItem('u_history', JSON.stringify(history));
-                    renderHistory();
-                }, 5000);
-
-                cart = {}; renderCart(); renderHistory();
-                nav('history', document.querySelectorAll('.nav-item')[3]);
-                btn.innerText = "BUYURTMA BERISH"; btn.disabled = false;
-            });
-        }
-
-        function sendChat() {
-            let inp = document.getElementById('chatInput');
-            if(!inp.value.trim()) return showToast("Xabarni yozing! ✍️");
-            let text = `💬 CHAT (ID: ${localStorage.getItem('u_id')})\n👤 ${localStorage.getItem('u_name')}\n\n${inp.value}`;
-            fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage`, {
-                method: 'POST', headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ chat_id: ADMIN, text: text })
-            });
-            document.getElementById('chatDisplay').innerHTML += `<div style="background:var(--blue); color:white; padding:10px 15px; border-radius:15px; margin-bottom:10px; margin-left:30px; align-self: flex-end;">${inp.value}</div>`;
-            inp.value = "";
-            showToast("Xabar adminga yuborildi!");
-        }
-
-        function nav(id, el) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            document.getElementById('p-' + id).classList.add('active');
-            el.classList.add('active');
-            if(id === 'favs') renderFavs();
-            if(id === 'history') renderHistory();
-        }
-
-        function showToast(m) {
-            let t = document.getElementById('toast');
-            t.innerText = m; t.classList.add('show');
-            setTimeout(() => t.classList.remove('show'), 3000);
-        }
-
-        function filterCat(c, el) {
-            document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
-            el.classList.add('active');
-            renderMenu(c === 'Barchasi' ? products : products.filter(p => p.cat === c));
-        }
-
-        function renderHistory() {
-            document.getElementById('historyList').innerHTML = history.length ? history.map(h => `
-                <div style="background:white; padding:15px; border-radius:15px; margin-bottom:10px; border-left:5px solid var(--blue); animation: slideUp 0.3s;">
-                    <div style="display:flex; justify-content:space-between;">
-                        <b>#${h.id}</b>
-                        <span style="font-size:12px; color:var(--blue); font-weight:bold;">${h.status}</span>
-                    </div>
-                    <div style="font-size:13px; color:#555; margin-top:5px;">${h.items.replace(/\n/g, '<br>')}</div>
-                </div>`).join('') : "<div style='text-align:center; padding-top:50px; color:#999;'>Buyurtmalar tarixi mavjud emas</div>";
-        }
-    </script>
+function showMsg(m) {
+    let t = document.getElementById('toast');
+    t.innerText = m; t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3000);
+}
+</script>
 </body>
 </html>
