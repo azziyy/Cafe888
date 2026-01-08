@@ -3,259 +3,226 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Cafe 777 Premium</title>
+    <title>Cafe 777 Ideal System</title>
     <style>
-        :root { --p: #ffbe0b; --s: #fb5607; --d: #1a1a1a; --b: #0088cc; --r: #ff4757; --g: #f1f3f5; }
-        * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background: var(--g); margin: 0; padding-bottom: 90px; }
+        :root { --p: #ffbe0b; --s: #fb5607; --d: #1a1a1a; --b: #0088cc; --g: #f1f3f5; }
+        * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background: var(--g); margin: 0; padding-bottom: 90px; color: var(--d); }
 
-        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        .page { display: none; padding: 20px; animation: fadeInUp 0.4s ease; }
+        .page { display: none; padding: 20px; animation: slideUp 0.4s ease-out; }
         .page.active { display: block; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* TOAST XABARLAR */
-        #toast { 
-            position: fixed; top: -100px; left: 50%; transform: translateX(-50%); 
-            background: var(--d); color: white; padding: 15px 25px; border-radius: 50px; 
-            z-index: 10000; transition: 0.5s; font-weight: bold; width: 85%; text-align: center;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-        }
-        #toast.show { top: 25px; }
-
-        /* KARTALAR */
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .card { background: white; border-radius: 20px; overflow: hidden; position: relative; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        .card { background: white; border-radius: 25px; overflow: hidden; box-shadow: 0 8px 20px rgba(0,0,0,0.06); margin-bottom: 15px; position: relative; border: 1px solid rgba(0,0,0,0.03); }
         .card img { width: 100%; aspect-ratio: 1/1; object-fit: cover; }
-        .heart { position: absolute; top: 10px; right: 10px; font-size: 25px; color: rgba(255,255,255,0.8); cursor: pointer; text-shadow: 0 0 5px rgba(0,0,0,0.5); }
-        .heart.active { color: var(--r); }
-
-        /* INPUTLAR */
-        input { width: 100%; padding: 16px; margin-bottom: 15px; border-radius: 15px; border: 2px solid #ddd; font-size: 16px; outline: none; }
+        
+        input { width: 100%; padding: 18px; margin-bottom: 15px; border-radius: 15px; border: 2px solid #eee; font-size: 16px; outline: none; transition: 0.3s; }
         input:focus { border-color: var(--p); }
-        .btn { background: var(--d); color: white; border: none; width: 100%; padding: 16px; border-radius: 15px; font-weight: bold; font-size: 16px; cursor: pointer; }
-        .btn:active { transform: scale(0.97); }
+        
+        .btn { background: var(--d); color: white; border: none; width: 100%; padding: 18px; border-radius: 15px; font-weight: 800; font-size: 16px; cursor: pointer; transition: 0.3s; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .btn:active { transform: scale(0.96); }
 
-        /* NAVBAR */
-        .nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; padding: 10px 0; border-radius: 25px 25px 0 0; box-shadow: 0 -5px 15px rgba(0,0,0,0.05); }
-        .nav-item { flex: 1; text-align: center; color: #bbb; font-size: 11px; font-weight: bold; }
-        .nav-item.active { color: var(--s); }
-        .nav-item b { font-size: 24px; display: block; }
+        .nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; padding: 12px 0; border-radius: 30px 30px 0 0; box-shadow: 0 -8px 25px rgba(0,0,0,0.06); z-index: 1000; }
+        .nav-item { flex: 1; text-align: center; color: #bbb; font-size: 11px; font-weight: bold; transition: 0.3s; }
+        .nav-item.active { color: var(--s); transform: translateY(-3px); }
+        .nav-item b { font-size: 26px; display: block; margin-bottom: 2px; }
+
+        .history-card { background: white; padding: 20px; border-radius: 20px; margin-bottom: 12px; border-left: 6px solid var(--b); box-shadow: 0 4px 12px rgba(0,0,0,0.04); }
+        .status-badge { background: var(--b); color: white; padding: 4px 10px; border-radius: 8px; font-size: 12px; }
+
+        #toast { position: fixed; top: -100px; left: 50%; transform: translateX(-50%); background: var(--d); color: white; padding: 15px 30px; border-radius: 50px; z-index: 10000; transition: 0.5s; font-weight: bold; width: 85%; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        #toast.show { top: 30px; }
     </style>
 </head>
 <body>
 
 <div id="toast">Xabar!</div>
 
-<div id="p-reg" class="page active" style="text-align: center; padding-top: 50px;">
-    <h1>Cafe 777 👋</h1>
-    <p>Davom etish uchun ma'lumotlarni kiriting</p>
-    <input type="text" id="rName" placeholder="Ismingiz">
-    <input type="tel" id="rPhone" value="+998 " maxlength="17">
-    <button class="btn" onclick="saveReg()">TIZIMGA KIRISH</button>
+<div id="p-reg" class="page active" style="text-align: center; padding-top: 60px;">
+    <div style="font-size: 60px;">🍔</div>
+    <h1 style="margin: 10px 0;">Cafe 777</h1>
+    <p style="color: #777; margin-bottom: 30px;">Premium yetkazib berish xizmati</p>
+    <input type="text" id="uName" placeholder="Ismingiz">
+    <input type="tel" id="uPhone" value="+998 " maxlength="17">
+    <button class="btn" onclick="handleAuth()">DAVOM ETISH</button>
 </div>
 
-<div id="app" style="display:none;">
+<div id="app" style="display: none;">
     <div id="p-home" class="page">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-            <h2 style="margin:0;">Menu 🍔</h2>
-            <div id="uIdDisp" style="font-size:12px; font-weight:bold; background:#eee; padding:5px 10px; border-radius:8px;"></div>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+            <h2 style="margin:0;">Menu</h2>
+            <div id="uIdBadge" style="font-size:12px; font-weight:900; background:#ddd; padding:6px 12px; border-radius:10px;"></div>
         </div>
-        <div id="menuGrid" class="grid"></div>
+        <div id="menuGrid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;"></div>
     </div>
 
     <div id="p-cart" class="page">
         <h2>Savat 🛒</h2>
-        <div id="cartItems" style="background:white; padding:15px; border-radius:20px; margin-bottom:15px;"></div>
-        <div style="display:flex; justify-content:space-between; font-size:20px; font-weight:900; margin-bottom:20px;">
-            <span>Jami:</span> <span id="totalPrice">0 so'm</span>
+        <div id="cartBox" style="background:white; padding:20px; border-radius:20px; margin-bottom:20px;"></div>
+        <div style="display:flex; justify-content:space-between; font-size:22px; font-weight:900; margin-bottom:25px; padding:0 10px;">
+            <span>Jami:</span> <span id="totalPrice" style="color:var(--s);">0 so'm</span>
         </div>
-        <button class="btn" id="locBtn" onclick="getLocation()" style="background:#eef; color:#333; margin-bottom:12px;">📍 MANZILNI ANIQLASH</button>
-        <button class="btn" onclick="sendOrder()" style="background:var(--b);">BUYURTMA BERISH</button>
-    </div>
-
-    <div id="p-fav" class="page">
-        <h2>Sevimlilar ❤️</h2>
-        <div id="favGrid" class="grid"></div>
+        <button class="btn" id="locBtn" onclick="askGeo()" style="background:#eef2f7; color:#333; margin-bottom:12px;">📍 MANZILNI ANIQLASH</button>
+        <button class="btn" onclick="makeOrder()" style="background:var(--b);">BUYURTMA BERISH ✅</button>
     </div>
 
     <div id="p-history" class="page">
         <h2>Tarix 📜</h2>
-        <div id="historyList"></div>
+        <div id="historyBox"></div>
     </div>
 
     <nav class="nav">
-        <div class="nav-item active" onclick="nav('home', this)"><b>🏠</b>MENU</div>
-        <div class="nav-item" onclick="nav('fav', this)"><b>❤️</b>SEVIMLI</div>
-        <div class="nav-item" onclick="nav('cart', this)"><b>🛒</b>SAVAT</div>
-        <div class="nav-item" onclick="nav('history', this)"><b>📜</b>TARIX</div>
+        <div class="nav-item active" onclick="go('home', this)"><b>🏠</b>MENU</div>
+        <div class="nav-item" onclick="go('cart', this)"><b>🛒</b>SAVAT</div>
+        <div class="nav-item" onclick="go('history', this)"><b>📜</b>TARIX</div>
     </nav>
 </div>
 
 <script>
-const TOKEN = "8032226679:AAETTGPvYZYSvF_QmdofXKibpOwt4E9Iitc";
-const ADMIN = "519326806";
-const SHEET = "1j6VojbeSYWgYj3UY98xCxHLCzHcGlEg0nXjYwHDkKQk";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyjn4Ie7Lb9mLy9KuvyjG7VEdd5V_uMLjxDB1GmyKZKENvJmiTaNwQGpfUikGlPI6kk/exec";
+const BOT_TOKEN = "8032226679:AAETTGPvYZYSvF_QmdofXKibpOwt4E9Iitc";
+const ADMIN_ID = "519326806";
+const SHEET_ID = "1j6VojbeSYWgYj3UY98xCxHLCzHcGlEg0nXjYwHDkKQk";
 
-let products = [], cart = {}, favs = [], history = [], userLocation = null;
+let state = { products: [], cart: {}, history: [], geo: null };
 
-// TELEFON FORMATI
-document.getElementById('rPhone').addEventListener('input', function(e) {
+// 1. TELEFON FORMATLASH
+document.getElementById('uPhone').addEventListener('input', e => {
     let x = e.target.value.replace(/\D/g, '').match(/(\d{0,3})(\d{0,2})(\d{0,3})(\d{0,2})(\d{0,2})/);
     e.target.value = !x[2] ? "+998 " : "+998 " + x[2] + (x[3] ? " " + x[3] : "") + (x[4] ? " " + x[4] : "") + (x[5] ? " " + x[5] : "");
 });
 
-function saveReg() {
-    let n = document.getElementById('rName').value.trim();
-    let p = document.getElementById('rPhone').value.trim();
-    if(n.length < 3) return showMsg("Ismingizni kiriting!");
-    if(p.length < 17) return showMsg("Telefon raqami xato!");
-
-    let cleanP = p.replace(/\s/g, '');
-    let id = (n.substring(0,4).toUpperCase()) + (cleanP.slice(-4));
+function handleAuth() {
+    let n = document.getElementById('uName').value.trim();
+    let p = document.getElementById('uPhone').value.trim();
+    if(n.length < 3 || p.length < 17) return msg("Ma'lumotlar to'liq emas!");
     
-    localStorage.setItem('u_data', JSON.stringify({id, name: n, phone: cleanP}));
+    let id = n.substring(0,4).toUpperCase() + p.replace(/\s/g,'').slice(-4);
+    localStorage.setItem('cafe_user', JSON.stringify({id, name: n, phone: p.replace(/\s/g,'')}));
     location.reload();
 }
 
 window.onload = () => {
-    let data = localStorage.getItem('u_data');
-    if(data) {
-        data = JSON.parse(data);
+    let user = localStorage.getItem('cafe_user');
+    if(user) {
+        user = JSON.parse(user);
         document.getElementById('p-reg').style.display = 'none';
         document.getElementById('app').style.display = 'block';
-        document.getElementById('uIdDisp').innerText = "ID: " + data.id;
-        favs = JSON.parse(localStorage.getItem('u_favs') || '[]');
-        history = JSON.parse(localStorage.getItem('u_history') || '[]');
-        loadData();
+        document.getElementById('uIdBadge').innerText = "ID: " + user.id;
+        state.history = JSON.parse(localStorage.getItem('cafe_history') || '[]');
+        fetchData();
+        // Har 15 soniyada statuslarni tekshirish
+        setInterval(syncStatus, 15000);
     }
 };
 
-async function loadData() {
-    const res = await fetch(`https://docs.google.com/spreadsheets/d/${SHEET}/gviz/tq?tqx=out:json`);
-    const text = await res.text();
-    const json = JSON.parse(text.substr(47).slice(0, -2));
-    products = json.table.rows.map((r, i) => ({
-        id: i, name: r.c[2]?.v, price: r.c[3]?.v, img: r.c[4]?.v
-    }));
+async function fetchData() {
+    const r = await fetch(`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`);
+    const t = await r.text();
+    const j = JSON.parse(t.substr(47).slice(0,-2));
+    state.products = j.table.rows.map((r,i) => ({id:i, name:r.c[2].v, price:r.c[3].v, img:r.c[4].v}));
     renderMenu();
 }
 
 function renderMenu() {
-    document.getElementById('menuGrid').innerHTML = products.map(p => `
-        <div class="card" onclick="addToCart(${p.id})">
-            <span class="heart ${favs.includes(p.id)?'active':''}" onclick="event.stopPropagation(); toggleFav(${p.id}, this)">❤</span>
+    document.getElementById('menuGrid').innerHTML = state.products.map(p => `
+        <div class="card" onclick="add(${p.id})">
             <img src="${p.img}">
-            <div style="padding:10px; text-align:center;">
-                <h4 style="margin:5px 0; font-size:14px;">${p.name}</h4>
-                <b style="color:var(--s);">${p.price.toLocaleString()} so'm</b>
+            <div style="padding:15px; text-align:center;">
+                <h4 style="margin:0; font-size:14px;">${p.name}</h4>
+                <b style="color:var(--s); display:block; margin-top:8px;">${p.price.toLocaleString()} so'm</b>
             </div>
         </div>`).join('');
 }
 
-function toggleFav(id, el) {
-    if(favs.includes(id)) {
-        favs = favs.filter(f => f !== id);
-        el.classList.remove('active');
-    } else {
-        favs.push(id);
-        el.classList.add('active');
-        showMsg("Sevimli ❤️");
-    }
-    localStorage.setItem('u_favs', JSON.stringify(favs));
-}
-
-function addToCart(id) {
-    cart[id] = (cart[id] || 0) + 1;
-    showMsg("Savatga qo'shildi! 🛒");
+function add(id) {
+    state.cart[id] = (state.cart[id] || 0) + 1;
+    msg("Savatga qo'shildi! 🛒");
     renderCart();
 }
 
 function renderCart() {
-    let total = 0, html = "";
-    for(let id in cart) {
-        total += products[id].price * cart[id];
-        html += `<div style="display:flex; justify-content:space-between; margin-bottom:10px; border-bottom:1px solid #eee; padding-bottom:5px;">
-            <span>${products[id].name} (x${cart[id]})</span>
-            <b>${(products[id].price * cart[id]).toLocaleString()}</b>
+    let h = "", total = 0;
+    for(let id in state.cart) {
+        let p = state.products[id];
+        total += p.price * state.cart[id];
+        h += `<div style="display:flex; justify-content:space-between; margin-bottom:10px; border-bottom:1px solid #eee; padding-bottom:8px;">
+            <span>${p.name} (x${state.cart[id]})</span>
+            <b>${(p.price * state.cart[id]).toLocaleString()}</b>
         </div>`;
     }
-    document.getElementById('cartItems').innerHTML = html || "Savat bo'sh 🛒";
+    document.getElementById('cartBox').innerHTML = h || "Savat bo'sh 🛒";
     document.getElementById('totalPrice').innerText = total.toLocaleString() + " so'm";
 }
 
-function getLocation() {
-    document.getElementById('locBtn').innerText = "Aniqlanmoqda...";
+function askGeo() {
     navigator.geolocation.getCurrentPosition(p => {
-        userLocation = `${p.coords.latitude},${p.coords.longitude}`;
+        state.geo = p.coords.latitude + "," + p.coords.longitude;
         document.getElementById('locBtn').innerText = "✅ MANZIL ANIQLANDI";
         document.getElementById('locBtn').style.background = "#d4edda";
-    }, () => {
-        showMsg("GPS-ni yoqing! 📍");
-        document.getElementById('locBtn').innerText = "📍 MANZILNI ANIQLASH";
-    });
+    }, () => msg("GPS-ni yoqing! 📍"));
 }
 
-function sendOrder() {
-    if(!Object.keys(cart).length) return showMsg("Savat bo'sh! 🛒");
-    if(!userLocation) return showMsg("Manzilni aniqlang! 📍");
+function makeOrder() {
+    if(!Object.keys(state.cart).length || !state.geo) return msg("Savat bo'sh yoki manzil yo'q!");
+    
+    let u = JSON.parse(localStorage.getItem('cafe_user'));
+    let oid = Math.floor(1000 + Math.random()*9000);
+    let items = Object.keys(state.cart).map(id => `• ${state.products[id].name} (x${state.cart[id]})`).join('\n');
 
-    let user = JSON.parse(localStorage.getItem('u_data'));
-    let orderId = Math.floor(1000 + Math.random() * 9000);
-    let items = "";
-    for(let id in cart) items += `• ${products[id].name} (x${cart[id]})\n`;
-
-    let msgText = `🆕 BUYURTMA #${orderId}\n🆔 ID: ${user.id}\n👤 ${user.name}\n📞 ${user.phone}\n\n${items}\n💰 Jami: ${document.getElementById('totalPrice').innerText}\n📍 Manzil: https://www.google.com/maps?q=${userLocation}`;
-
-    fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage`, {
+    fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({
-            chat_id: ADMIN,
-            text: msgText,
-            reply_markup: {
-                inline_keyboard: [
-                    [{text: "✅ Qabul qilish", callback_data: `ok_${orderId}`}],
-                    [{text: "🚚 Yo'lga chiqish", callback_data: `go_${orderId}`}]
-                ]
-            }
+            chat_id: ADMIN_ID,
+            text: `🆕 BUYURTMA #${oid}\n🆔 ID: ${u.id}\n👤 ${u.name}\n📞 ${u.phone}\n\n${items}\n💰 Jami: ${document.getElementById('totalPrice').innerText}\n📍 Manzil: https://www.google.com/maps?q=${state.geo}`,
+            reply_markup: { inline_keyboard: [[{text: "✅ Qabul qilish", callback_data: `ok_${oid}`}]] }
         })
-    }).then(() => {
-        showMsg("Buyurtma yuborildi! 🚀");
-        history.unshift({id: orderId, items, status: "Kutilmoqda"});
-        localStorage.setItem('u_history', JSON.stringify(history));
-        cart = {}; renderCart();
-        nav('history', document.querySelectorAll('.nav-item')[3]);
     });
+
+    state.history.unshift({id: oid, items, status: "Yuborildi ⏳"});
+    localStorage.setItem('cafe_history', JSON.stringify(state.history));
+    state.cart = {}; renderCart();
+    go('history', document.querySelectorAll('.nav-item')[2]);
 }
 
-function nav(id, el) {
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    document.getElementById('p-' + id).classList.add('active');
-    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+async function syncStatus() {
+    for(let h of state.history) {
+        if(h.status.includes("Yetkazilmoqda")) continue;
+        try {
+            const r = await fetch(`${SCRIPT_URL}?orderId=${h.id}`);
+            const d = await r.json();
+            if(d.status && d.status !== h.status) {
+                h.status = d.status;
+                localStorage.setItem('cafe_history', JSON.stringify(state.history));
+                if(document.getElementById('p-history').classList.contains('active')) renderHistory();
+            }
+        } catch(e) {}
+    }
+}
+
+function go(p, el) {
+    document.querySelectorAll('.page').forEach(x => x.classList.remove('active'));
+    document.getElementById('p-'+p).classList.add('active');
+    document.querySelectorAll('.nav-item').forEach(x => x.classList.remove('active'));
     el.classList.add('active');
-    
-    if(id === 'fav') {
-        let list = products.filter(p => favs.includes(p.id));
-        document.getElementById('favGrid').innerHTML = list.length ? list.map(p => `
-            <div class="card">
-                <span class="heart active" onclick="toggleFav(${p.id}, this); nav('fav', document.querySelectorAll('.nav-item')[1])">❤</span>
-                <img src="${p.img}">
-                <div style="padding:10px; text-align:center;"><h4>${p.name}</h4></div>
-            </div>`).join('') : "<p style='grid-column:1/3; text-align:center;'>Sevimlilar bo'sh</p>";
-    }
-    if(id === 'history') {
-        document.getElementById('historyList').innerHTML = history.map(h => `
-            <div style="background:white; padding:15px; border-radius:15px; margin-bottom:10px; border-left:5px solid var(--b);">
-                <div style="display:flex; justify-content:space-between;"><b>#${h.id}</b> <span style="color:var(--b)">${h.status}</span></div>
-                <small>${h.items.replace(/\n/g, '<br>')}</small>
-            </div>`).join('') || "<p style='text-align:center;'>Tarix bo'sh</p>";
-    }
+    if(p === 'history') renderHistory();
 }
 
-function showMsg(m) {
+function renderHistory() {
+    document.getElementById('historyBox').innerHTML = state.history.map(h => `
+        <div class="history-card">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <b>#${h.id}</b> <span class="status-badge">${h.status}</span>
+            </div>
+            <p style="font-size:13px; color:#555; margin-top:10px;">${h.items.replace(/\n/g,'<br>')}</p>
+        </div>`).join('') || "<p style='text-align:center; padding:40px;'>Tarix bo'sh</p>";
+}
+
+function msg(m) {
     let t = document.getElementById('toast');
     t.innerText = m; t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 3000);
+    setTimeout(()=>t.classList.remove('show'), 3000);
 }
 </script>
 </body>
