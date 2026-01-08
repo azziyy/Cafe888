@@ -3,227 +3,272 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Cafe 777 Ideal System</title>
+    <title>Cafe 777 - Premium System</title>
     <style>
-        :root { --p: #ffbe0b; --s: #fb5607; --d: #1a1a1a; --b: #0088cc; --g: #f1f3f5; }
-        * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background: var(--g); margin: 0; padding-bottom: 90px; color: var(--d); }
+        :root { --p: #ffbe0b; --s: #fb5607; --d: #1a1a1a; --b: #0088cc; --g: #f4f7f6; --w: #ffffff; }
+        * { box-sizing: border-box; font-family: 'Segoe UI', Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
+        
+        body { background-color: var(--g); margin: 0; padding-bottom: 90px; color: var(--d); overflow-x: hidden; }
 
-        .page { display: none; padding: 20px; animation: slideUp 0.4s ease-out; }
+        /* Animatsiyalar */
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .page { display: none; padding: 20px; animation: fadeInUp 0.4s ease-out; }
         .page.active { display: block; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-        .card { background: white; border-radius: 25px; overflow: hidden; box-shadow: 0 8px 20px rgba(0,0,0,0.06); margin-bottom: 15px; position: relative; border: 1px solid rgba(0,0,0,0.03); }
+        /* Kartochkalar */
+        .card { background: var(--w); border-radius: 25px; overflow: hidden; box-shadow: 0 8px 20px rgba(0,0,0,0.06); margin-bottom: 15px; position: relative; border: 1px solid rgba(0,0,0,0.02); }
         .card img { width: 100%; aspect-ratio: 1/1; object-fit: cover; }
         
+        /* Inputlar va Tugmalar */
         input { width: 100%; padding: 18px; margin-bottom: 15px; border-radius: 15px; border: 2px solid #eee; font-size: 16px; outline: none; transition: 0.3s; }
-        input:focus { border-color: var(--p); }
+        input:focus { border-color: var(--p); box-shadow: 0 0 10px rgba(255, 190, 11, 0.2); }
         
-        .btn { background: var(--d); color: white; border: none; width: 100%; padding: 18px; border-radius: 15px; font-weight: 800; font-size: 16px; cursor: pointer; transition: 0.3s; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .btn { background: var(--d); color: white; border: none; width: 100%; padding: 18px; border-radius: 15px; font-weight: 800; font-size: 16px; cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 10px; }
         .btn:active { transform: scale(0.96); }
+        .btn-geo { background: #eef2f7; color: #333; margin-bottom: 12px; border: 1px solid #ddd; }
 
-        .nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; padding: 12px 0; border-radius: 30px 30px 0 0; box-shadow: 0 -8px 25px rgba(0,0,0,0.06); z-index: 1000; }
-        .nav-item { flex: 1; text-align: center; color: #bbb; font-size: 11px; font-weight: bold; transition: 0.3s; }
+        /* Navigatsiya */
+        .nav { position: fixed; bottom: 0; width: 100%; background: var(--w); display: flex; padding: 12px 0; border-radius: 30px 30px 0 0; box-shadow: 0 -10px 30px rgba(0,0,0,0.08); z-index: 1000; }
+        .nav-item { flex: 1; text-align: center; color: #bbb; font-size: 11px; font-weight: bold; cursor: pointer; transition: 0.3s; }
         .nav-item.active { color: var(--s); transform: translateY(-3px); }
         .nav-item b { font-size: 26px; display: block; margin-bottom: 2px; }
 
-        .history-card { background: white; padding: 20px; border-radius: 20px; margin-bottom: 12px; border-left: 6px solid var(--b); box-shadow: 0 4px 12px rgba(0,0,0,0.04); }
-        .status-badge { background: var(--b); color: white; padding: 4px 10px; border-radius: 8px; font-size: 12px; }
+        /* Tarix kartochkasi */
+        .history-card { background: var(--w); padding: 20px; border-radius: 20px; margin-bottom: 12px; border-left: 6px solid var(--b); box-shadow: 0 4px 12px rgba(0,0,0,0.04); }
+        .status-badge { background: var(--b); color: white; padding: 4px 10px; border-radius: 8px; font-size: 12px; font-weight: bold; }
 
-        #toast { position: fixed; top: -100px; left: 50%; transform: translateX(-50%); background: var(--d); color: white; padding: 15px 30px; border-radius: 50px; z-index: 10000; transition: 0.5s; font-weight: bold; width: 85%; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        /* Toast Xabarlar */
+        #toast { position: fixed; top: -100px; left: 50%; transform: translateX(-50%); background: var(--d); color: white; padding: 15px 30px; border-radius: 50px; z-index: 10000; transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); font-weight: bold; width: 85%; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
         #toast.show { top: 30px; }
     </style>
 </head>
 <body>
 
-<div id="toast">Xabar!</div>
+    <div id="toast">Xabar!</div>
 
-<div id="p-reg" class="page active" style="text-align: center; padding-top: 60px;">
-    <div style="font-size: 60px;">🍔</div>
-    <h1 style="margin: 10px 0;">Cafe 777</h1>
-    <p style="color: #777; margin-bottom: 30px;">Premium yetkazib berish xizmati</p>
-    <input type="text" id="uName" placeholder="Ismingiz">
-    <input type="tel" id="uPhone" value="+998 " maxlength="17">
-    <button class="btn" onclick="handleAuth()">DAVOM ETISH</button>
-</div>
-
-<div id="app" style="display: none;">
-    <div id="p-home" class="page">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-            <h2 style="margin:0;">Menu</h2>
-            <div id="uIdBadge" style="font-size:12px; font-weight:900; background:#ddd; padding:6px 12px; border-radius:10px;"></div>
+    <div id="p-reg" class="page active" style="text-align: center; padding-top: 60px;">
+        <div style="font-size: 70px; margin-bottom: 10px;">🥘</div>
+        <h1 style="margin: 0;">Cafe 777</h1>
+        <p style="color: #777; margin-bottom: 30px;">Premium Buyurtma Tizimi</p>
+        <div style="text-align: left; max-width: 400px; margin: 0 auto;">
+            <label style="margin-left: 10px; font-weight: bold; font-size: 14px;">Ismingiz</label>
+            <input type="text" id="uName" placeholder="Masalan: Azizbek">
+            <label style="margin-left: 10px; font-weight: bold; font-size: 14px;">Telefon raqamingiz</label>
+            <input type="tel" id="uPhone" value="+998 " maxlength="17">
+            <button class="btn" onclick="handleAuth()" style="margin-top: 10px; background: var(--s);">TIZIMGA KIRISH 🚀</button>
         </div>
-        <div id="menuGrid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;"></div>
     </div>
 
-    <div id="p-cart" class="page">
-        <h2>Savat 🛒</h2>
-        <div id="cartBox" style="background:white; padding:20px; border-radius:20px; margin-bottom:20px;"></div>
-        <div style="display:flex; justify-content:space-between; font-size:22px; font-weight:900; margin-bottom:25px; padding:0 10px;">
-            <span>Jami:</span> <span id="totalPrice" style="color:var(--s);">0 so'm</span>
-        </div>
-        <button class="btn" id="locBtn" onclick="askGeo()" style="background:#eef2f7; color:#333; margin-bottom:12px;">📍 MANZILNI ANIQLASH</button>
-        <button class="btn" onclick="makeOrder()" style="background:var(--b);">BUYURTMA BERISH ✅</button>
-    </div>
-
-    <div id="p-history" class="page">
-        <h2>Tarix 📜</h2>
-        <div id="historyBox"></div>
-    </div>
-
-    <nav class="nav">
-        <div class="nav-item active" onclick="go('home', this)"><b>🏠</b>MENU</div>
-        <div class="nav-item" onclick="go('cart', this)"><b>🛒</b>SAVAT</div>
-        <div class="nav-item" onclick="go('history', this)"><b>📜</b>TARIX</div>
-    </nav>
-</div>
-
-<script>
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyjn4Ie7Lb9mLy9KuvyjG7VEdd5V_uMLjxDB1GmyKZKENvJmiTaNwQGpfUikGlPI6kk/exec";
-const BOT_TOKEN = "8032226679:AAETTGPvYZYSvF_QmdofXKibpOwt4E9Iitc";
-const ADMIN_ID = "519326806";
-const SHEET_ID = "1j6VojbeSYWgYj3UY98xCxHLCzHcGlEg0nXjYwHDkKQk";
-
-let state = { products: [], cart: {}, history: [], geo: null };
-
-// 1. TELEFON FORMATLASH
-document.getElementById('uPhone').addEventListener('input', e => {
-    let x = e.target.value.replace(/\D/g, '').match(/(\d{0,3})(\d{0,2})(\d{0,3})(\d{0,2})(\d{0,2})/);
-    e.target.value = !x[2] ? "+998 " : "+998 " + x[2] + (x[3] ? " " + x[3] : "") + (x[4] ? " " + x[4] : "") + (x[5] ? " " + x[5] : "");
-});
-
-function handleAuth() {
-    let n = document.getElementById('uName').value.trim();
-    let p = document.getElementById('uPhone').value.trim();
-    if(n.length < 3 || p.length < 17) return msg("Ma'lumotlar to'liq emas!");
-    
-    let id = n.substring(0,4).toUpperCase() + p.replace(/\s/g,'').slice(-4);
-    localStorage.setItem('cafe_user', JSON.stringify({id, name: n, phone: p.replace(/\s/g,'')}));
-    location.reload();
-}
-
-window.onload = () => {
-    let user = localStorage.getItem('cafe_user');
-    if(user) {
-        user = JSON.parse(user);
-        document.getElementById('p-reg').style.display = 'none';
-        document.getElementById('app').style.display = 'block';
-        document.getElementById('uIdBadge').innerText = "ID: " + user.id;
-        state.history = JSON.parse(localStorage.getItem('cafe_history') || '[]');
-        fetchData();
-        // Har 15 soniyada statuslarni tekshirish
-        setInterval(syncStatus, 15000);
-    }
-};
-
-async function fetchData() {
-    const r = await fetch(`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`);
-    const t = await r.text();
-    const j = JSON.parse(t.substr(47).slice(0,-2));
-    state.products = j.table.rows.map((r,i) => ({id:i, name:r.c[2].v, price:r.c[3].v, img:r.c[4].v}));
-    renderMenu();
-}
-
-function renderMenu() {
-    document.getElementById('menuGrid').innerHTML = state.products.map(p => `
-        <div class="card" onclick="add(${p.id})">
-            <img src="${p.img}">
-            <div style="padding:15px; text-align:center;">
-                <h4 style="margin:0; font-size:14px;">${p.name}</h4>
-                <b style="color:var(--s); display:block; margin-top:8px;">${p.price.toLocaleString()} so'm</b>
+    <div id="app" style="display: none;">
+        <div id="p-home" class="page">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                <h2 style="margin:0;">Asosiy Menyu</h2>
+                <div id="uIdBadge" style="font-size:12px; font-weight:900; background:#ddd; padding:6px 12px; border-radius:10px;"></div>
             </div>
-        </div>`).join('');
-}
+            <div id="menuGrid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;"></div>
+        </div>
 
-function add(id) {
-    state.cart[id] = (state.cart[id] || 0) + 1;
-    msg("Savatga qo'shildi! 🛒");
-    renderCart();
-}
+        <div id="p-cart" class="page">
+            <h2>Savat 🛒</h2>
+            <div id="cartBox" style="background:white; padding:20px; border-radius:20px; margin-bottom:20px; min-height: 50px;"></div>
+            <div style="display:flex; justify-content:space-between; font-size:22px; font-weight:900; margin-bottom:25px; padding:0 10px;">
+                <span>Jami:</span> <span id="totalPrice" style="color:var(--s);">0 so'm</span>
+            </div>
+            <button class="btn btn-geo" id="locBtn" onclick="askGeo()">📍 MANZILNI ANIQLASH</button>
+            <button class="btn" onclick="makeOrder()" style="background:var(--b);">BUYURTMA BERISH ✅</button>
+        </div>
 
-function renderCart() {
-    let h = "", total = 0;
-    for(let id in state.cart) {
-        let p = state.products[id];
-        total += p.price * state.cart[id];
-        h += `<div style="display:flex; justify-content:space-between; margin-bottom:10px; border-bottom:1px solid #eee; padding-bottom:8px;">
-            <span>${p.name} (x${state.cart[id]})</span>
-            <b>${(p.price * state.cart[id]).toLocaleString()}</b>
-        </div>`;
-    }
-    document.getElementById('cartBox').innerHTML = h || "Savat bo'sh 🛒";
-    document.getElementById('totalPrice').innerText = total.toLocaleString() + " so'm";
-}
+        <div id="p-history" class="page">
+            <h2>Buyurtmalar Tarixi 📜</h2>
+            <div id="historyBox"></div>
+        </div>
 
-function askGeo() {
-    navigator.geolocation.getCurrentPosition(p => {
-        state.geo = p.coords.latitude + "," + p.coords.longitude;
-        document.getElementById('locBtn').innerText = "✅ MANZIL ANIQLANDI";
-        document.getElementById('locBtn').style.background = "#d4edda";
-    }, () => msg("GPS-ni yoqing! 📍"));
-}
+        <nav class="nav">
+            <div class="nav-item active" onclick="go('home', this)"><b>🏠</b>MENU</div>
+            <div class="nav-item" onclick="go('cart', this)"><b>🛒</b>SAVAT</div>
+            <div class="nav-item" onclick="go('history', this)"><b>📜</b>TARIX</div>
+        </nav>
+    </div>
 
-function makeOrder() {
-    if(!Object.keys(state.cart).length || !state.geo) return msg("Savat bo'sh yoki manzil yo'q!");
-    
-    let u = JSON.parse(localStorage.getItem('cafe_user'));
-    let oid = Math.floor(1000 + Math.random()*9000);
-    let items = Object.keys(state.cart).map(id => `• ${state.products[id].name} (x${state.cart[id]})`).join('\n');
+    <script>
+        // SOZLAMALAR
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx1FH-FtOcf6x-Len-bQSjWLwe4XpJulldZkvtd7oitEnDc7tURRWwwggN3lJnbteqx/exec";
+        const BOT_TOKEN = "8032226679:AAETTGPvYZYSvF_QmdofXKibpOwt4E9Iitc";
+        const ADMIN_ID = "519326806";
+        const SHEET_ID = "1j6VojbeSYWgYj3UY98xCxHLCzHcGlEg0nXjYwHDkKQk";
 
-    fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({
-            chat_id: ADMIN_ID,
-            text: `🆕 BUYURTMA #${oid}\n🆔 ID: ${u.id}\n👤 ${u.name}\n📞 ${u.phone}\n\n${items}\n💰 Jami: ${document.getElementById('totalPrice').innerText}\n📍 Manzil: https://www.google.com/maps?q=${state.geo}`,
-            reply_markup: { inline_keyboard: [[{text: "✅ Qabul qilish", callback_data: `ok_${oid}`}]] }
-        })
-    });
+        let state = { 
+            products: [], 
+            cart: {}, 
+            history: JSON.parse(localStorage.getItem('cafe_history') || '[]'), 
+            geo: null 
+        };
 
-    state.history.unshift({id: oid, items, status: "Yuborildi ⏳"});
-    localStorage.setItem('cafe_history', JSON.stringify(state.history));
-    state.cart = {}; renderCart();
-    go('history', document.querySelectorAll('.nav-item')[2]);
-}
+        // 1. STATUSNI SINXRONIZATSIYA QILISH (Botdan dasturga)
+        async function syncStatus() {
+            if (state.history.length === 0) return;
+            for (let order of state.history) {
+                // Agar allaqachon yetkazilgan bo'lsa, qayta tekshirmaydi
+                if (order.status.includes("Yo'lda") || order.status.includes("Yetkazildi")) continue;
 
-async function syncStatus() {
-    for(let h of state.history) {
-        if(h.status.includes("Yetkazilmoqda")) continue;
-        try {
-            const r = await fetch(`${SCRIPT_URL}?orderId=${h.id}`);
-            const d = await r.json();
-            if(d.status && d.status !== h.status) {
-                h.status = d.status;
-                localStorage.setItem('cafe_history', JSON.stringify(state.history));
-                if(document.getElementById('p-history').classList.contains('active')) renderHistory();
+                try {
+                    const response = await fetch(`${SCRIPT_URL}?orderId=${order.id}`);
+                    const result = await response.json();
+                    if (result.status && result.status !== order.status) {
+                        order.status = result.status;
+                        localStorage.setItem('cafe_history', JSON.stringify(state.history));
+                        if (document.getElementById('p-history').classList.contains('active')) renderHistory();
+                    }
+                } catch (e) { console.log("Sinx xatosi"); }
             }
-        } catch(e) {}
-    }
-}
+        }
+        setInterval(syncStatus, 10000); // Har 10 soniyada tekshirish
 
-function go(p, el) {
-    document.querySelectorAll('.page').forEach(x => x.classList.remove('active'));
-    document.getElementById('p-'+p).classList.add('active');
-    document.querySelectorAll('.nav-item').forEach(x => x.classList.remove('active'));
-    el.classList.add('active');
-    if(p === 'history') renderHistory();
-}
+        // 2. TELEFON FORMATI (+998 90 123 45 67)
+        document.getElementById('uPhone').addEventListener('input', e => {
+            let x = e.target.value.replace(/\D/g, '').match(/(\d{0,3})(\d{0,2})(\d{0,3})(\d{0,2})(\d{0,2})/);
+            e.target.value = !x[2] ? "+998 " : "+998 " + x[2] + (x[3] ? " " + x[3] : "") + (x[4] ? " " + x[4] : "") + (x[5] ? " " + x[5] : "");
+        });
 
-function renderHistory() {
-    document.getElementById('historyBox').innerHTML = state.history.map(h => `
-        <div class="history-card">
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-                <b>#${h.id}</b> <span class="status-badge">${h.status}</span>
-            </div>
-            <p style="font-size:13px; color:#555; margin-top:10px;">${h.items.replace(/\n/g,'<br>')}</p>
-        </div>`).join('') || "<p style='text-align:center; padding:40px;'>Tarix bo'sh</p>";
-}
+        // 3. REGISTRATSIYA VA 4+4 ID
+        function handleAuth() {
+            let n = document.getElementById('uName').value.trim();
+            let p = document.getElementById('uPhone').value.trim();
+            if(n.length < 3 || p.length < 17) return msg("Iltimos, ma'lumotlarni to'liq kiriting!");
+            
+            let id = n.substring(0,4).toUpperCase() + p.replace(/\s/g,'').slice(-4);
+            localStorage.setItem('cafe_user', JSON.stringify({id, name: n, phone: p}));
+            location.reload();
+        }
 
-function msg(m) {
-    let t = document.getElementById('toast');
-    t.innerText = m; t.classList.add('show');
-    setTimeout(()=>t.classList.remove('show'), 3000);
-}
-</script>
+        window.onload = () => {
+            let user = localStorage.getItem('cafe_user');
+            if(user) {
+                user = JSON.parse(user);
+                document.getElementById('p-reg').style.display = 'none';
+                document.getElementById('app').style.display = 'block';
+                document.getElementById('uIdBadge').innerText = "ID: " + user.id;
+                fetchProducts();
+            }
+        };
+
+        // 4. JADVALDAN MAHSULOTLARNI OLISH
+        async function fetchProducts() {
+            try {
+                const r = await fetch(`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`);
+                const t = await r.text();
+                const j = JSON.parse(t.substr(47).slice(0,-2));
+                state.products = j.table.rows.map((r,i) => ({
+                    id: i, 
+                    name: r.c[2]?.v || "Nomsiz", 
+                    price: r.c[3]?.v || 0, 
+                    img: r.c[4]?.v || "https://via.placeholder.com/150"
+                }));
+                renderMenu();
+            } catch (e) { msg("Internet bilan bog'lanishda xato!"); }
+        }
+
+        function renderMenu() {
+            document.getElementById('menuGrid').innerHTML = state.products.map(p => `
+                <div class="card" onclick="addToCart(${p.id})">
+                    <img src="${p.img}">
+                    <div style="padding:15px; text-align:center;">
+                        <h4 style="margin:0; font-size:14px; height:36px; overflow:hidden;">${p.name}</h4>
+                        <b style="color:var(--s); display:block; margin-top:8px;">${p.price.toLocaleString()} so'm</b>
+                    </div>
+                </div>`).join('');
+        }
+
+        function addToCart(id) {
+            state.cart[id] = (state.cart[id] || 0) + 1;
+            msg("Savatga qo'shildi! 🛒");
+            renderCart();
+        }
+
+        function renderCart() {
+            let h = "", total = 0;
+            for(let id in state.cart) {
+                let p = state.products[id];
+                total += p.price * state.cart[id];
+                h += `<div style="display:flex; justify-content:space-between; margin-bottom:10px; border-bottom:1px solid #eee; padding-bottom:8px;">
+                    <span>${p.name} (x${state.cart[id]})</span>
+                    <b>${(p.price * state.cart[id]).toLocaleString()}</b>
+                </div>`;
+            }
+            document.getElementById('cartBox').innerHTML = h || "<p style='text-align:center; color:#999;'>Savat bo'sh 🛒</p>";
+            document.getElementById('totalPrice').innerText = total.toLocaleString() + " so'm";
+        }
+
+        // 5. GEOLOKATSIYA
+        function askGeo() {
+            document.getElementById('locBtn').innerText = "Aniqlanmoqda...";
+            navigator.geolocation.getCurrentPosition(p => {
+                state.geo = p.coords.latitude + "," + p.coords.longitude;
+                document.getElementById('locBtn').innerText = "✅ MANZIL ANIQLANDI";
+                document.getElementById('locBtn').style.background = "#d4edda";
+                msg("Manzilingiz aniqlandi! 📍");
+            }, () => {
+                msg("GPS-ni yoqing! 📍");
+                document.getElementById('locBtn').innerText = "📍 MANZILNI ANIQLASH";
+            });
+        }
+
+        // 6. BUYURTMA BERISH
+        function makeOrder() {
+            if(!Object.keys(state.cart).length) return msg("Savat bo'sh! 🛒");
+            if(!state.geo) return msg("Manzilni aniqlang! 📍");
+            
+            let u = JSON.parse(localStorage.getItem('cafe_user'));
+            let oid = Math.floor(1000 + Math.random()*9000);
+            let items = Object.keys(state.cart).map(id => `• ${state.products[id].name} (x${state.cart[id]})`).join('\n');
+
+            // Telegramga yuborish
+            fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    chat_id: ADMIN_ID,
+                    text: `🆕 BUYURTMA #${oid}\n🆔 ID: ${u.id}\n👤 ${u.name}\n📞 ${u.phone}\n\n${items}\n💰 Jami: ${document.getElementById('totalPrice').innerText}\n📍 Manzil: https://www.google.com/maps?q=${state.geo}`,
+                    reply_markup: { 
+                        inline_keyboard: [[{text: "✅ Qabul qilish", callback_data: `ok_${oid}`}]] 
+                    }
+                })
+            });
+
+            // Tarixga saqlash
+            state.history.unshift({id: oid, items, status: "Kutilmoqda ⏳"});
+            localStorage.setItem('cafe_history', JSON.stringify(state.history));
+            
+            state.cart = {}; 
+            renderCart();
+            msg("Buyurtma yuborildi! 🚀");
+            go('history', document.querySelectorAll('.nav-item')[2]);
+        }
+
+        // 7. NAVIGATSIYA
+        function go(page, el) {
+            document.querySelectorAll('.page').forEach(x => x.classList.remove('active'));
+            document.getElementById('p-'+page).classList.add('active');
+            document.querySelectorAll('.nav-item').forEach(x => x.classList.remove('active'));
+            el.classList.add('active');
+            if(page === 'history') renderHistory();
+        }
+
+        function renderHistory() {
+            document.getElementById('historyBox').innerHTML = state.history.map(h => `
+                <div class="history-card">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <b>#${h.id}</b> <span class="status-badge">${h.status}</span>
+                    </div>
+                    <p style="font-size:13px; color:#555; margin-top:10px; line-height:1.4;">${h.items.replace(/\n/g,'<br>')}</p>
+                </div>`).join('') || "<p style='text-align:center; padding:40px; color:#999;'>Buyurtmalar mavjud emas</p>";
+        }
+
+        function msg(m) {
+            let t = document.getElementById('toast');
+            t.innerText = m; t.classList.add('show');
+            setTimeout(()=>t.classList.remove('show'), 3000);
+        }
+    </script>
 </body>
 </html>
