@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Cafe 777 - Smart System</title>
+    <title>Cafe 777 - Professional System</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
@@ -12,9 +12,18 @@
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--gray); margin: 0; overflow-x: hidden; }
+        body { font-family: 'Segoe UI', Roboto, sans-serif; background: var(--gray); margin: 0; overflow-x: hidden; }
 
-        /* HEADER */
+        /* 1. REGISTRATSIYA MODALI */
+        #regScreen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: white; z-index: 10000; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; padding: 30px;
+            transition: 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        #regScreen.hide { transform: translateY(-100%); visibility: hidden; }
+
+        /* 2. HEADER VA NAVIGATSIYA */
         .header {
             width: 100%; background: white; padding: 15px 20px;
             display: flex; justify-content: space-between; align-items: center;
@@ -22,288 +31,359 @@
         }
         .badge { background: var(--red); color: white; border-radius: 50%; padding: 2px 6px; font-size: 10px; position: absolute; top: -5px; right: -5px; }
 
-        /* DRAWER */
-        .drawer { position: fixed; top: 0; left: -300px; width: 280px; height: 100%; background: white; z-index: 5501; transition: 0.5s; box-shadow: 10px 0 30px rgba(0,0,0,0.1); }
-        .drawer.open { left: 0; }
-        .drawer-header { background: var(--primary); padding: 40px 20px; text-align: center; }
-        .drawer-item { display: flex; align-items: center; padding: 15px 25px; color: var(--dark); text-decoration: none; font-weight: 600; border-bottom: 1px solid #f5f5f5; }
-        .drawer-item i { margin-right: 15px; width: 20px; }
-
-        /* STATUS SECTION */
-        .status-box { background: white; margin: 15px; padding: 15px; border-radius: 15px; border-left: 5px solid var(--blue); animation: slideIn 0.5s; }
-        .status-step { display: flex; align-items: center; gap: 10px; margin-top: 10px; font-size: 14px; }
-        .dot { width: 12px; height: 12px; border-radius: 50%; background: #ddd; }
-        .dot.active { background: var(--green); box-shadow: 0 0 10px var(--green); }
-
-        /* CHAT SECTION */
-        .chat-container { height: 300px; overflow-y: auto; padding: 10px; background: #fafafa; border-radius: 10px; margin-bottom: 10px; }
-        .msg { margin-bottom: 10px; padding: 8px 12px; border-radius: 15px; max-width: 80%; font-size: 14px; }
-        .msg.admin { background: #e1ffeb; align-self: flex-start; border-bottom-left-radius: 2px; }
-        .msg.user { background: var(--blue); color: white; margin-left: auto; border-bottom-right-radius: 2px; }
-
-        /* CARDS & ANIMATIONS */
+        /* 3. MENU CARDLARI VA ANIMATSIYALAR */
         .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 12px; }
-        .card { background: white; border-radius: 20px; overflow: hidden; position: relative; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-        .card img { width: 100%; aspect-ratio: 1/1; object-fit: cover; transition: 0.3s; }
-        .card:active img { transform: scale(1.1); }
-        .fav-heart { position: absolute; top: 10px; right: 10px; color: #ccc; font-size: 20px; z-index: 5; }
-        .fav-heart.active { color: var(--red); }
-
-        /* MODALS */
-        .full-screen-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 7000; display: none; flex-direction: column; padding: 20px; transition: 0.5s; }
-        .full-screen-modal.show { display: flex; animation: fadeInUp 0.4s forwards; }
+        .card { 
+            background: white; border-radius: 20px; overflow: hidden; position: relative; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05); animation: zoomIn 0.5s ease;
+        }
+        @keyframes zoomIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
         
-        @keyframes fadeInUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-        @keyframes slideIn { from { transform: translateX(-100%); } to { transform: translateX(0); } }
+        .fav-icon {
+            position: absolute; top: 10px; right: 10px; z-index: 10;
+            font-size: 20px; color: #ddd; transition: 0.3s; cursor: pointer;
+            text-shadow: 0 0 5px rgba(0,0,0,0.2);
+        }
+        .fav-icon.active { color: var(--red); transform: scale(1.2); }
 
-        .order-btn { background: var(--dark); color: white; border: none; width: 100%; padding: 16px; border-radius: 14px; font-weight: bold; cursor: pointer; }
-        input { width: 100%; padding: 15px; margin: 10px 0; border: 1px solid #ddd; border-radius: 12px; }
+        .card img { width: 100%; aspect-ratio: 1/1; object-fit: cover; cursor: pointer; transition: 0.5s; }
+
+        /* 4. MAHSULOT MODALI (ZOOM) */
+        #productModal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9); z-index: 9000; align-items: center; justify-content: center;
+            backdrop-filter: blur(10px);
+        }
+        .modal-content {
+            background: white; width: 90%; max-width: 400px; border-radius: 30px; overflow: hidden;
+            transform: scale(0.5); opacity: 0; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .modal-content.show { transform: scale(1); opacity: 1; }
+
+        /* 5. STATUS VA CHAT */
+        .status-container { background: white; margin: 15px; padding: 20px; border-radius: 20px; border-left: 6px solid var(--blue); }
+        .step { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; color: #888; transition: 0.3s; }
+        .step.done { color: var(--green); font-weight: bold; }
+        .step .dot { width: 12px; height: 12px; border-radius: 50%; background: #ddd; }
+        .step.done .dot { background: var(--green); box-shadow: 0 0 10px var(--green); }
+
+        .chat-box { height: 250px; overflow-y: auto; padding: 10px; background: #f9f9f9; border-radius: 15px; display: flex; flex-direction: column; gap: 10px; }
+        .m { padding: 10px 15px; border-radius: 18px; max-width: 80%; font-size: 14px; line-height: 1.4; }
+        .m.admin { background: #e8e8e8; align-self: flex-start; border-bottom-left-radius: 2px; }
+        .m.user { background: var(--blue); color: white; align-self: flex-end; border-bottom-right-radius: 2px; }
+
+        /* TUGMALAR */
+        .btn-p { background: var(--dark); color: white; border: none; width: 100%; padding: 16px; border-radius: 15px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .btn-p:active { transform: scale(0.95); }
+        .btn-loc { background: #eee; color: #333; margin-bottom: 10px; }
+        input { width: 100%; padding: 15px; margin: 8px 0; border: 1px solid #ddd; border-radius: 12px; font-size: 16px; }
+
+        /* DRAWER */
+        .drawer { position: fixed; top: 0; left: -300px; width: 280px; height: 100%; background: white; z-index: 5501; transition: 0.4s; box-shadow: 10px 0 30px rgba(0,0,0,0.1); }
+        .drawer.open { left: 0; }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 5500; display: none; }
     </style>
 </head>
 <body>
 
+    <div id="regScreen">
+        <div style="font-size: 60px;">👑</div>
+        <h2 style="margin: 10px 0;">Cafe 777</h2>
+        <p style="color: #888; margin-bottom: 20px;">Ro'yxatdan o'ting</p>
+        <input type="text" id="uName" placeholder="Ism Familiyangiz">
+        <input type="tel" id="uPhone" value="+998 " maxlength="17" oninput="formatPhone(this)">
+        <button class="btn-p" onclick="completeReg()" style="margin-top: 20px;">SAQLASH VA KIRISH</button>
+    </div>
+
+    <div id="overlay" class="overlay" onclick="closeDrawer()"></div>
     <div id="drawer" class="drawer">
-        <div class="drawer-header">
-            <div style="font-size:40px">🍳</div>
-            <h3 id="drName">Mehmon</h3>
+        <div style="background:var(--primary); padding:40px 20px; color:white; text-align:center;">
+            <div style="font-size:40px;">👤</div>
+            <h3 id="sideName" style="margin:5px 0;"></h3>
+            <small id="sidePhone"></small>
         </div>
-        <a href="#" class="drawer-item" onclick="showSec('home')"><i class="fas fa-home"></i> Menyu</a>
-        <a href="#" class="drawer-item" onclick="showSec('favs')"><i class="fas fa-heart"></i> Sevimlilar</a>
-        <a href="#" class="drawer-item" onclick="showSec('status')"><i class="fas fa-truck"></i> Buyurtmani kuzatish</a>
-        <a href="#" class="drawer-item" onclick="showSec('chat')"><i class="fas fa-comment-dots"></i> Xabarlar <span id="msgBadge" class="badge" style="display:none">0</span></a>
+        <nav style="padding: 20px;">
+            <div onclick="showPage('home')" style="padding:15px 0; border-bottom:1px solid #eee;"><i class="fas fa-home"></i> Menyu</div>
+            <div onclick="showPage('favs')" style="padding:15px 0; border-bottom:1px solid #eee;"><i class="fas fa-heart"></i> Sevimlilar</div>
+            <div onclick="showPage('status')" style="padding:15px 0; border-bottom:1px solid #eee;"><i class="fas fa-truck"></i> Buyurtma holati</div>
+            <div onclick="showPage('chat')" style="padding:15px 0;"><i class="fas fa-comment"></i> Xabarlar <span id="chatDot" style="color:red; display:none;">●</span></div>
+        </nav>
     </div>
 
     <header class="header">
-        <button onclick="document.getElementById('drawer').classList.toggle('open')" style="background:none; border:none; font-size:24px;">☰</button>
-        <b>CAFE 777</b>
-        <div style="font-size:20px; position:relative;" onclick="showSec('favs')">❤️<span id="favBadge" class="badge">0</span></div>
+        <button onclick="openDrawer()" style="background:none; border:none; font-size:24px;">☰</button>
+        <b style="letter-spacing:1px;">CAFE 777</b>
+        <div onclick="showPage('favs')" style="position:relative;">❤️<span id="fCount" class="badge">0</span></div>
     </header>
 
-    <div id="activeStatus" style="display:none"></div>
-
-    <main id="homeSec">
+    <main id="p-home">
         <div id="catNav" style="display:flex; gap:10px; overflow-x:auto; padding:15px; background:white;"></div>
         <div class="menu-grid" id="menuDisplay"></div>
     </main>
 
-    <main id="favsSec" style="display:none; padding:15px;">
+    <main id="p-favs" style="display:none; padding:20px;">
         <h3>Sevimlilar ❤️</h3>
         <div class="menu-grid" id="favDisplay"></div>
     </main>
 
-    <main id="statusSec" style="display:none; padding:15px;">
-        <h3>Buyurtma holati 📦</h3>
-        <div id="statusContent">Sizda faol buyurtmalar yo'q.</div>
+    <main id="p-status" style="display:none; padding:20px;">
+        <h3>Buyurtma kuzatuvi 🚚</h3>
+        <div id="statusUI">Hozircha faol buyurtma yo'q.</div>
     </main>
 
-    <main id="chatSec" style="display:none; padding:15px;">
-        <h3>Admin bilan muloqot 💬</h3>
-        <div id="chatBox" class="chat-container"></div>
-        <div style="display:flex; gap:5px;">
-            <input type="text" id="chatInput" placeholder="Xabar yozing...">
-            <button onclick="sendChat()" style="background:var(--blue); color:white; border:none; border-radius:12px; padding:0 20px;">✉️</button>
+    <main id="p-chat" style="display:none; padding:20px;">
+        <h3>Xabarlar 💬</h3>
+        <div id="chatDisplay" class="chat-box"></div>
+        <div style="display:flex; gap:5px; margin-top:10px;">
+            <input type="text" id="chatMsg" placeholder="Xabaringiz...">
+            <button onclick="sendMessage()" style="background:var(--blue); color:white; border:none; border-radius:12px; padding:0 15px;">Yuborish</button>
         </div>
     </main>
 
-    <div style="background:white; margin:15px; padding:20px; border-radius:20px; box-shadow: 0 5px 20px rgba(0,0,0,0.05);">
-        <div id="cartItems"></div>
-        <div style="display:flex; justify-content:space-between; font-weight:bold; margin:10px 0;">
-            <span>Jami:</span><span id="totalPrice">0 so'm</span>
+    <div id="productModal" onclick="if(event.target==this) closeProduct()">
+        <div class="modal-content" id="mContent">
+            <img id="mImg" style="width:100%;">
+            <div style="padding:20px;">
+                <h2 id="mTitle" style="margin:0;"></h2>
+                <p id="mDesc" style="color:#666; margin:10px 0;"></p>
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <b id="mPrice" style="font-size:20px; color:var(--secondary);"></b>
+                    <button class="btn-p" onclick="closeProduct()" style="width:auto; padding:10px 20px;">Yopish</button>
+                </div>
+            </div>
         </div>
-        <button class="order-btn" onclick="sendOrder()">BUYURTMA BERISH</button>
+    </div>
+
+    <div style="background:white; margin:15px; padding:20px; border-radius:25px; box-shadow:0 10px 30px rgba(0,0,0,0.05);">
+        <h3>Savat 🛒</h3>
+        <div id="cartItems" style="margin-bottom:10px; font-size:14px; color:#555;"></div>
+        <div style="display:flex; justify-content:space-between; font-weight:bold; font-size:18px; margin-bottom:15px;">
+            <span>Jami:</span><span id="totalSum">0 so'm</span>
+        </div>
+        <button class="btn-p btn-loc" id="locBtn" onclick="getLocation()">📍 MANZILNI ANIQLASH</button>
+        <button class="btn-p" id="orderBtn" onclick="placeOrder()">BUYURTMA BERISH</button>
     </div>
 
     <script>
         const BOT_TOKEN = "8032226679:AAETTGPvYZYSvF_QmdofXKibpOwt4E9Iitc";
-        const ADMIN_CHAT_ID = "519326806";
-        const SHEET_ID = "1j6VojbeSYWgYj3UY98xCxHLCzHcGlEg0nXjYwHDkKQk";
+        const ADMIN_ID = "519326806";
+        const SHEET_URL = "https://docs.google.com/spreadsheets/d/1j6VojbeSYWgYj3UY98xCxHLCzHcGlEg0nXjYwHDkKQk/gviz/tq?tqx=out:json";
 
-        let products = [], cart = {}, favorites = [], orderStatus = "none";
-        let messages = JSON.parse(localStorage.getItem('c777_msgs') || "[]");
+        let products = [], cart = {}, favorites = [], myLoc = null, userID = "";
 
-        // 1. SEVIMLILAR LOGIKASI
-        function toggleFav(id) {
-            const idx = favorites.indexOf(id);
-            if(idx === -1) favorites.push(id); else favorites.splice(idx,1);
-            localStorage.setItem('c777_favs', JSON.stringify(favorites));
-            updateUI();
+        // FORMAT TELEFON
+        function formatPhone(i) {
+            let v = i.value.replace(/[^\d]/g, '');
+            if(!v.startsWith('998')) v = '998' + v;
+            let res = "+998 ";
+            if(v.length > 3) res += v.substring(3, 5) + " ";
+            if(v.length > 5) res += v.substring(5, 8) + " ";
+            if(v.length > 8) res += v.substring(8, 10) + " ";
+            if(v.length > 10) res += v.substring(10, 12);
+            i.value = res.trim();
         }
 
-        // 2. BUYURTMA VA STATUS (ADMIN BILAN ALOQA)
-        async function sendOrder() {
-            if(Object.keys(cart).length === 0) return alert("Savat bo'sh!");
+        // REGISTRATSIYA
+        function completeReg() {
+            const name = document.getElementById('uName').value;
+            const phone = document.getElementById('uPhone').value;
+            if(name.length < 3 || phone.length < 17) return alert("Ma'lumotlarni to'liq kiriting!");
             
-            orderStatus = "yuborildi";
-            localStorage.setItem('order_status', "yuborildi");
+            userID = "ID" + Math.floor(Math.random() * 999999);
+            localStorage.setItem('c777_user', JSON.stringify({name, phone, userID}));
             
-            let text = `🚀 YANGI BUYURTMA!\n\n`;
-            for(let id in cart) text += `- ${products.find(x=>x.id==id).name} x${cart[id]}\n`;
-            
-            // Telegramga status tugmalari bilan yuborish
-            const keyboard = {
-                inline_keyboard: [
-                    [{text: "✅ Qabul qilish", callback_data: `status_qabul_${ADMIN_CHAT_ID}`}],
-                    [{text: "👨‍🍳 Tayyorlanmoqda", callback_data: `status_tayyorlanmoqda_${ADMIN_CHAT_ID}`}],
-                    [{text: "🚚 Yo'lda", callback_data: `status_yolda_${ADMIN_CHAT_ID}`}]
-                ]
-            };
-
-            await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({
-                    chat_id: ADMIN_CHAT_ID,
-                    text: text,
-                    reply_markup: keyboard
-                })
-            });
-            
-            alert("Buyurtma yuborildi! Statusni kuzatishingiz mumkin.");
-            showSec('status');
-            updateStatusUI();
+            document.getElementById('regScreen').classList.add('hide');
+            loadAppData();
         }
 
-        // 3. STATUSNI TEKSHIRIB TURISH (Interval)
-        // Eslatma: Haqiqiy server bo'lmasa, biz Bot "getUpdates" orqali Admin xabarlarini tekshiramiz
-        async function checkUpdates() {
+        // MA'LUMOTLARNI YUKLASH
+        async function loadAppData() {
+            const user = JSON.parse(localStorage.getItem('c777_user'));
+            if(!user) return;
+            
+            document.getElementById('regScreen').style.display = 'none';
+            document.getElementById('sideName').innerText = user.name;
+            document.getElementById('sidePhone').innerText = user.phone;
+            userID = user.userID;
+
             try {
-                const r = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/getUpdates?offset=-1`);
-                const d = await r.json();
-                if(d.result.length > 0) {
-                    const lastMsg = d.result[0];
-                    
-                    // Agar admin statusni o'zgartirsa (Sizning holatda buni simulyatsiya qilamiz)
-                    if(lastMsg.message && lastMsg.message.text.startsWith("/status")) {
-                        const newStatus = lastMsg.message.text.split(" ")[1];
-                        orderStatus = newStatus;
-                        localStorage.setItem('order_status', newStatus);
-                        updateStatusUI();
-                    }
-                    
-                    // Agar admin xabar yozsa
-                    if(lastMsg.message && lastMsg.message.chat.id == ADMIN_CHAT_ID && !lastMsg.message.text.startsWith("/")) {
-                        const text = lastMsg.message.text;
-                        if(!messages.find(m => m.text === text)) {
-                            messages.push({type: 'admin', text: text});
-                            localStorage.setItem('c777_msgs', JSON.stringify(messages));
-                            renderChat();
-                            document.getElementById('msgBadge').style.display = 'block';
-                        }
-                    }
-                }
-            } catch(e) {}
-        }
-        setInterval(checkUpdates, 3000); // Har 3 sekundda tekshiradi
-
-        function updateStatusUI() {
-            const container = document.getElementById('statusContent');
-            const s = localStorage.getItem('order_status') || "none";
-            
-            if(s === "none") return;
-
-            const steps = [
-                {id: "yuborildi", label: "Yuborildi"},
-                {id: "qabul", label: "Qabul qilindi"},
-                {id: "tayyor", label: "Tayyor bo'ldi"},
-                {id: "yolda", label: "Yo'lda / Yetkazilmoqda"}
-            ];
-
-            let html = `<div class="status-box"><h3>Buyurtma #${Math.floor(Math.random()*1000)}</h3>`;
-            steps.forEach(step => {
-                const isActive = (s.includes(step.id)) ? 'active' : '';
-                html += `<div class="status-step"><div class="dot ${isActive}"></div> ${step.label}</div>`;
-            });
-            html += `</div>`;
-            container.innerHTML = html;
-        }
-
-        // 4. CHAT LOGIKASI
-        function sendChat() {
-            const input = document.getElementById('chatInput');
-            if(!input.value) return;
-            
-            const txt = input.value;
-            messages.push({type: 'user', text: txt});
-            localStorage.setItem('c777_msgs', JSON.stringify(messages));
-            
-            // Adminga yuborish
-            fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-                method: 'POST',
-                headers: {'Content-Type':'application/json'},
-                body: JSON.stringify({ chat_id: ADMIN_CHAT_ID, text: `💬 Xabar: ${txt}` })
-            });
-            
-            input.value = "";
-            renderChat();
-        }
-
-        function renderChat() {
-            const box = document.getElementById('chatBox');
-            box.innerHTML = messages.map(m => `<div class="msg ${m.type}">${m.text}</div>`).join('');
-            box.scrollTop = box.scrollHeight;
-        }
-
-        // 5. ASOSIY FUNKSIYALAR
-        function showSec(id) {
-            ['homeSec', 'favsSec', 'statusSec', 'chatSec'].forEach(s => document.getElementById(s).style.display = 'none');
-            document.getElementById(id + 'Sec').style.display = 'block';
-            document.getElementById('drawer').classList.remove('open');
-            if(id === 'chat') {
-                renderChat();
-                document.getElementById('msgBadge').style.display = 'none';
-            }
-            if(id === 'favs') renderFavs();
-        }
-
-        async function loadData() {
-            const r = await fetch(`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`);
-            const t = await r.text();
-            const j = JSON.parse(t.substr(47).slice(0, -2));
-            products = j.table.rows.map((r, i) => ({
-                id: i+1, cat: r.c[1]?.v, name: r.c[2]?.v, price: r.c[3]?.v, img: r.c[4]?.v
-            }));
-            renderMenu();
+                const r = await fetch(SHEET_URL);
+                const t = await r.text();
+                const j = JSON.parse(t.substr(47).slice(0,-2));
+                products = j.table.rows.map((r,i) => ({
+                    id: i+1, cat: r.c[1]?.v, name: r.c[2]?.v, price: r.c[3]?.v, img: r.c[4]?.v, desc: r.c[5]?.v || "Ajoyib ta'm!"
+                }));
+                renderMenu();
+            } catch(e) { alert("Internet xatosi!"); }
         }
 
         function renderMenu() {
-            document.getElementById('menuDisplay').innerHTML = products.map(p => `
+            const display = document.getElementById('menuDisplay');
+            display.innerHTML = products.map(p => `
                 <div class="card">
-                    <i class="fas fa-heart fav-heart ${favorites.includes(p.id)?'active':''}" onclick="toggleFav(${p.id})"></i>
-                    <img src="${p.img}">
-                    <div style="padding:10px; text-align:center">
-                        <div style="font-size:14px; font-weight:600">${p.name}</div>
-                        <div style="color:var(--secondary)">${p.price.toLocaleString()} so'm</div>
-                        <button onclick="addToCart(${p.id})" style="margin-top:5px; border:none; background:var(--dark); color:white; border-radius:5px; padding:5px 10px;">+ Savat</button>
+                    <i class="fas fa-heart fav-icon ${favorites.includes(p.id)?'active':''}" onclick="toggleFav(${p.id}, this)"></i>
+                    <img src="${p.img}" onclick="openProduct(${p.id})">
+                    <div style="padding:10px; text-align:center;">
+                        <h4 style="margin:5px 0; font-size:14px;">${p.name}</h4>
+                        <b style="color:var(--secondary)">${p.price.toLocaleString()} so'm</b>
+                        <button onclick="addToCart(${p.id})" style="width:100%; margin-top:8px; border:none; background:var(--dark); color:white; border-radius:8px; padding:5px;">+ Savat</button>
                     </div>
                 </div>
             `).join('');
         }
 
-        function renderFavs() {
-            const favProducts = products.filter(p => favorites.includes(p.id));
-            document.getElementById('favDisplay').innerHTML = favProducts.map(p => `
-                <div class="card"><img src="${p.img}"><div style="padding:10px">${p.name}</div></div>
-            `).join('');
+        // MODAL FUNKSIYALARI
+        function openProduct(id) {
+            const p = products.find(x => x.id == id);
+            document.getElementById('mImg').src = p.img;
+            document.getElementById('mTitle').innerText = p.name;
+            document.getElementById('mDesc').innerText = p.desc;
+            document.getElementById('mPrice').innerText = p.price.toLocaleString() + " so'm";
+            document.getElementById('productModal').style.display = 'flex';
+            setTimeout(() => document.getElementById('mContent').classList.add('show'), 10);
         }
 
+        function closeProduct() {
+            document.getElementById('mContent').classList.remove('show');
+            setTimeout(() => document.getElementById('productModal').style.display = 'none', 300);
+        }
+
+        // SAVAT VA SEVIMLILAR
         function addToCart(id) {
             cart[id] = (cart[id] || 0) + 1;
-            updateUI();
+            updateCartUI();
         }
 
-        function updateUI() {
-            document.getElementById('favBadge').innerText = favorites.length;
-            let total = 0;
-            for(let id in cart) total += products.find(x=>x.id==id).price * cart[id];
-            document.getElementById('totalPrice').innerText = total.toLocaleString() + " so'm";
+        function toggleFav(id, el) {
+            const idx = favorites.indexOf(id);
+            if(idx === -1) { favorites.push(id); el.classList.add('active'); }
+            else { favorites.splice(idx, 1); el.classList.remove('active'); }
+            document.getElementById('fCount').innerText = favorites.length;
         }
 
-        window.onload = () => {
-            favorites = JSON.parse(localStorage.getItem('c777_favs') || "[]");
-            loadData();
+        function updateCartUI() {
+            let total = 0, html = "";
+            for(let id in cart) {
+                const p = products.find(x => x.id == id);
+                total += p.price * cart[id];
+                html += `<div>${p.name} x${cart[id]}</div>`;
+            }
+            document.getElementById('cartItems').innerHTML = html || "Savat bo'sh";
+            document.getElementById('totalSum').innerText = total.toLocaleString() + " so'm";
+        }
+
+        // MANZIL
+        function getLocation() {
+            const btn = document.getElementById('locBtn');
+            btn.innerText = "Aniqlanmoqda...";
+            navigator.geolocation.getCurrentPosition(pos => {
+                myLoc = `${pos.coords.latitude},${pos.coords.longitude}`;
+                btn.innerText = "✅ MANZIL ANIQLANDI";
+                btn.style.background = "#eaffea";
+            }, () => { alert("GPS-ni yoqing!"); btn.innerText = "📍 MANZILNI ANIQLASH"; });
+        }
+
+        // BUYURTMA BERISH
+        async function placeOrder() {
+            if(!Object.keys(cart).length) return alert("Savat bo'sh!");
+            if(!myLoc) return alert("Avval manzilni aniqlang!");
+
+            const user = JSON.parse(localStorage.getItem('c777_user'));
+            let items = "";
+            for(let id in cart) items += `- ${products.find(x=>x.id==id).name} x${cart[id]}\n`;
+
+            const text = `🚀 YANGI BUYURTMA\n👤: ${user.name}\n📞: ${user.phone}\n🆔: ${user.userID}\n\n${items}\n💰 JAMI: ${document.getElementById('totalSum').innerText}\n📍 Manzil: https://www.google.com/maps?q=${myLoc}`;
+
+            const keyboard = {
+                inline_keyboard: [
+                    [{text: "✅ Qabul qilish", callback_data: `st_qabul_${user.userID}`}],
+                    [{text: "👨‍🍳 Tayyorlanmoqda", callback_data: `st_tayyor_${user.userID}`}],
+                    [{text: "🚚 Yetkazilmoqda", callback_data: `st_yolda_${user.userID}`}]
+                ]
+            };
+
+            await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                method: 'POST', headers: {'Content-Type':'application/json'},
+                body: JSON.stringify({ chat_id: ADMIN_ID, text: text, reply_markup: keyboard })
+            });
+
+            alert("Buyurtma yuborildi!");
+            localStorage.setItem('last_status', 'yuborildi');
             updateStatusUI();
-            updateUI();
-        };
-    </script>
-</body>
-</html>
+            cart = {}; updateCartUI();
+        }
+
+        // REAL-TIME STATUS VA CHAT (TELEGRAMDAN TEKSHIRISH)
+        async function syncWithTelegram() {
+            try {
+                const r = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/getUpdates?offset=-1`);
+                const d = await r.json();
+                if(!d.result.length) return;
+
+                const last = d.result[0];
+                
+                // Status o'zgarishi (Agar admin callback yoki maxsus xabar yuborsa)
+                if(last.message && last.message.text.includes(userID)) {
+                    const txt = last.message.text.toLowerCase();
+                    if(txt.includes("qabul")) localStorage.setItem('last_status', 'qabul');
+                    if(txt.includes("tayyor")) localStorage.setItem('last_status', 'tayyor');
+                    if(txt.includes("yolda")) localStorage.setItem('last_status', 'yolda');
+                    updateStatusUI();
+                }
+
+                // Chat (Admin javobi)
+                // Admin mijozning xabariga REPLY qilgan bo'lishi kerak
+                if(last.message && last.message.reply_to_message && last.message.reply_to_message.text.includes(userID)) {
+                    const msg = last.message.text;
+                    const history = JSON.parse(localStorage.getItem('chat_hist') || "[]");
+                    if(!history.find(h => h.txt == msg)) {
+                        history.push({type: 'admin', txt: msg});
+                        localStorage.setItem('chat_hist', JSON.stringify(history));
+                        renderChat();
+                        document.getElementById('chatDot').style.display = 'inline';
+                    }
+                }
+            } catch(e) {}
+        }
+        setInterval(syncWithTelegram, 3000);
+
+        function updateStatusUI() {
+            const s = localStorage.getItem('last_status');
+            if(!s) return;
+            const container = document.getElementById('statusUI');
+            container.innerHTML = `
+                <div class="status-container">
+                    <div class="step ${s=='yuborildi'||s=='qabul'||s=='tayyor'||s=='yolda'?'done':''}"> <div class="dot"></div> Buyurtma yuborildi</div>
+                    <div class="step ${s=='qabul'||s=='tayyor'||s=='yolda'?'done':''}"> <div class="dot"></div> Admin qabul qildi</div>
+                    <div class="step ${s=='tayyor'||s=='yolda'?'done':''}"> <div class="dot"></div> Taom tayyorlandi</div>
+                    <div class="step ${s=='yolda'?'done':''}"> <div class="dot"></div> Kuryer yo'lda</div>
+                </div>
+            `;
+        }
+
+        function sendMessage() {
+            const inp = document.getElementById('chatMsg');
+            if(!inp.value) return;
+            const txt = inp.value;
+            const history = JSON.parse(localStorage.getItem('chat_hist') || "[]");
+            history.push({type: 'user', txt: txt});
+            localStorage.setItem('chat_hist', JSON.stringify(history));
+
+            fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                method: 'POST', headers: {'Content-Type':'application/json'},
+                body: JSON.stringify({ chat_id: ADMIN_ID, text: `💬 MIJOZ (${userID}):\n${txt}` })
+            });
+
+            inp.value = ""; renderChat();
+        }
+
+        function renderChat() {
+            const hist = JSON.parse(localStorage.getItem('chat_hist') || "[]");
+            document.getElementById('chatDisplay').innerHTML = hist.map(h => `<div class="m ${h.type}">${h.txt}</div>`).join('');
+            const d = document.getElementById('chatDisplay'); d.scrollTop = d.scrollHeight;
+        }
+
+        // NAVIGATSIYA
+        function showPage(p) {
+            ['home', 'favs', 'status', 'chat'].forEach(id => document.getElementById('p-'+id).style.display = 'none');
+            document.getElementById('p-'+p).style.display = 
