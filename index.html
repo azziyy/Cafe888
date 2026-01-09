@@ -3,258 +3,405 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Cafe 777 - Premium App</title>
+    <title>Cafe 777 - Professional Edition</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        /* Status va Tarix uchun qo'shimcha dizayn */
-        .history-item {
-            background: var(--white);
-            border-radius: 15px;
-            padding: 15px;
-            margin-bottom: 15px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-            border-left: 5px solid #ddd;
-            animation: fadeIn 0.3s ease;
-        }
-        .status-badge {
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: bold;
-            display: inline-block;
-        }
-        /* Status ranglari */
-        .st-1 { background: #fff3cd; color: #856404; } /* Qabul qilindi */
-        .st-2 { background: #cce5ff; color: #004085; } /* Tayyorlanmoqda */
-        .st-3 { background: #d1ecf1; color: #0c5460; } /* Yo'lda */
-        .st-4 { background: #d4edda; color: #155724; } /* Yetkazildi */
-        
-        .order-id { font-size: 10px; color: #999; }
-        .order-date { font-size: 10px; color: #999; float: right; }
-    </style>
 </head>
-<body class="light-mode">
+<body class="light-theme">
 
-    <div id="myAlert" class="custom-alert" onclick="if(event.target==this) closeAlert()">
-        <div class="alert-box">
-            <span id="alertIcon" class="alert-icon"></span>
-            <div id="alertTitle" class="alert-title"></div>
-            <div id="alertMsg" class="alert-msg"></div>
-            <button class="alert-btn" onclick="closeAlert()">Tushunarli</button>
+    <div id="loader" class="loader-wrapper">
+        <div class="loader-content">
+            <div class="logo-anim">CAFE <span>777</span></div>
+            <div class="progress-bar"><div class="progress"></div></div>
         </div>
     </div>
 
-    <header class="header-nav">
-        <div class="menu-icon" onclick="toggleDrawer()"><i class="fa fa-bars-staggered"></i></div>
-        <div class="logo">CAFE <span>777</span></div>
-        <div class="user-badge" onclick="openProfile()"><i class="fa fa-circle-user"></i> <span id="badgeName">Kirish</span></div>
+    <div id="drawerOverlay" class="drawer-overlay" onclick="toggleDrawer()"></div>
+    <div id="sidebar" class="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-user">
+                <div class="avatar-circle"><i class="fa fa-user"></i></div>
+                <div class="user-info">
+                    <h4 id="sideName">Mehmon</h4>
+                    <p id="sidePhone">+998 .. ... .. ..</p>
+                </div>
+            </div>
+        </div>
+        <div class="sidebar-menu">
+            <div class="menu-item" onclick="p('main', this); toggleDrawer();"><i class="fa fa-home"></i> Bosh sahifa</div>
+            <div class="menu-item" onclick="p('history', this); toggleDrawer();"><i class="fa fa-history"></i> Mening buyurtmalarim</div>
+            <div class="menu-item" onclick="openProfile(); toggleDrawer();"><i class="fa fa-cog"></i> Sozlamalar</div>
+            <hr>
+            <div class="menu-item" onclick="toggleTheme()"><i class="fa fa-moon"></i> Tungi rejim <span class="toggle-btn"></span></div>
+            <div class="menu-item" onclick="window.location.reload()"><i class="fa fa-sync"></i> Yangilash</div>
+        </div>
+        <div class="sidebar-footer">v2.0.4 Professional</div>
+    </div>
+
+    <header class="main-header">
+        <div class="header-left">
+            <button class="icon-btn" onclick="toggleDrawer()"><i class="fa fa-bars-staggered"></i></button>
+        </div>
+        <div class="header-center">
+            <div class="logo">CAFE <span>777</span></div>
+        </div>
+        <div class="header-right">
+            <button class="icon-btn" onclick="openProfile()"><i class="fa-regular fa-circle-user"></i></button>
+        </div>
     </header>
 
-    <main id="main-p" class="p-con">
-        <div id="catNav" class="category-nav"></div>
-        <div id="menu" class="menu-grid"></div>
+    <main id="app">
+        
+        <section id="main-p" class="page active">
+            <div class="search-bar">
+                <i class="fa fa-search"></i>
+                <input type="text" id="searchInput" placeholder="Taom qidirish..." oninput="searchFood()">
+            </div>
+            
+            <div id="catNav" class="category-list">
+                </div>
+
+            <div id="menuGrid" class="menu-grid">
+                </div>
+        </section>
+
+        <section id="cart-p" class="page">
+            <div class="page-header">
+                <h2>Savat</h2>
+                <button class="clear-btn" onclick="clearCart()">Tozalash</button>
+            </div>
+            <div id="cartItems" class="cart-items">
+                </div>
+            <div class="order-form">
+                <div class="price-summary">
+                    <div class="summary-row"><span>Mahsulotlar:</span> <span id="subtotal">0</span></div>
+                    <div class="summary-row"><span>Yetkazish:</span> <span>Bepul</span></div>
+                    <div class="summary-row total"><span>Jami:</span> <span id="cartTotal">0 so'm</span></div>
+                </div>
+                
+                <button id="locBtn" class="form-btn outline" onclick="getLocation()">
+                    <i class="fa fa-location-dot"></i> <span id="locText">Manzilni aniqlash</span>
+                </button>
+                
+                <button class="form-btn primary" onclick="sendOrder()">
+                    <i class="fa fa-check"></i> BUYURTMA BERISH
+                </button>
+            </div>
+        </section>
+
+        <section id="history-p" class="page">
+            <div class="page-header">
+                <h2>Buyurtmalar holati</h2>
+            </div>
+            <div id="historyList" class="history-list">
+                </div>
+        </section>
+
+        <section id="fav-p" class="page">
+            <div class="page-header">
+                <h2>Sevimlilar</h2>
+            </div>
+            <div id="favGrid" class="menu-grid">
+                </div>
+        </section>
+
     </main>
 
-    <div id="cart-p" class="p-con hidden">
-        <div class="cart-card">
-            <h3>Savat 🛒</h3>
-            <div id="cartList" class="cart-items-list"></div>
-            <div class="total-section"><span>Jami:</span> <span id="total">0 so'm</span></div>
-            <button id="locBtn" class="location-btn" onclick="getLocation()"><i class="fa fa-location-arrow"></i> MANZILNI ANIQLASH</button>
-            <button id="submitBtn" class="order-submit-btn" onclick="sendOrder()">BUYURTMANI YUBORISH</button>
-        </div>
-    </div>
-
-    <div id="history-p" class="p-con hidden">
-        <div class="cart-card">
-            <h3>Buyurtmalar tarixi 📜</h3>
-            <div id="historyList">
-                <p style="text-align:center; color:#999; padding:20px;">Hozircha buyurtmalar yo'q</p>
+    <div id="productModal" class="modal" onclick="closeModal('productModal')">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="modal-header-img">
+                <img id="m-img" src="" alt="">
+                <button class="close-icon" onclick="closeModal('productModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <h2 id="m-title"></h2>
+                <p id="m-desc"></p>
+                <div class="modal-footer">
+                    <b id="m-price"></b>
+                    <div id="m-ctrl"></div>
+                </div>
             </div>
         </div>
     </div>
 
-    <div id="fav-p" class="p-con hidden">
-        <div id="favs" class="menu-grid"></div>
+    <div id="profileModal" class="modal" onclick="closeModal('profileModal')">
+        <div class="modal-content profile-card" onclick="event.stopPropagation()">
+            <h3>Profil ma'lumotlari</h3>
+            <div class="input-group">
+                <label>Ismingiz</label>
+                <input type="text" id="uName" placeholder="Ism familiya">
+            </div>
+            <div class="input-group">
+                <label>Telefon raqamingiz</label>
+                <input type="tel" id="uPhone" value="+998" maxlength="13">
+            </div>
+            <button class="form-btn primary" onclick="saveProfile()">SAQLASH</button>
+            <button class="form-btn text" onclick="closeModal('profileModal')">Yopish</button>
+        </div>
     </div>
 
-    <nav class="toolbar">
-        <div class="tool-item active" onclick="p('main',this)"><i class="fa fa-utensils"></i><span>Menyu</span></div>
-        <div class="tool-item" onclick="p('cart',this)"><i class="fa fa-cart-shopping"></i><span>Savat</span></div>
-        <div class="tool-item" onclick="p('history',this)"><i class="fa fa-clock-rotate-left"></i><span>Tarix</span></div>
-        <div class="tool-item" onclick="p('fav',this)"><i class="fa fa-heart"></i><span>Sevimlilar</span></div>
+    <nav class="bottom-nav">
+        <div class="nav-item active" onclick="p('main', this)"><i class="fa fa-utensils"></i><span>Menyu</span></div>
+        <div class="nav-item" onclick="p('cart', this)"><i class="fa fa-shopping-bag"></i><span id="cartBadge" class="badge">0</span><span>Savat</span></div>
+        <div class="nav-item" onclick="p('history', this)"><i class="fa fa-clock-rotate-left"></i><span>Tarix</span></div>
+        <div class="nav-item" onclick="p('fav', this)"><i class="fa fa-heart"></i><span>Sevimlilar</span></div>
     </nav>
 
-    <div id="profileModal" class="modal" onclick="if(event.target==this) closeModal('profileModal')">
-        <div class="modal-content profile-modal-content">
-            <div class="modal-body profile-body">
-                <h3>Mening profilim</h3>
-                <div class="input-group"><label>Ism</label><input type="text" id="userName"></div>
-                <div class="input-group"><label>Telefon</label><input type="tel" id="userPhone"></div>
-                <button class="save-btn" onclick="saveProfile()">SAQLASH</button>
-            </div>
-        </div>
-    </div>
-
     <script>
-        const BOT = "8032226679:AAETTGPvYZYSvF_QmdofXKibpOwt4E9Iitc", 
-              ADMIN = "519326806", 
-              SHEET = "1j6VojbeSYWgYj3UY98xCxHLCzHcGlEg0nXjYwHDkKQk",
-              SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzwXqXAjdnweGOhHv-8zUHy2w00LKFaW5-bMWgzEyY7qLfDIkdhdyr13E-vWwx9icJQ4g/exec"; // Google Apps Script URL ni qo'ying
+        // ASOSIY KONFIGURATSIYA
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxY3WpeGlsE6giypDRwV_yIjhfUzhYDolYcK4fE1OKWKQHdl1v_ID-XdEq6dAxX1_uK6A/exec";
+        const SHEET_API = "https://docs.google.com/spreadsheets/d/1j6VojbeSYWgYj3UY98xCxHLCzHcGlEg0nXjYwHDkKQk/gviz/tq?tqx=out:json";
+        const BOT_TOKEN = "8032226679:AAETTGPvYZYSvF_QmdofXKibpOwt4E9Iitc";
+        const ADMIN_ID = "519326806";
 
         let prods = [], cart = {}, favs = [], coords = null;
 
-        async function load() {
+        // Ma'lumotlarni yuklash
+        async function init() {
             try {
-                const r = await fetch(`https://docs.google.com/spreadsheets/d/${SHEET}/gviz/tq?tqx=out:json`);
-                const t = await r.text();
-                const j = JSON.parse(t.substring(47, t.length - 2));
-                prods = j.table.rows.map((r, i) => ({
-                    id: i + 1, cat: r.c[1]?.v || 'Boshqa', name: r.c[2]?.v || 'Nomsiz',
-                    price: r.c[3]?.v || 0, img: r.c[4]?.v || '', desc: r.c[5]?.v || ""
+                const res = await fetch(SHEET_API);
+                const text = await res.text();
+                const json = JSON.parse(text.substring(47, text.length - 2));
+                prods = json.table.rows.map((r, i) => ({
+                    id: i + 1,
+                    cat: r.c[1]?.v || 'Boshqa',
+                    name: r.c[2]?.v || 'Nomsiz',
+                    price: r.c[3]?.v || 0,
+                    img: r.c[4]?.v || 'https://via.placeholder.com/300',
+                    desc: r.c[5]?.v || "Mazali taom"
                 }));
-                renderCats(); renderMenu(); checkProfile();
-            } catch(e) { console.log(e); }
+                renderCats();
+                renderMenu(prods);
+                loadProfile();
+                loadFavs();
+                document.getElementById('loader').style.display = 'none';
+            } catch (e) {
+                alert("Internet ulanishini tekshiring!");
+            }
         }
 
-        // Sahifalarni boshqarish
-        function p(s, el) {
-            document.querySelectorAll('.p-con').forEach(x => x.classList.add('hidden'));
-            document.getElementById(s + '-p').classList.remove('hidden');
-            document.querySelectorAll('.tool-item').forEach(x => x.classList.remove('active'));
-            el.classList.add('active'); 
-            if(s === 'history') updateHistory();
-            if(s === 'fav') renderF();
-            window.scrollTo(0,0);
+        // Sahifani almashtirish
+        function p(pageId, el) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(pageId + '-p').classList.add('active');
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            if(el) el.classList.add('active');
+            if(pageId === 'cart') renderCart();
+            if(pageId === 'history') updateStatus();
+            if(pageId === 'fav') renderFavs();
+            window.scrollTo(0, 0);
         }
 
+        // Menyuni chizish
+        function renderMenu(data) {
+            const grid = document.getElementById('menuGrid');
+            grid.innerHTML = data.map(p => `
+                <div class="food-card">
+                    <div class="fav-icon ${favs.includes(p.id)?'active':''}" onclick="toggleFav(${p.id}, this)">
+                        <i class="fa-solid fa-heart"></i>
+                    </div>
+                    <img src="${p.img}" onclick="openDetail(${p.id})">
+                    <div class="food-info">
+                        <h4 onclick="openDetail(${p.id})">${p.name}</h4>
+                        <div class="food-footer">
+                            <span class="price">${p.price.toLocaleString()} so'm</span>
+                            <div id="btn-ctrl-${p.id}">
+                                ${btnHTML(p.id)}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function btnHTML(id) {
+            const q = cart[id] || 0;
+            return q > 0 ? `
+                <div class="qty-ctrl">
+                    <button onclick="updateQty(${id}, -1)">-</button>
+                    <span>${q}</span>
+                    <button onclick="updateQty(${id}, 1)">+</button>
+                </div>
+            ` : `<button class="add-btn" onclick="updateQty(${id}, 1)">Savatga</button>`;
+        }
+
+        function updateQty(id, delta) {
+            cart[id] = (cart[id] || 0) + delta;
+            if(cart[id] <= 0) delete cart[id];
+            
+            // UI yangilash
+            const ctrls = document.querySelectorAll(`#btn-ctrl-${id}, #m-ctrl`);
+            ctrls.forEach(c => { if(c) c.innerHTML = btnHTML(id); });
+            updateBadge();
+            saveLocalCart();
+        }
+
+        // Tarix va Statusni tekshirish
+        async function updateStatus() {
+            const orders = JSON.parse(localStorage.getItem('c777_orders') || "[]");
+            const container = document.getElementById('historyList');
+            if(orders.length === 0) {
+                container.innerHTML = `<div class="empty-state"><i class="fa fa-receipt"></i><p>Buyurtmalar mavjud emas</p></div>`;
+                return;
+            }
+
+            container.innerHTML = orders.map(o => `
+                <div class="order-card status-${o.status || 1}" id="order-${o.id}">
+                    <div class="order-header">
+                        <span>ID: #${o.id.toString().slice(-6)}</span>
+                        <span class="status-label">${getStatusName(o.status)}</span>
+                    </div>
+                    <p class="order-items">${o.items}</p>
+                    <div class="order-footer">
+                        <b>${o.total}</b>
+                        <small>${new Date(o.id).toLocaleTimeString()}</small>
+                    </div>
+                </div>
+            `).join('');
+
+            // Google Sheets'dan yangi statuslarni olish
+            for(let o of orders) {
+                if(o.status < 4) {
+                    try {
+                        const r = await fetch(`${SCRIPT_URL}?orderId=${o.id}`);
+                        const d = await r.json();
+                        if(d.status && d.status != o.status) {
+                            o.status = d.status;
+                            updateStatus(); // Qayta chizish
+                        }
+                    } catch(e) {}
+                }
+            }
+            localStorage.setItem('c777_orders', JSON.stringify(orders));
+        }
+
+        function getStatusName(s) {
+            const st = { 1: "Qabul qilindi", 2: "Pishirilmoqda", 3: "Yo'lda", 4: "Yetkazildi" };
+            return st[s] || "Kutilmoqda";
+        }
+
+        // Buyurtmani yuborish
         async function sendOrder() {
-            const n = localStorage.getItem('c777_name'), ph = localStorage.getItem('c777_phone');
-            if(!n || !ph) return openProfile();
-            if(!Object.keys(cart).length) return;
-            if(!coords) return showAlert("Manzil", "Joylashuvni aniqlang", "geo");
+            const name = localStorage.getItem('c777_name');
+            const phone = localStorage.getItem('c777_phone');
+            if(!name || !phone) return openProfile();
+            if(Object.keys(cart).length === 0) return alert("Savat bo'sh!");
+            if(!coords) return alert("Iltimos, manzilni aniqlang!");
 
             const orderId = Date.now();
             let itemsText = "";
-            for(let id in cart) itemsText += `${prods.find(x => x.id == id).name} x${cart[id]}, `;
-            const totalSum = document.getElementById('total').innerText;
+            let total = 0;
+            for(let id in cart) {
+                const p = prods.find(x => x.id == id);
+                itemsText += `${p.name} (${cart[id]}x), `;
+                total += p.price * cart[id];
+            }
 
-            // 1. Google Sheetsga saqlash
-            fetch(`${SCRIPT_URL}?action=add&id=${orderId}&name=${encodeURIComponent(n)}&phone=${ph}&items=${encodeURIComponent(itemsText)}&total=${totalSum}`);
+            const totalStr = total.toLocaleString() + " so'm";
 
-            // 2. Telegramga yuborish
+            // Telegram uchun keyboard
             const keyboard = { inline_keyboard: [
-                [{text:"🍳 Tayyorlanmoqda", callback_data:`status_2_${orderId}`}, {text:"🚴 Yo'lda", callback_data:`status_3_${orderId}`}],
-                [{text:"✅ Yetkazildi", callback_data:`status_4_${orderId}`}]
+                [{text:"👨‍🍳 Pishirish", callback_data:`status_2_${orderId}`}, {text:"🚴 Yo'lda", callback_data:`status_3_${orderId}`}],
+                [{text:"✅ Yakunlash", callback_data:`status_4_${orderId}`}]
             ]};
 
-            await fetch(`https://api.telegram.org/bot${BOT}/sendMessage`, {
-                method: 'POST', headers: {'Content-Type':'application/json'},
-                body: JSON.stringify({ chat_id: ADMIN, text: `🔔 BUYURTMA #${orderId}\n👤 ${n}\n📞 ${ph}\n🛒 ${itemsText}\n💰 ${totalSum}\n📍 https://www.google.com/maps?q=${coords.latitude},${coords.longitude}`, reply_markup: keyboard })
-            });
+            try {
+                // 1. Sheets'ga yozish
+                fetch(`${SCRIPT_URL}?action=add&id=${orderId}&name=${encodeURIComponent(name)}&phone=${phone}&items=${encodeURIComponent(itemsText)}&total=${totalStr}`);
 
-            // 3. Tarixga saqlash
-            let myOrders = JSON.parse(localStorage.getItem('my_orders') || "[]");
-            myOrders.unshift({ id: orderId, items: itemsText, total: totalSum, status: 1 });
-            localStorage.setItem('my_orders', JSON.stringify(myOrders));
+                // 2. Telegramga
+                await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                    method: 'POST',
+                    headers: {'Content-Type':'application/json'},
+                    body: JSON.stringify({
+                        chat_id: ADMIN_ID,
+                        text: `🔔 YANGI BUYURTMA #${orderId}\n👤 Mijoz: ${name}\n📞 Tel: ${phone}\n🛒 Taomlar: ${itemsText}\n💰 Jami: ${totalStr}\n📍 Manzil: https://www.google.com/maps?q=${coords.latitude},${coords.longitude}`,
+                        reply_markup: keyboard
+                    })
+                });
 
-            showAlert("Muvaffaqiyatli", "Buyurtmangiz qabul qilindi!", "success");
-            cart = {}; renderCart(); p('history', document.querySelectorAll('.tool-item')[2]);
+                // 3. Mahalliy xotiraga
+                let myOrders = JSON.parse(localStorage.getItem('c777_orders') || "[]");
+                myOrders.unshift({id: orderId, items: itemsText, total: totalStr, status: 1});
+                localStorage.setItem('c777_orders', JSON.stringify(myOrders));
+
+                alert("Buyurtmangiz qabul qilindi!");
+                cart = {};
+                saveLocalCart();
+                p('history', document.querySelectorAll('.nav-item')[2]);
+            } catch(e) { alert("Xatolik!"); }
         }
 
-        async function updateHistory() {
-            let myOrders = JSON.parse(localStorage.getItem('my_orders') || "[]");
-            const container = document.getElementById('historyList');
-            if(myOrders.length === 0) return;
-
-            container.innerHTML = `<p style="text-align:center; padding:20px;"><i class="fa fa-spinner fa-spin"></i> Yangilanmoqda...</p>`;
-            
-            let html = "";
-            const statusTexts = ["", "Qabul qilindi", "Tayyorlanmoqda 👨‍🍳", "Yo'lda 🚴", "Yetkazildi ✅"];
-
-            for(let order of myOrders) {
-                if(order.status < 4) {
-                    try {
-                        const res = await fetch(`${SCRIPT_URL}?orderId=${order.id}`);
-                        const data = await res.json();
-                        if(data.status) order.status = parseInt(data.status);
-                    } catch(e) {}
-                }
-                html += `
-                <div class="history-item" style="border-left-color: ${order.status==4?'#2ecc71':'#ffc107'}">
-                    <span class="order-id">#${order.id}</span>
-                    <span class="order-date">${new Date(order.id).toLocaleTimeString()}</span>
-                    <div style="margin:8px 0; font-weight:bold; font-size:14px;">${order.items}</div>
-                    <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <b>${order.total}</b>
-                        <span class="status-badge st-${order.status}">${statusTexts[order.status]}</span>
-                    </div>
-                </div>`;
-            }
-            container.innerHTML = html;
-            localStorage.setItem('my_orders', JSON.stringify(myOrders));
+        // Yordamchi funksiyalar
+        function updateBadge() {
+            const count = Object.values(cart).reduce((a,b) => a+b, 0);
+            const b = document.getElementById('cartBadge');
+            b.innerText = count;
+            b.style.display = count > 0 ? 'flex' : 'none';
         }
 
-        // (Qolgan renderMenu, updateQty, renderCats funksiyalaringiz o'sha holaticha qoladi...)
-        // ... (Kodingizning qolgan qismi)
-        
-        function renderMenu(data = prods) {
-            const container = document.getElementById('menu'); container.innerHTML = "";
-            data.forEach(p => {
-                const div = document.createElement('div'); div.innerHTML = genCard(p, 'main'); container.appendChild(div);
+        function getLocation() {
+            const btn = document.getElementById('locBtn');
+            btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Aniqlanmoqda...';
+            navigator.geolocation.getCurrentPosition(pos => {
+                coords = pos.coords;
+                btn.classList.add('success');
+                btn.innerHTML = '<i class="fa fa-location-dot"></i> ✅ MANZIL OLINDI';
+            }, () => {
+                alert("GPS yoqilmagan!");
+                btn.innerHTML = '<i class="fa fa-location-dot"></i> QAYTA URINISH';
             });
         }
-        function genCard(p, prefix = 'main') {
-            let q = cart[p.id] || 0;
-            return `<div class="card">
-                <img src="${p.img}">
-                <div class="card-info">
-                    <h4>${p.name}</h4>
-                    <b class="price">${p.price.toLocaleString()} so'm</b>
-                    <div id="${prefix}-ctrl-${p.id}" class="card-ctrl">
-                        ${q > 0 ? `<button onclick="updateQty(${p.id},-1)">-</button><span>${q}</span><button onclick="updateQty(${p.id},1)">+</button>` : 
-                        `<button class="add-to-cart" onclick="updateQty(${p.id},1)">Savatga</button>`}
-                    </div>
-                </div>
-            </div>`;
-        }
-        function updateQty(id, n) {
-            cart[id] = (cart[id] || 0) + n;
-            if(cart[id] <= 0) delete cart[id];
-            renderCart();
-            document.querySelectorAll(`[id$="-ctrl-${id}"]`).forEach(ctrl => {
-                let q = cart[id] || 0;
-                ctrl.innerHTML = q > 0 ? `<button onclick="updateQty(${id},-1)">-</button><span>${q}</span><button onclick="updateQty(${id},1)">+</button>` : 
-                `<button class="add-to-cart" onclick="updateQty(${id},1)">Savatga</button>`;
-            });
-        }
-        function renderCats() {
-            const cats = ['Barchasi', ...new Set(prods.map(p => p.cat))];
-            document.getElementById('catNav').innerHTML = cats.map(c => `<button class="cat-btn" onclick="filterCat('${c}', this)">${c}</button>`).join('');
-        }
-        function filterCat(c, btn) {
-            document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active'); renderMenu(c === 'Barchasi' ? prods : prods.filter(p => p.cat === c));
-        }
-        function openProfile() { openModal('profileModal'); }
+
         function saveProfile() {
-            const n = document.getElementById('userName').value, ph = document.getElementById('userPhone').value;
-            if(n && ph) { localStorage.setItem('c777_name', n); localStorage.setItem('c777_phone', ph); checkProfile(); closeModal('profileModal'); }
+            const n = document.getElementById('uName').value;
+            const p = document.getElementById('uPhone').value;
+            if(n.length < 3 || p.length < 9) return alert("Ma'lumotlar to'liq emas");
+            localStorage.setItem('c777_name', n);
+            localStorage.setItem('c777_phone', p);
+            loadProfile();
+            closeModal('profileModal');
         }
-        function checkProfile() { const n = localStorage.getItem('c777_name'); if(n) document.getElementById('badgeName').innerText = n.split(' ')[0]; }
-        function openModal(id) { document.getElementById(id).style.display = 'flex'; }
-        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
-        function getLocation() { navigator.geolocation.getCurrentPosition(p => { coords = p.coords; document.getElementById('locBtn').innerText = "✅ ANIQLANDI"; }); }
-        function renderCart() {
-            let t=0, h="";
-            for(let id in cart) { let p=prods.find(x=>x.id==id); t+=p.price*cart[id]; h+=`<div class="cart-item"><span>${p.name} (x${cart[id]})</span><b>${(p.price*cart[id]).toLocaleString()}</b></div>`; }
-            document.getElementById('cartList').innerHTML = h || "Bo'sh";
-            document.getElementById('total').innerText = t.toLocaleString() + " so'm";
-        }
-        function showAlert(t, m) { alert(t + ": " + m); }
 
-        window.onload = load;
+        function loadProfile() {
+            const n = localStorage.getItem('c777_name');
+            const p = localStorage.getItem('c777_phone');
+            if(n) {
+                document.getElementById('sideName').innerText = n;
+                document.getElementById('sidePhone').innerText = p;
+                document.getElementById('uName').value = n;
+                document.getElementById('uPhone').value = p;
+            }
+        }
+
+        function toggleDrawer() {
+            document.getElementById('sidebar').classList.toggle('open');
+            document.getElementById('drawerOverlay').classList.toggle('active');
+        }
+
+        function openModal(id) {
+            const m = document.getElementById(id);
+            m.style.display = 'flex';
+            setTimeout(() => m.classList.add('show'), 10);
+        }
+
+        function closeModal(id) {
+            const m = document.getElementById(id);
+            m.classList.remove('show');
+            setTimeout(() => m.style.display = 'none', 300);
+        }
+
+        function openDetail(id) {
+            const p = prods.find(x => x.id == id);
+            document.getElementById('m-img').src = p.img;
+            document.getElementById('m-title').innerText = p.name;
+            document.getElementById('m-desc').innerText = p.desc;
+            document.getElementById('m-price').innerText = p.price.toLocaleString() + " so'm";
+            document.getElementById('m-ctrl').innerHTML = btnHTML(id);
+            openModal('productModal');
+        }
+
+        window.onload = init;
     </script>
 </body>
 </html>
