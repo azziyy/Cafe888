@@ -3,64 +3,91 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Cafe 777 - Premium System</title>
+    <title>Cafe 777 - Premium App</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body class="light-mode">
 
-    <div id="productInfoModal" class="modal" onclick="if(event.target==this) closeProductModal()">
-        <div class="modal-content" style="max-width: 400px; border-radius: 30px; overflow: hidden; position: relative;">
-            <button class="close-modal" onclick="closeProductModal()" style="position: absolute; top: 15px; right: 15px; z-index: 1000; background: rgba(0,0,0,0.5); border: none; color: white; border-radius: 50%; width: 35px; height: 35px; font-size: 20px; cursor: pointer;">×</button>
-            
-            <div style="width: 100%; height: 300px; background: #f8f9fa; display: flex; align-items: center; justify-content: center;">
-                <img id="p-modal-img" src="" style="width: 100%; height: 100%; object-fit: cover; display: block;">
-            </div>
-
-            <div style="padding: 25px; background: var(--white);">
-                <h2 id="p-modal-title" style="margin: 0; font-size: 24px; color: var(--text);"></h2>
-                <div style="height: 2px; width: 50px; background: var(--primary); margin: 15px 0;"></div>
-                <p id="p-modal-desc" style="color: #666; font-size: 15px; line-height: 1.6; margin-bottom: 20px;"></p>
-                
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <b id="p-modal-price" style="font-size: 22px; color: var(--secondary);"></b>
-                    <button class="order-btn" style="width: auto; padding: 12px 30px; background: var(--dark); color: white;" onclick="closeProductModal()">YOPISH</button>
-                </div>
-            </div>
+    <div id="myAlert" class="custom-alert" onclick="if(event.target==this) closeAlert()">
+        <div class="alert-box">
+            <span id="alertIcon" class="alert-icon"></span>
+            <div id="alertTitle" class="alert-title"></div>
+            <div id="alertMsg" class="alert-msg"></div>
+            <button class="alert-btn" onclick="closeAlert()">Tushunarli</button>
         </div>
     </div>
 
-    <div id="customAlert" class="modal">
-        <div class="modal-content" style="padding: 30px; text-align: center; max-width: 320px;">
-            <div id="alertIcon" style="font-size: 60px; margin-bottom: 15px;"></div>
-            <h2 id="alertTitle" style="margin: 0;"></h2>
-            <p id="alertMsg" style="color: #777; margin: 15px 0;"></p>
-            <button class="order-btn" style="background: var(--dark); color: white;" onclick="closeAlert()">OK</button>
-        </div>
-    </div>
-
-    <div id="drawerOverlay" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:5000; display:none;" onclick="toggleDrawer()"></div>
+    <div id="drawerOverlay" class="drawer-overlay" onclick="toggleDrawer()"></div>
     <div id="myDrawer" class="drawer">
-        <div style="padding: 25px;">
-            <h2 style="color: var(--secondary); margin-bottom: 30px;">Cafe 777</h2>
+        <div class="drawer-header">
+            <h2>Cafe 777</h2>
+            <p>Sifat va lazzat uyg'unligi</p>
+        </div>
+        <div class="drawer-content">
             <div class="drawer-item" onclick="toggleMode()">
-                <i class="fa fa-adjust"></i> <span>Tungi rejim</span>
+                <i class="fa fa-moon"></i> <span>Tungi rejim</span>
                 <div id="modeToggle" class="toggle-switch"></div>
             </div>
             <div class="drawer-item" onclick="p('cart', this); toggleDrawer();">
-                <i class="fa fa-shopping-cart"></i> <span>Savatcham</span>
+                <i class="fa fa-shopping-basket"></i> <span>Savatim</span>
             </div>
             <div class="drawer-item" onclick="location.reload()">
-                <i class="fa fa-sync"></i> <span>Yangilash</span>
+                <i class="fa fa-rotate"></i> <span>Yangilash</span>
             </div>
         </div>
     </div>
 
     <header class="header-nav">
-        <i class="fa fa-bars-staggered" onclick="toggleDrawer()" style="font-size: 24px; cursor: pointer;"></i>
-        <span style="font-weight: 900; font-size: 22px; color: var(--dark);">CAFE <span style="color: var(--primary);">777</span></span>
-        <i class="fa-regular fa-circle-user" style="font-size: 24px;"></i>
+        <div class="menu-icon" onclick="toggleDrawer()">
+            <i class="fa fa-bars-staggered"></i>
+        </div>
+        <div class="logo">CAFE <span>777</span></div>
+        <div class="user-badge" onclick="openProfile()">
+            <i class="fa fa-circle-user"></i>
+            <span id="badgeName">Kirish</span>
+        </div>
     </header>
+
+    <div id="productInfoModal" class="modal" onclick="if(event.target==this) closeModal('productInfoModal')">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeModal('productInfoModal')">×</button>
+            <div class="modal-img-wrapper">
+                <img id="p-modal-img" src="" alt="product">
+            </div>
+            <div class="modal-body">
+                <h2 id="p-modal-title"></h2>
+                <div id="p-modal-price" class="modal-price"></div>
+                <p id="p-modal-desc"></p>
+            </div>
+        </div>
+    </div>
+
+    <div id="profileModal" class="modal" onclick="if(event.target==this) closeModal('profileModal')">
+        <div class="modal-content profile-modal-content">
+            <button class="close-modal" onclick="closeModal('profileModal')">×</button>
+            <div class="profile-header-bg"></div>
+            <div class="modal-body profile-body">
+                <div class="profile-avatar">
+                    <i class="fa fa-user-circle"></i>
+                </div>
+                <h3>Mening profilim</h3>
+                <p class="profile-hint">Buyurtmalaringizni yetkazish uchun ma'lumotlarni to'ldiring</p>
+                
+                <div class="input-group">
+                    <label><i class="fa fa-user"></i> To'liq ismingiz</label>
+                    <input type="text" id="userName" placeholder="Masalan: Ali Valiyev">
+                </div>
+                <div class="input-group">
+                    <label><i class="fa fa-phone"></i> Telefon raqamingiz</label>
+                    <input type="tel" id="userPhone" placeholder="+998 90 123 45 67">
+                </div>
+                <button class="save-btn profile-save" onclick="saveProfile()">
+                    <i class="fa fa-check-circle"></i> MA'LUMOTLARNI SAQLASH
+                </button>
+            </div>
+        </div>
+    </div>
 
     <main id="main-p" class="p-con">
         <div id="catNav" class="category-nav"></div>
@@ -68,27 +95,35 @@
     </main>
 
     <div id="cart-p" class="p-con hidden">
-        <div style="padding: 25px; background: var(--white); margin: 15px; border-radius: 30px; box-shadow: var(--shadow);">
-            <h3 style="margin-top:0; font-size: 22px;">Savatcha 🛒</h3>
-            <div id="cartList" style="margin: 20px 0;"></div>
-            <div style="display:flex; justify-content:space-between; margin:20px 0; font-weight:bold; font-size:22px;">
-                <span>Jami:</span><span id="total" style="color: var(--secondary);">0 so'm</span>
+        <div class="cart-card">
+            <h3>Savat 🛒</h3>
+            <div id="cartList" class="cart-items-list"></div>
+            <div class="total-section">
+                <span>Jami:</span> <span id="total">0 so'm</span>
             </div>
-            <button id="locBtn" class="order-btn" style="background: #f0f2f5; color: #333; margin-bottom: 12px; border: 1px dashed #ccc;" onclick="getLocation()">
-                <i class="fa fa-location-crosshairs"></i> <span>MANZILNI ANIQLASH</span>
+            <button id="locBtn" class="location-btn" onclick="getLocation()">
+                <i class="fa fa-location-arrow"></i> MANZILNI ANIQLASH
             </button>
-            <button id="submitBtn" class="order-btn" style="background: var(--green); color: white; box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);" onclick="sendOrder()">
+            <button id="submitBtn" class="order-submit-btn" onclick="sendOrder()">
                 BUYURTMANI YUBORISH
             </button>
         </div>
     </div>
 
-    <div id="fav-p" class="p-con hidden"><div id="favs" class="menu-grid"></div></div>
+    <div id="fav-p" class="p-con hidden">
+        <div id="favs" class="menu-grid"></div>
+    </div>
 
     <nav class="toolbar">
-        <div class="tool-item active" onclick="p('main',this)"><i class="fa fa-home-alt"></i>Asosiy</div>
-        <div class="tool-item" onclick="p('cart',this)"><i class="fa fa-shopping-bag"></i>Savat</div>
-        <div class="tool-item" onclick="p('fav',this)"><i class="fa fa-heart"></i>Sevimlilar</div>
+        <div class="tool-item active" onclick="p('main',this)">
+            <i class="fa fa-utensils"></i><span>Menyu</span>
+        </div>
+        <div class="tool-item" onclick="p('cart',this)">
+            <i class="fa fa-cart-shopping"></i><span>Savat</span>
+        </div>
+        <div class="tool-item" onclick="p('fav',this)">
+            <i class="fa fa-heart"></i><span>Sevimlilar</span>
+        </div>
     </nav>
 
     <script>
@@ -98,189 +133,105 @@
         
         let prods = [], cart = {}, favs = [], coords = null;
 
+        // Custom Alert
+        function showAlert(title, msg, type = 'info') {
+            const icons = { success: '✅', error: '❌', info: 'ℹ️', geo: '📍' };
+            document.getElementById('alertIcon').innerText = icons[type] || '🔔';
+            document.getElementById('alertTitle').innerText = title;
+            document.getElementById('alertMsg').innerText = msg;
+            const modal = document.getElementById('myAlert');
+            modal.style.display = 'flex';
+            setTimeout(() => modal.classList.add('show'), 10);
+        }
+
+        function closeAlert() {
+            const modal = document.getElementById('myAlert');
+            modal.classList.remove('show');
+            setTimeout(() => modal.style.display = 'none', 300);
+        }
+
+        // Ma'lumotlarni yuklash
         async function load() {
             try {
                 const r = await fetch(`https://docs.google.com/spreadsheets/d/${SHEET}/gviz/tq?tqx=out:json`);
                 const t = await r.text();
                 const j = JSON.parse(t.substring(47, t.length - 2));
-                
                 prods = j.table.rows.map((r, i) => ({
-                    id: i + 1,
-                    cat: r.c[1] ? r.c[1].v : 'Boshqa',
-                    name: r.c[2] ? r.c[2].v : 'Nomsiz',
-                    price: r.c[3] ? r.c[3].v : 0,
-                    img: r.c[4] ? r.c[4].v : '', 
-                    desc: r.c[5] ? r.c[5].v : "Mahsulot haqida batafsil ma'lumot kiritilmagan."
+                    id: i + 1, cat: r.c[1]?.v || 'Boshqa', name: r.c[2]?.v || 'Nomsiz',
+                    price: r.c[3]?.v || 0, img: r.c[4]?.v || '', desc: r.c[5]?.v || "Ma'lumot yo'q"
                 }));
-
-                renderCats();
+                renderCats(); 
                 renderMenu(); 
-            } catch(e) {
-                showAlert("Xato", "Sheets ma'lumotlarini yuklab bo'lmadi.", "🌐");
-            }
+                checkProfile();
+            } catch(e) { showAlert("Xato", "Tarmoq ulanishini tekshiring", "error"); }
         }
 
-        function renderCats() {
-            const cats = ['Barchasi', ...new Set(prods.map(p => p.cat))];
-            document.getElementById('catNav').innerHTML = cats.map(c => 
-                `<button class="cat-btn ${c==='Barchasi'?'active':''}" onclick="filterCat('${c}', this)">${c}</button>`).join('');
-        }
-
-        function filterCat(c, btn) {
-            document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            const f = (c === 'Barchasi') ? prods : prods.filter(p => p.cat === c);
-            document.getElementById('menu').innerHTML = f.map(p => genCard(p)).join('');
-        }
-
-        function genCard(p) {
+        // Kartani generatsiya qilish (prefix bilan)
+        function genCard(p, prefix = 'main') {
             let q = cart[p.id] || 0;
+            const ctrlId = `${prefix}-ctrl-${p.id}`;
             return `
             <div class="card">
                 <div class="heart-btn ${favs.includes(p.id)?'active':''}" onclick="toggleF(${p.id},this)"><i class="fa fa-heart"></i></div>
-                <img src="${p.img}" alt="${p.name}" onclick="openProductModal(${p.id})" onerror="this.src='https://via.placeholder.com/300?text=Rasm+Mavjud+Emas'">
-                <div style="padding:12px; text-align:center;">
-                    <h4 style="margin:5px 0; font-size:15px;">${p.name}</h4>
-                    <b style="color:var(--secondary); font-size:14px;">${p.price.toLocaleString()} so'm</b>
-                    <div class="counter-box" style="margin-top:12px;">
-                        <button class="c-btn-sm" onclick="updateQty(${p.id},-1)">-</button>
-                        <span id="qty-${p.id}" style="font-weight:bold; min-width:25px; font-size:16px;">${q}</span>
-                        <button class="c-btn-sm" onclick="updateQty(${p.id},1)">+</button>
+                <img src="${p.img}" onclick="openDetail(${p.id})" onerror="this.src='https://via.placeholder.com/300'">
+                <div class="card-info">
+                    <h4 onclick="openDetail(${p.id})">${p.name}</h4>
+                    <b class="price">${p.price.toLocaleString()} so'm</b>
+                    <div id="${ctrlId}" class="card-ctrl">
+                        ${q > 0 ? `
+                            <button class="qty-btn" onclick="updateQty(${p.id},-1)">-</button>
+                            <span class="qty-num">${q}</span>
+                            <button class="qty-btn" onclick="updateQty(${p.id},1)">+</button>
+                        ` : `<button class="add-to-cart" onclick="updateQty(${p.id},1)">Savatga</button>`}
                     </div>
                 </div>
             </div>`;
         }
 
-        function openProductModal(id) {
-            const p = prods.find(x => x.id === id);
-            if(!p) return;
-
-            document.getElementById('p-modal-img').src = p.img;
-            document.getElementById('p-modal-title').innerText = p.name;
-            document.getElementById('p-modal-desc').innerText = p.desc;
-            document.getElementById('p-modal-price').innerText = p.price.toLocaleString() + " so'm";
-            
-            const modal = document.getElementById('productInfoModal');
-            modal.style.display = 'flex';
-            setTimeout(() => modal.classList.add('show'), 10);
-        }
-
-        function closeProductModal() {
-            const modal = document.getElementById('productInfoModal');
-            modal.classList.remove('show');
-            setTimeout(() => modal.style.display = 'none', 300);
-        }
-
+        // Sinxron yangilash
         function updateQty(id, n) {
             cart[id] = (cart[id] || 0) + n;
             if(cart[id] <= 0) delete cart[id];
-            const el = document.getElementById(`qty-${id}`);
-            if(el) el.innerText = cart[id] || 0;
             renderCart();
-        }
-
-        function renderCart() {
-            let t=0, h="";
-            for(let id in cart) { 
-                let p=prods.find(x=>x.id==id);
-                if(p) {
-                    t+=p.price*cart[id]; 
-                    h+=`<div class="cart-item"><span>${p.name} <b>x${cart[id]}</b></span><b>${(p.price*cart[id]).toLocaleString()}</b></div>`; 
-                }
-            }
-            document.getElementById('cartList').innerHTML = h || "<p style='text-align:center; color:#999; padding:20px;'>Savatda mahsulot yo'q</p>";
-            document.getElementById('total').innerText = t.toLocaleString() + " so'm";
-        }
-
-        function getLocation() {
-            const btn = document.getElementById('locBtn');
-            btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> ANIQLANMOQDA...';
-            navigator.geolocation.getCurrentPosition(p => {
-                coords = p.coords;
-                btn.innerHTML = '<i class="fa fa-check-circle"></i> MANZIL ANIQLANDI';
-                btn.style.background = "#e7fdf0";
-                btn.style.color = "#2ecc71";
-            }, () => {
-                showAlert("Diqqat", "GPS'ni yoqing yoki ruxsat bering.", "📍");
-                btn.innerHTML = '<i class="fa fa-location-dot"></i> QAYTA URINISH';
+            const allCtrls = document.querySelectorAll(`[id$="-ctrl-${id}"]`);
+            allCtrls.forEach(ctrl => {
+                let q = cart[id] || 0;
+                ctrl.innerHTML = q > 0 ? `
+                    <button class="qty-btn" onclick="updateQty(${id},-1)">-</button>
+                    <span class="qty-num">${q}</span>
+                    <button class="qty-btn" onclick="updateQty(${id},1)">+</button>
+                ` : `<button class="add-to-cart" onclick="updateQty(${id},1)">Savatga</button>`;
             });
         }
 
-        async function sendOrder() {
-            if(!Object.keys(cart).length) return showAlert("Savatcha", "Hali mahsulot tanlamadingiz!", "🛒");
-            if(!coords) return showAlert("Manzil", "Iltimos, manzilni aniqlang!", "📍");
-
-            const btn = document.getElementById('submitBtn');
-            btn.disabled = true;
-            btn.innerHTML = '<i class="fa fa-paper-plane"></i> JO\'NATILMOQDA...';
-
-            let items = "🛍 BUYURTMA:\n"; 
-            for(let id in cart) {
-                let p = prods.find(x=>x.id==id);
-                items += `• ${p.name} (${cart[id]} dona)\n`;
-            }
-            const msg = `${items}\n💰 JAMI: ${document.getElementById('total').innerText}\n\n📍 Lokatsiya: https://www.google.com/maps?q=${coords.latitude},${coords.longitude}`;
-
-            try {
-                await fetch(`https://api.telegram.org/bot${BOT}/sendMessage`, {
-                    method: 'POST',
-                    headers: {'Content-Type':'application/json'},
-                    body: JSON.stringify({ chat_id: ADMIN, text: msg })
-                });
-                showAlert("Raxmat!", "Buyurtmangiz qabul qilindi!", "✅");
-                cart = {}; renderMenu(); renderCart();
-                p('main', document.querySelector('.tool-item'));
-            } catch(e) {
-                showAlert("Xato", "Telegram bilan aloqa yo'q.", "❌");
-            } finally {
-                btn.disabled = false;
-                btn.innerHTML = "BUYURTMANI YUBORISH";
-            }
-        }
-
-        function showAlert(t, m, i) {
-            document.getElementById('alertTitle').innerText = t;
-            document.getElementById('alertMsg').innerText = m;
-            document.getElementById('alertIcon').innerText = i;
-            const a = document.getElementById('customAlert');
-            a.style.display = 'flex';
-            setTimeout(() => a.classList.add('show'), 10);
-        }
-
-        function closeAlert() {
-            const a = document.getElementById('customAlert');
-            a.classList.remove('show');
-            setTimeout(() => a.style.display = 'none', 300);
-        }
-
-        function toggleDrawer() {
-            const d = document.getElementById('myDrawer');
-            const o = document.getElementById('drawerOverlay');
-            d.classList.toggle('open');
-            o.style.display = d.classList.contains('open') ? 'block' : 'none';
-        }
-
-        function toggleMode() {
-            document.body.classList.toggle('dark-mode');
-            document.getElementById('modeToggle').classList.toggle('active');
-            localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
-        }
-
-        function p(s, el) {
-            document.querySelectorAll('.p-con').forEach(x => x.classList.add('hidden'));
-            document.getElementById(s + '-p').classList.remove('hidden');
-            document.querySelectorAll('.tool-item').forEach(x => x.classList.remove('active'));
-            el.classList.add('active');
-            if(s === 'fav') renderF();
-            window.scrollTo(0,0);
+        function renderMenu(data = prods) {
+            const container = document.getElementById('menu');
+            container.innerHTML = "";
+            data.forEach((p, i) => {
+                const div = document.createElement('div');
+                div.className = 'card-anim';
+                div.style.animationDelay = (i * 0.05) + 's';
+                div.innerHTML = genCard(p, 'main');
+                container.appendChild(div);
+            });
         }
 
         function renderF() {
-            const f = prods.filter(x => favs.includes(x.id));
-            document.getElementById('favs').innerHTML = f.length ? f.map(p => genCard(p)).join('') : "<p style='text-align:center; width:100%; color:#999; padding-top:50px;'>Sevimlilar bo'sh</p>";
+            const fList = prods.filter(x => favs.includes(x.id));
+            const container = document.getElementById('favs');
+            container.innerHTML = "";
+            if(fList.length === 0) {
+                container.innerHTML = `<div class="empty-state"><i class="fa-regular fa-heart"></i><p>Sevimlilar bo'sh</p></div>`;
+            } else {
+                fList.forEach((p, i) => {
+                    const div = document.createElement('div');
+                    div.className = 'card-anim';
+                    div.style.animationDelay = (i * 0.05) + 's';
+                    div.innerHTML = genCard(p, 'fav');
+                    container.appendChild(div);
+                });
+            }
         }
-
-        function renderMenu() { document.getElementById('menu').innerHTML = prods.map(p => genCard(p)).join(''); }
 
         function toggleF(id, el) {
             event.stopPropagation();
@@ -289,12 +240,135 @@
             localStorage.setItem('c777_f', JSON.stringify(favs));
         }
 
+        function filterCat(c, btn) {
+            document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            renderMenu(c === 'Barchasi' ? prods : prods.filter(p => p.cat === c));
+        }
+
+        function renderCats() {
+            const cats = ['Barchasi', ...new Set(prods.map(p => p.cat))];
+            document.getElementById('catNav').innerHTML = cats.map(c => 
+                `<button class="cat-btn ${c==='Barchasi'?'active':''}" onclick="filterCat('${c}', this)">${c}</button>`
+            ).join('');
+        }
+
+        function p(s, el) {
+            document.querySelectorAll('.p-con').forEach(x => x.classList.add('hidden'));
+            const target = document.getElementById(s + '-p');
+            target.classList.remove('hidden');
+            document.querySelectorAll('.tool-item').forEach(x => x.classList.remove('active'));
+            el.classList.add('active'); 
+            if(s === 'fav') renderF();
+            if(s === 'main') renderMenu();
+            window.scrollTo(0,0);
+        }
+
+        // UI Funksiyalari
+        function toggleDrawer() {
+            document.getElementById('myDrawer').classList.toggle('open');
+            document.getElementById('drawerOverlay').classList.toggle('active');
+        }
+
+        // MODAL FUNKSIYALARI (Tuzatilgan)
+        function openModal(id) {
+            const m = document.getElementById(id);
+            m.style.display = 'flex';
+            setTimeout(() => m.classList.add('show'), 10);
+        }
+
+        function closeModal(id) {
+            const m = document.getElementById(id);
+            m.classList.remove('show');
+            setTimeout(() => m.style.display = 'none', 300);
+        }
+
+        // Profil ochish funksiyasi
+        function openProfile() {
+            const n = localStorage.getItem('c777_name');
+            const ph = localStorage.getItem('c777_phone');
+            if(n) document.getElementById('userName').value = n;
+            if(ph) document.getElementById('userPhone').value = ph;
+            openModal('profileModal');
+        }
+
+        function saveProfile() {
+            const n = document.getElementById('userName').value.trim();
+            const ph = document.getElementById('userPhone').value.trim();
+            if(n.length > 2 && ph.length > 8) {
+                localStorage.setItem('c777_name', n);
+                localStorage.setItem('c777_phone', ph);
+                document.getElementById('badgeName').innerText = n.split(' ')[0];
+                closeModal('profileModal');
+                showAlert("Saqlandi", "Profilingiz muvaffaqiyatli yangilandi ✨", "success");
+            } else {
+                showAlert("Xatolik", "Iltimos, ismingiz va raqamingizni to'g'ri kiriting!", "error");
+            }
+        }
+
+        function checkProfile() {
+            const n = localStorage.getItem('c777_name');
+            if(n) document.getElementById('badgeName').innerText = n.split(' ')[0];
+        }
+
+        function toggleMode() {
+            document.body.classList.toggle('dark-mode');
+            document.getElementById('modeToggle').classList.toggle('active');
+        }
+
+        function openDetail(id) {
+            const p = prods.find(x => x.id === id);
+            document.getElementById('p-modal-img').src = p.img;
+            document.getElementById('p-modal-title').innerText = p.name;
+            document.getElementById('p-modal-price').innerText = p.price.toLocaleString() + " so'm";
+            document.getElementById('p-modal-desc').innerText = p.desc;
+            openModal('productInfoModal');
+        }
+
+        function renderCart() {
+            let t=0, h="";
+            for(let id in cart) { 
+                let p=prods.find(x=>x.id==id);
+                t+=p.price*cart[id]; 
+                h+=`<div class="cart-item"><span>${p.name} (x${cart[id]})</span><b>${(p.price*cart[id]).toLocaleString()}</b></div>`; 
+            }
+            document.getElementById('cartList').innerHTML = h || "<p style='text-align:center; color:#999; padding:20px;'>Savat bo'sh</p>";
+            document.getElementById('total').innerText = t.toLocaleString() + " so'm";
+        }
+
+        function getLocation() {
+            const b = document.getElementById('locBtn');
+            b.innerHTML = '<i class="fa fa-spinner fa-spin"></i>...';
+            navigator.geolocation.getCurrentPosition(p => {
+                coords = p.coords;
+                b.style.color = "var(--green)"; b.innerText = "✅ MANZIL ANIQLANDI";
+                showAlert("Ajoyib", "Yetkazib berish manzili olindi", "geo");
+            }, () => {
+                b.innerHTML = '<i class="fa fa-location-arrow"></i> QAYTA URINISH';
+                showAlert("GPS Xatosi", "Iltimos, joylashuvga ruxsat bering", "error");
+            });
+        }
+
+        async function sendOrder() {
+            const n = localStorage.getItem('c777_name'), ph = localStorage.getItem('c777_phone');
+            if(!n || !ph) { openProfile(); return; }
+            if(!Object.keys(cart).length) return showAlert("Savat bo'sh", "Mahsulot tanlang", "info");
+            if(!coords) return showAlert("Manzil", "Joylashuvni aniqlang", "geo");
+
+            const text = `🔔 YANGI BUYURTMA\n👤 ${n}\n📞 ${ph}\n💰 Jami: ${document.getElementById('total').innerText}\n📍 Manzil: http://google.com/maps?q=${coords.latitude},${coords.longitude}`;
+            
+            try {
+                await fetch(`https://api.telegram.org/bot${BOT}/sendMessage`, {
+                    method: 'POST', headers: {'Content-Type':'application/json'},
+                    body: JSON.stringify({ chat_id: ADMIN, text: text })
+                });
+                showAlert("Tabriklaymiz!", "Buyurtmangiz yuborildi. Operator qo'ng'irog'ini kuting.", "success");
+                cart = {}; renderCart(); renderMenu(); p('main', document.querySelector('.tool-item'));
+            } catch(e) { showAlert("Xato", "Buyurtma yuborishda xatolik yuz berdi", "error"); }
+        }
+
         window.onload = () => {
             favs = JSON.parse(localStorage.getItem('c777_f') || "[]");
-            if(localStorage.getItem('theme') === 'dark') {
-                document.body.classList.add('dark-mode');
-                document.getElementById('modeToggle').classList.add('active');
-            }
             load();
         };
     </script>
