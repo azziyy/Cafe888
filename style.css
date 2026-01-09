@@ -393,3 +393,65 @@ body {
 .toggle-switch.active::after { left: 24px; }
 
 .hidden { display: none !important; }
+
+/* Savatdagi raqam (Badge) */
+.tool-item {
+    position: relative;
+}
+
+.badge {
+    position: absolute;
+    top: -5px;
+    right: 15px;
+    background: var(--red);
+    color: white;
+    font-size: 10px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    border: 2px solid var(--white);
+    animation: badgePop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes badgePop {
+    from { transform: scale(0); }
+    to { transform: scale(1); }
+}
+
+/* Tugmani bosganda yengil effekt */
+.add-to-cart:active, .qty-btn:active, .tool-item:active {
+    transform: scale(0.9);
+    transition: 0.1s;
+}
+
+/* Buyurtmalar tarixi stili (agar Drawer ichida ko'rsatmoqchi bo'lsangiz) */
+.history-item {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+    font-size: 12px;
+}
+.history-item b { color: var(--green); }
+
+.history-item {
+    background: #f8f9fa;
+    border-radius: 15px;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-left: 5px solid #ddd;
+}
+.status-badge {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: bold;
+    display: inline-block;
+    margin-top: 5px;
+}
+.status-1 { background: #fff3cd; color: #856404; border: 1px solid #ffeeba; } /* Qabul qilindi */
+.status-2 { background: #cce5ff; color: #004085; border: 1px solid #b8daff; } /* Tayyorlanmoqda */
+.status-3 { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; } /* Yo'lda */
+.status-4 { background: #e2e3e5; color: #383d41; border: 1px solid #d6d8db; } /* Yetkazildi */
