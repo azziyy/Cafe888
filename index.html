@@ -350,22 +350,47 @@
         }
 
         async function sendOrder() {
-            const n = localStorage.getItem('c777_name'), ph = localStorage.getItem('c777_phone');
-            if(!n || !ph) { openProfile(); return; }
-            if(!Object.keys(cart).length) return showAlert("Savat bo'sh", "Mahsulot tanlang", "info");
-            if(!coords) return showAlert("Manzil", "Joylashuvni aniqlang", "geo");
+    const n = localStorage.getItem('c777_name'), ph = localStorage.getItem('c777_phone');
+    if(!n || !ph) { openProfile(); return; }
+    if(!Object.keys(cart).length) return showAlert("Savat bo'sh", "Mahsulot tanlang", "info");
+    if(!coords) return showAlert("Manzil", "Joylashuvni aniqlang", "geo");
 
-            const text = `🔔 YANGI BUYURTMA\n👤 ${n}\n📞 ${ph}\n💰 Jami: ${document.getElementById('total').innerText}\n📍 Manzil: http://google.com/maps?q=${coords.latitude},${coords.longitude}`;
-            
-            try {
-                await fetch(`https://api.telegram.org/bot${BOT}/sendMessage`, {
-                    method: 'POST', headers: {'Content-Type':'application/json'},
-                    body: JSON.stringify({ chat_id: ADMIN, text: text })
-                });
-                showAlert("Tabriklaymiz!", "Buyurtmangiz yuborildi. Operator qo'ng'irog'ini kuting.", "success");
-                cart = {}; renderCart(); renderMenu(); p('main', document.querySelector('.tool-item'));
-            } catch(e) { showAlert("Xato", "Buyurtma yuborishda xatolik yuz berdi", "error"); }
-        }
+    // 1. Mahsulotlar ro'yxatini shakllantirish
+    let itemsText = "";
+    for(let id in cart) {
+        let p = prods.find(x => x.id == id);
+        let count = cart[id];
+        let sum = (p.price * count).toLocaleString();
+        // Har bir qator: 🍔 Burger x2 = 60,000 so'm
+        itemsText += `🔹 ${p.name} x${count} = ${sum} so'm\n`;
+    }
+
+    const totalSum = document.getElementById('total').innerText;
+    
+    // 2. Telegram uchun to'liq xabar matni
+    const text = `🔔 YANGI BUYURTMA\n\n` +
+                 `👤 Mijoz: ${n}\n` +
+                 `📞 Tel: ${ph}\n\n` +
+                 `🛒 MAHSULOTLAR:\n${itemsText}\n` +
+                 `💰 JAMI: ${totalSum}\n\n` +
+                 `📍 Manzil: https://www.google.com/maps?q=${coords.latitude},${coords.longitude}`;
+    
+    try {
+        await fetch(`https://api.telegram.org/bot${BOT}/sendMessage`, {
+            method: 'POST', 
+            headers: {'Content-Type':'application/json'},
+            body: JSON.stringify({ chat_id: ADMIN, text: text })
+        });
+        showAlert("Tabriklaymiz!", "Buyurtmangiz yuborildi. Operator qo'ng'irog'ini kuting.", "success");
+        cart = {}; 
+        renderCart(); 
+        renderMenu(); 
+        p('main', document.querySelector('.tool-item'));
+    } catch(e) { 
+        showAlert("Xato", "Buyurtma yuborishda xatolik yuz berdi", "error"); 
+    }
+}
+
 
         window.onload = () => {
             favs = JSON.parse(localStorage.getItem('c777_f') || "[]");
