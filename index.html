@@ -3,211 +3,196 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Cafe 777 - Professional Edition</title>
+    <title>Cafe 777 Premium</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="style.css">
+    <style>
+        :root {
+            --primary: #ff7f50;
+            --bg: #f4f7f6;
+            --white: #ffffff;
+            --text: #2d3436;
+            --shadow: 0 10px 30px rgba(0,0,0,0.08);
+            --radius: 20px;
+        }
+
+        * { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI', sans-serif; -webkit-tap-highlight-color:transparent; }
+        body { background: var(--bg); color: var(--text); overflow-x: hidden; }
+
+        /* Splash Screen (Tuzatilgan) */
+        #splash { position:fixed; inset:0; background:var(--white); z-index:10000; display:flex; flex-direction:column; align-items:center; justify-content:center; transition:0.5s; }
+        .loader-ring { width:50px; height:50px; border:4px solid #f3f3f3; border-top:4px solid var(--primary); border-radius:50%; animation:spin 1s linear infinite; }
+
+        /* Custom Alert */
+        .alert-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:11000; display:none; align-items:center; justify-content:center; backdrop-filter:blur(5px); }
+        .alert-card { background:var(--white); padding:25px; border-radius:var(--radius); width:85%; max-width:320px; text-align:center; box-shadow: var(--shadow); }
+        .alert-card h3 { color:var(--primary); margin-bottom:10px; }
+        .alert-card button { margin-top:20px; width:100%; padding:12px; border:none; background:var(--primary); color:white; border-radius:12px; font-weight:bold; }
+
+        /* Header */
+        header { position:sticky; top:0; background:rgba(255,255,255,0.8); backdrop-filter:blur(15px); padding:15px 20px; display:flex; justify-content:space-between; align-items:center; z-index:1000; box-shadow:0 2px 10px rgba(0,0,0,0.03); }
+        .logo { font-size:22px; font-weight:900; }
+        .logo span { color:var(--primary); }
+
+        /* Categories */
+        .cats { display:flex; overflow-x:auto; padding:15px; gap:10px; scrollbar-width:none; }
+        .cats::-webkit-scrollbar { display:none; }
+        .chip { padding:10px 20px; background:var(--white); border-radius:25px; font-size:14px; font-weight:600; white-space:nowrap; box-shadow:var(--shadow); transition:0.3s; }
+        .chip.active { background:var(--primary); color:white; }
+
+        /* Grid */
+        .grid { display:grid; grid-template-columns: 1fr 1fr; gap:15px; padding:15px; margin-bottom:100px; }
+        .card { background:var(--white); border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow); }
+        .card img { width:100%; height:130px; object-fit:cover; background:#eee; }
+        .card-body { padding:12px; }
+        .card-body h4 { font-size:14px; margin-bottom:5px; height:20px; overflow:hidden; }
+        .card-footer { display:flex; justify-content:space-between; align-items:center; margin-top:10px; }
+        .price { color:var(--primary); font-weight:800; font-size:14px; }
+
+        /* Buttons */
+        .add-btn { background:var(--primary); color:white; border:none; padding:8px 12px; border-radius:10px; font-size:11px; font-weight:bold; }
+        .qty-box { display:flex; align-items:center; gap:8px; background:#f1f2f6; border-radius:10px; padding:2px; }
+        .qty-box button { width:26px; height:26px; border:none; background:white; border-radius:8px; font-weight:bold; }
+
+        /* Toolbar */
+        .toolbar { position:fixed; bottom:0; width:100%; height:70px; background:var(--white); display:flex; justify-content:space-around; align-items:center; box-shadow:0 -5px 20px rgba(0,0,0,0.05); z-index:1000; }
+        .tool-item { display:flex; flex-direction:column; align-items:center; color:#b2bec3; font-size:11px; gap:4px; text-decoration:none; }
+        .tool-item.active { color:var(--primary); }
+        .tool-item i { font-size:20px; }
+        .badge { position:absolute; top:12px; transform: translateX(12px); background:#ff4757; color:white; width:18px; height:18px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:10px; }
+
+        /* History */
+        .h-card { background:var(--white); margin:10px 15px; padding:15px; border-radius:15px; border-left:6px solid #dfe6e9; box-shadow:var(--shadow); }
+        .st-1 { border-left-color: #fdcb6e; }
+        .st-2 { border-left-color: #0984e3; }
+        .st-3 { border-left-color: #e67e22; }
+        .st-4 { border-left-color: #00b894; }
+
+        .page { display:none; min-height:100vh; padding-bottom:100px; }
+        .page.active { display:block; }
+
+        #imgModal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.9); z-index:10001; align-items:center; justify-content:center; }
+        #imgModal img { width:90%; max-height:80%; object-fit:contain; }
+
+        @keyframes spin { 100% { transform:rotate(360deg); } }
+    </style>
 </head>
-<body class="light-theme">
+<body>
 
-    <div id="loader" class="loader-wrapper">
-        <div class="loader-content">
-            <div class="logo-anim">CAFE <span>777</span></div>
-            <div class="progress-bar"><div class="progress"></div></div>
+    <div id="splash">
+        <div class="loader-ring"></div>
+        <h2 style="margin-top:20px">CAFE <span style="color:var(--primary)">777</span></h2>
+    </div>
+
+    <div id="alertOverlay" class="alert-overlay">
+        <div class="alert-card">
+            <h3 id="alertTitle">Xabar</h3>
+            <p id="alertMsg"></p>
+            <button onclick="closeAlert()">Tushunarli</button>
         </div>
     </div>
 
-    <div id="drawerOverlay" class="drawer-overlay" onclick="toggleDrawer()"></div>
-    <div id="sidebar" class="sidebar">
-        <div class="sidebar-header">
-            <div class="sidebar-user">
-                <div class="avatar-circle"><i class="fa fa-user"></i></div>
-                <div class="user-info">
-                    <h4 id="sideName">Mehmon</h4>
-                    <p id="sidePhone">+998 .. ... .. ..</p>
-                </div>
-            </div>
-        </div>
-        <div class="sidebar-menu">
-            <div class="menu-item" onclick="p('main', this); toggleDrawer();"><i class="fa fa-home"></i> Bosh sahifa</div>
-            <div class="menu-item" onclick="p('history', this); toggleDrawer();"><i class="fa fa-history"></i> Mening buyurtmalarim</div>
-            <div class="menu-item" onclick="openProfile(); toggleDrawer();"><i class="fa fa-cog"></i> Sozlamalar</div>
-            <hr>
-            <div class="menu-item" onclick="toggleTheme()"><i class="fa fa-moon"></i> Tungi rejim <span class="toggle-btn"></span></div>
-            <div class="menu-item" onclick="window.location.reload()"><i class="fa fa-sync"></i> Yangilash</div>
-        </div>
-        <div class="sidebar-footer">v2.0.4 Professional</div>
-    </div>
+    <div id="imgModal" onclick="this.style.display='none'"><img id="zoomImg"></div>
 
-    <header class="main-header">
-        <div class="header-left">
-            <button class="icon-btn" onclick="toggleDrawer()"><i class="fa fa-bars-staggered"></i></button>
-        </div>
-        <div class="header-center">
-            <div class="logo">CAFE <span>777</span></div>
-        </div>
-        <div class="header-right">
-            <button class="icon-btn" onclick="openProfile()"><i class="fa-regular fa-circle-user"></i></button>
-        </div>
+    <header>
+        <div class="logo">CAFE <span>777</span></div>
+        <div id="userDisplay" style="font-weight:bold; font-size:14px">Profil</div>
     </header>
 
     <main id="app">
-        
         <section id="main-p" class="page active">
-            <div class="search-bar">
-                <i class="fa fa-search"></i>
-                <input type="text" id="searchInput" placeholder="Taom qidirish..." oninput="searchFood()">
-            </div>
-            
-            <div id="catNav" class="category-list">
-                </div>
-
-            <div id="menuGrid" class="menu-grid">
-                </div>
+            <div class="cats" id="catNav"></div>
+            <div class="grid" id="menuItems"></div>
         </section>
 
         <section id="cart-p" class="page">
-            <div class="page-header">
-                <h2>Savat</h2>
-                <button class="clear-btn" onclick="clearCart()">Tozalash</button>
-            </div>
-            <div id="cartItems" class="cart-items">
+            <div style="padding:20px">
+                <h2>Savat 🛒</h2>
+                <div id="cartList" style="margin-top:20px"></div>
+                <div style="margin-top:20px; background:white; padding:20px; border-radius:15px">
+                    <div style="display:flex; justify-content:space-between; margin-bottom:15px">
+                        <span>Jami:</span> <b id="totalPrice" style="color:var(--primary)">0 so'm</b>
+                    </div>
+                    <button onclick="getLocation()" id="locBtn" style="width:100%; padding:12px; border:2px solid var(--primary); background:none; color:var(--primary); border-radius:10px; margin-bottom:10px; font-weight:bold">📍 Manzilni aniqlash</button>
+                    <button onclick="sendOrder()" style="width:100%; padding:15px; border:none; background:var(--primary); color:white; border-radius:10px; font-weight:bold">BUYURTMA BERISH</button>
                 </div>
-            <div class="order-form">
-                <div class="price-summary">
-                    <div class="summary-row"><span>Mahsulotlar:</span> <span id="subtotal">0</span></div>
-                    <div class="summary-row"><span>Yetkazish:</span> <span>Bepul</span></div>
-                    <div class="summary-row total"><span>Jami:</span> <span id="cartTotal">0 so'm</span></div>
-                </div>
-                
-                <button id="locBtn" class="form-btn outline" onclick="getLocation()">
-                    <i class="fa fa-location-dot"></i> <span id="locText">Manzilni aniqlash</span>
-                </button>
-                
-                <button class="form-btn primary" onclick="sendOrder()">
-                    <i class="fa fa-check"></i> BUYURTMA BERISH
-                </button>
             </div>
         </section>
 
         <section id="history-p" class="page">
-            <div class="page-header">
-                <h2>Buyurtmalar holati</h2>
-            </div>
-            <div id="historyList" class="history-list">
-                </div>
+            <div style="padding:20px"><h2>Buyurtmalar 📜</h2></div>
+            <div id="historyList"></div>
         </section>
-
-        <section id="fav-p" class="page">
-            <div class="page-header">
-                <h2>Sevimlilar</h2>
-            </div>
-            <div id="favGrid" class="menu-grid">
-                </div>
-        </section>
-
     </main>
 
-    <div id="productModal" class="modal" onclick="closeModal('productModal')">
-        <div class="modal-content" onclick="event.stopPropagation()">
-            <div class="modal-header-img">
-                <img id="m-img" src="" alt="">
-                <button class="close-icon" onclick="closeModal('productModal')">&times;</button>
-            </div>
-            <div class="modal-body">
-                <h2 id="m-title"></h2>
-                <p id="m-desc"></p>
-                <div class="modal-footer">
-                    <b id="m-price"></b>
-                    <div id="m-ctrl"></div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div id="profileModal" class="modal" onclick="closeModal('profileModal')">
-        <div class="modal-content profile-card" onclick="event.stopPropagation()">
-            <h3>Profil ma'lumotlari</h3>
-            <div class="input-group">
-                <label>Ismingiz</label>
-                <input type="text" id="uName" placeholder="Ism familiya">
-            </div>
-            <div class="input-group">
-                <label>Telefon raqamingiz</label>
-                <input type="tel" id="uPhone" value="+998" maxlength="13">
-            </div>
-            <button class="form-btn primary" onclick="saveProfile()">SAQLASH</button>
-            <button class="form-btn text" onclick="closeModal('profileModal')">Yopish</button>
-        </div>
-    </div>
-
-    <nav class="bottom-nav">
-        <div class="nav-item active" onclick="p('main', this)"><i class="fa fa-utensils"></i><span>Menyu</span></div>
-        <div class="nav-item" onclick="p('cart', this)"><i class="fa fa-shopping-bag"></i><span id="cartBadge" class="badge">0</span><span>Savat</span></div>
-        <div class="nav-item" onclick="p('history', this)"><i class="fa fa-clock-rotate-left"></i><span>Tarix</span></div>
-        <div class="nav-item" onclick="p('fav', this)"><i class="fa fa-heart"></i><span>Sevimlilar</span></div>
+    <nav class="toolbar">
+        <div class="tool-item active" onclick="changePage('main', this)"><i class="fa fa-home"></i><span>Menyu</span></div>
+        <div class="tool-item" onclick="changePage('cart', this)"><i class="fa fa-shopping-basket"></i><span id="badge" class="badge" style="display:none">0</span><span>Savat</span></div>
+        <div class="tool-item" onclick="changePage('history', this)"><i class="fa fa-history"></i><span>Tarix</span></div>
     </nav>
 
     <script>
-        // ASOSIY KONFIGURATSIYA
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxY3WpeGlsE6giypDRwV_yIjhfUzhYDolYcK4fE1OKWKQHdl1v_ID-XdEq6dAxX1_uK6A/exec";
-        const SHEET_API = "https://docs.google.com/spreadsheets/d/1j6VojbeSYWgYj3UY98xCxHLCzHcGlEg0nXjYwHDkKQk/gviz/tq?tqx=out:json";
-        const BOT_TOKEN = "8032226679:AAETTGPvYZYSvF_QmdofXKibpOwt4E9Iitc";
-        const ADMIN_ID = "519326806";
+        // SOZLAMALAR (Sizning ID laringiz)
+        const CONFIG = {
+            MENU_SHEET: "https://docs.google.com/spreadsheets/d/1j6VojbeSYWgYj3UY98xCxHLCzHcGlEg0nXjYwHDkKQk/gviz/tq?tqx=out:json",
+            SCRIPT: "https://script.google.com/macros/s/AKfycbxY3WpeGlsE6giypDRwV_yIjhfUzhYDolYcK4fE1OKWKQHdl1v_ID-XdEq6dAxX1_uK6A/exec",
+            BOT_TOKEN: "8032226679:AAETTGPvYZYSvF_QmdofXKibpOwt4E9Iitc",
+            ADMIN: "519326806"
+        };
 
-        let prods = [], cart = {}, favs = [], coords = null;
+        let products = [], cart = {}, coords = null;
 
-        // Ma'lumotlarni yuklash
         async function init() {
             try {
-                const res = await fetch(SHEET_API);
+                const res = await fetch(CONFIG.MENU_SHEET);
                 const text = await res.text();
-                const json = JSON.parse(text.substring(47, text.length - 2));
-                prods = json.table.rows.map((r, i) => ({
-                    id: i + 1,
-                    cat: r.c[1]?.v || 'Boshqa',
-                    name: r.c[2]?.v || 'Nomsiz',
-                    price: r.c[3]?.v || 0,
-                    img: r.c[4]?.v || 'https://via.placeholder.com/300',
-                    desc: r.c[5]?.v || "Mazali taom"
-                }));
+                const json = JSON.parse(text.substring(text.indexOf("{"), text.lastIndexOf("}") + 1));
+                
+                products = json.table.rows
+                    .filter(r => r.c[2] && r.c[2].v)
+                    .map((r, i) => ({
+                        id: i + 1,
+                        cat: r.c[1]?.v || 'Boshqa',
+                        name: r.c[2].v,
+                        price: r.c[3]?.v || 0,
+                        img: r.c[4]?.v || '',
+                        desc: r.c[5]?.v || ''
+                    }));
+
                 renderCats();
-                renderMenu(prods);
-                loadProfile();
-                loadFavs();
-                document.getElementById('loader').style.display = 'none';
+                renderMenu('Barchasi');
+                loadUser();
             } catch (e) {
-                alert("Internet ulanishini tekshiring!");
+                showAlert("Xatolik", "Jadval yuklanmadi. Sharing sozlamalarini tekshiring.");
+            } finally {
+                document.getElementById('splash').style.opacity = '0';
+                setTimeout(() => document.getElementById('splash').remove(), 500);
             }
         }
 
-        // Sahifani almashtirish
-        function p(pageId, el) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.getElementById(pageId + '-p').classList.add('active');
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            if(el) el.classList.add('active');
-            if(pageId === 'cart') renderCart();
-            if(pageId === 'history') updateStatus();
-            if(pageId === 'fav') renderFavs();
-            window.scrollTo(0, 0);
+        function renderCats() {
+            const cats = ['Barchasi', ...new Set(products.map(p => p.cat))];
+            document.getElementById('catNav').innerHTML = cats.map(c => 
+                `<div class="chip" onclick="filterMenu('${c}', this)">${c}</div>`
+            ).join('');
+            document.querySelector('.chip').classList.add('active');
         }
 
-        // Menyuni chizish
-        function renderMenu(data) {
-            const grid = document.getElementById('menuGrid');
-            grid.innerHTML = data.map(p => `
-                <div class="food-card">
-                    <div class="fav-icon ${favs.includes(p.id)?'active':''}" onclick="toggleFav(${p.id}, this)">
-                        <i class="fa-solid fa-heart"></i>
-                    </div>
-                    <img src="${p.img}" onclick="openDetail(${p.id})">
-                    <div class="food-info">
-                        <h4 onclick="openDetail(${p.id})">${p.name}</h4>
-                        <div class="food-footer">
-                            <span class="price">${p.price.toLocaleString()} so'm</span>
-                            <div id="btn-ctrl-${p.id}">
-                                ${btnHTML(p.id)}
-                            </div>
+        function filterMenu(cat, el) {
+            document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+            el.classList.add('active');
+            renderMenu(cat);
+        }
+
+        function renderMenu(cat) {
+            const filtered = cat === 'Barchasi' ? products : products.filter(p => p.cat === cat);
+            document.getElementById('menuItems').innerHTML = filtered.map(p => `
+                <div class="card">
+                    <img src="${p.img}" onclick="zoom('${p.img}')" onerror="this.src='https://via.placeholder.com/150'">
+                    <div class="card-body">
+                        <h4>${p.name}</h4>
+                        <div class="card-footer">
+                            <b class="price">${p.price.toLocaleString()} so'm</b>
+                            <div id="ctrl-${p.id}">${btnHTML(p.id)}</div>
                         </div>
                     </div>
                 </div>
@@ -217,189 +202,140 @@
         function btnHTML(id) {
             const q = cart[id] || 0;
             return q > 0 ? `
-                <div class="qty-ctrl">
-                    <button onclick="updateQty(${id}, -1)">-</button>
+                <div class="qty-box">
+                    <button onclick="updateQty(${id},-1)">-</button>
                     <span>${q}</span>
-                    <button onclick="updateQty(${id}, 1)">+</button>
-                </div>
-            ` : `<button class="add-btn" onclick="updateQty(${id}, 1)">Savatga</button>`;
+                    <button onclick="updateQty(${id},1)">+</button>
+                </div>` : `<button class="add-btn" onclick="updateQty(${id},1)">Savatga</button>`;
         }
 
-        function updateQty(id, delta) {
-            cart[id] = (cart[id] || 0) + delta;
+        function updateQty(id, n) {
+            cart[id] = (cart[id] || 0) + n;
             if(cart[id] <= 0) delete cart[id];
             
-            // UI yangilash
-            const ctrls = document.querySelectorAll(`#btn-ctrl-${id}, #m-ctrl`);
-            ctrls.forEach(c => { if(c) c.innerHTML = btnHTML(id); });
+            const el = document.getElementById(`ctrl-${id}`);
+            if(el) el.innerHTML = btnHTML(id);
             updateBadge();
-            saveLocalCart();
+            if(document.getElementById('cart-p').classList.contains('active')) renderCart();
         }
 
-        // Tarix va Statusni tekshirish
-        async function updateStatus() {
-            const orders = JSON.parse(localStorage.getItem('c777_orders') || "[]");
-            const container = document.getElementById('historyList');
-            if(orders.length === 0) {
-                container.innerHTML = `<div class="empty-state"><i class="fa fa-receipt"></i><p>Buyurtmalar mavjud emas</p></div>`;
-                return;
-            }
-
-            container.innerHTML = orders.map(o => `
-                <div class="order-card status-${o.status || 1}" id="order-${o.id}">
-                    <div class="order-header">
-                        <span>ID: #${o.id.toString().slice(-6)}</span>
-                        <span class="status-label">${getStatusName(o.status)}</span>
-                    </div>
-                    <p class="order-items">${o.items}</p>
-                    <div class="order-footer">
-                        <b>${o.total}</b>
-                        <small>${new Date(o.id).toLocaleTimeString()}</small>
-                    </div>
-                </div>
-            `).join('');
-
-            // Google Sheets'dan yangi statuslarni olish
-            for(let o of orders) {
-                if(o.status < 4) {
-                    try {
-                        const r = await fetch(`${SCRIPT_URL}?orderId=${o.id}`);
-                        const d = await r.json();
-                        if(d.status && d.status != o.status) {
-                            o.status = d.status;
-                            updateStatus(); // Qayta chizish
-                        }
-                    } catch(e) {}
-                }
-            }
-            localStorage.setItem('c777_orders', JSON.stringify(orders));
+        function updateBadge() {
+            const total = Object.values(cart).reduce((a, b) => a + b, 0);
+            const b = document.getElementById('badge');
+            b.innerText = total;
+            b.style.display = total > 0 ? 'flex' : 'none';
         }
 
-        function getStatusName(s) {
-            const st = { 1: "Qabul qilindi", 2: "Pishirilmoqda", 3: "Yo'lda", 4: "Yetkazildi" };
-            return st[s] || "Kutilmoqda";
-        }
-
-        // Buyurtmani yuborish
-        async function sendOrder() {
-            const name = localStorage.getItem('c777_name');
-            const phone = localStorage.getItem('c777_phone');
-            if(!name || !phone) return openProfile();
-            if(Object.keys(cart).length === 0) return alert("Savat bo'sh!");
-            if(!coords) return alert("Iltimos, manzilni aniqlang!");
-
-            const orderId = Date.now();
-            let itemsText = "";
-            let total = 0;
+        function renderCart() {
+            const list = document.getElementById('cartList');
+            let total = 0, html = "";
             for(let id in cart) {
-                const p = prods.find(x => x.id == id);
-                itemsText += `${p.name} (${cart[id]}x), `;
+                const p = products.find(x => x.id == id);
+                total += p.price * cart[id];
+                html += `
+                <div style="display:flex; justify-content:space-between; align-items:center; background:white; padding:15px; border-radius:12px; margin-bottom:10px">
+                    <div><b>${p.name}</b><br><small>${p.price.toLocaleString()} so'm</small></div>
+                    <div class="qty-box">
+                        <button onclick="updateQty(${id},-1)">-</button>
+                        <span>${cart[id]}</span>
+                        <button onclick="updateQty(${id},1)">+</button>
+                    </div>
+                </div>`;
+            }
+            list.innerHTML = html || "<p style='text-align:center'>Savat bo'sh</p>";
+            document.getElementById('totalPrice').innerText = total.toLocaleString() + " so'm";
+        }
+
+        async function sendOrder() {
+            const user = JSON.parse(localStorage.getItem('c777_u'));
+            if(!user) {
+                const n = prompt("Ismingiz:");
+                const p = prompt("Telefoningiz:", "+998");
+                if(!n || !p) return;
+                localStorage.setItem('c777_u', JSON.stringify({n, p}));
+            }
+            if(!Object.keys(cart).length) return showAlert("Savat", "Savat bo'sh!");
+            if(!coords) return showAlert("Manzil", "Joylashuvni aniqlang!");
+
+            const u = JSON.parse(localStorage.getItem('c777_u'));
+            const orderId = Date.now();
+            let items = "", total = 0;
+            for(let id in cart) {
+                const p = products.find(x => x.id == id);
+                items += `${p.name} (${cart[id]}x), `;
                 total += p.price * cart[id];
             }
 
-            const totalStr = total.toLocaleString() + " so'm";
-
-            // Telegram uchun keyboard
-            const keyboard = { inline_keyboard: [
-                [{text:"👨‍🍳 Pishirish", callback_data:`status_2_${orderId}`}, {text:"🚴 Yo'lda", callback_data:`status_3_${orderId}`}],
-                [{text:"✅ Yakunlash", callback_data:`status_4_${orderId}`}]
-            ]};
-
             try {
-                // 1. Sheets'ga yozish
-                fetch(`${SCRIPT_URL}?action=add&id=${orderId}&name=${encodeURIComponent(name)}&phone=${phone}&items=${encodeURIComponent(itemsText)}&total=${totalStr}`);
-
-                // 2. Telegramga
-                await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                fetch(`${CONFIG.SCRIPT}?action=add&id=${orderId}&name=${encodeURIComponent(u.n)}&phone=${u.p}&items=${encodeURIComponent(items)}&total=${total}`);
+                
+                await fetch(`https://api.telegram.org/bot${CONFIG.BOT_TOKEN}/sendMessage`, {
                     method: 'POST',
                     headers: {'Content-Type':'application/json'},
                     body: JSON.stringify({
-                        chat_id: ADMIN_ID,
-                        text: `🔔 YANGI BUYURTMA #${orderId}\n👤 Mijoz: ${name}\n📞 Tel: ${phone}\n🛒 Taomlar: ${itemsText}\n💰 Jami: ${totalStr}\n📍 Manzil: https://www.google.com/maps?q=${coords.latitude},${coords.longitude}`,
-                        reply_markup: keyboard
+                        chat_id: CONFIG.ADMIN,
+                        text: `🔔 YANGI BUYURTMA #${orderId}\n👤 ${u.n}\n📞 ${u.p}\n🛒 ${items}\n💰 ${total.toLocaleString()} so'm\n📍 Manzil: https://www.google.com/maps?q=${coords.latitude},${coords.longitude}`
                     })
                 });
 
-                // 3. Mahalliy xotiraga
-                let myOrders = JSON.parse(localStorage.getItem('c777_orders') || "[]");
-                myOrders.unshift({id: orderId, items: itemsText, total: totalStr, status: 1});
-                localStorage.setItem('c777_orders', JSON.stringify(myOrders));
+                let h = JSON.parse(localStorage.getItem('c777_h') || "[]");
+                h.unshift({id: orderId, items, total, status: 1});
+                localStorage.setItem('c777_h', JSON.stringify(h));
 
-                alert("Buyurtmangiz qabul qilindi!");
-                cart = {};
-                saveLocalCart();
-                p('history', document.querySelectorAll('.nav-item')[2]);
-            } catch(e) { alert("Xatolik!"); }
+                showAlert("Rahmat!", "Buyurtmangiz qabul qilindi!");
+                cart = {}; updateBadge(); changePage('history', document.querySelectorAll('.tool-item')[2]);
+            } catch(e) { showAlert("Xato", "Bog'lanishda xato!"); }
         }
 
-        // Yordamchi funksiyalar
-        function updateBadge() {
-            const count = Object.values(cart).reduce((a,b) => a+b, 0);
-            const b = document.getElementById('cartBadge');
-            b.innerText = count;
-            b.style.display = count > 0 ? 'flex' : 'none';
+        async function loadHistory() {
+            const h = JSON.parse(localStorage.getItem('c777_h') || "[]");
+            const container = document.getElementById('historyList');
+            if(!h.length) return container.innerHTML = "<p style='text-align:center'>Tarix bo'sh</p>";
+
+            const sts = ["", "Kutilmoqda", "Tayyorlanmoqda 👨‍🍳", "Yo'lda 🚴", "Yetkazildi ✅"];
+            let html = "";
+            for(let o of h) {
+                if(o.status < 4) {
+                    try {
+                        const r = await fetch(`${CONFIG.SCRIPT}?orderId=${o.id}`);
+                        const d = await r.json();
+                        if(d.status) o.status = parseInt(d.status);
+                    } catch(e){}
+                }
+                html += `
+                <div class="h-card st-${o.status}">
+                    <div style="display:flex; justify-content:space-between"><small>#${o.id.toString().slice(-6)}</small> <b>${sts[o.status]}</b></div>
+                    <p style="font-size:13px; margin:8px 0">${o.items}</p>
+                    <b style="color:var(--primary)">${o.total.toLocaleString()} so'm</b>
+                </div>`;
+            }
+            container.innerHTML = html;
+            localStorage.setItem('c777_h', JSON.stringify(h));
         }
 
         function getLocation() {
-            const btn = document.getElementById('locBtn');
-            btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Aniqlanmoqda...';
-            navigator.geolocation.getCurrentPosition(pos => {
-                coords = pos.coords;
-                btn.classList.add('success');
-                btn.innerHTML = '<i class="fa fa-location-dot"></i> ✅ MANZIL OLINDI';
-            }, () => {
-                alert("GPS yoqilmagan!");
-                btn.innerHTML = '<i class="fa fa-location-dot"></i> QAYTA URINISH';
-            });
+            const b = document.getElementById('locBtn');
+            b.innerText = "Aniqlanmoqda...";
+            navigator.geolocation.getCurrentPosition(p => {
+                coords = p.coords;
+                b.innerText = "✅ Manzil aniqlandi";
+                b.style.color = "green"; b.style.borderColor = "green";
+            }, () => showAlert("Xato", "GPSni yoqing!"));
         }
 
-        function saveProfile() {
-            const n = document.getElementById('uName').value;
-            const p = document.getElementById('uPhone').value;
-            if(n.length < 3 || p.length < 9) return alert("Ma'lumotlar to'liq emas");
-            localStorage.setItem('c777_name', n);
-            localStorage.setItem('c777_phone', p);
-            loadProfile();
-            closeModal('profileModal');
+        function changePage(p, el) {
+            document.querySelectorAll('.page').forEach(x => x.classList.remove('active'));
+            document.getElementById(p + '-p').classList.add('active');
+            document.querySelectorAll('.tool-item').forEach(x => x.classList.remove('active'));
+            el.classList.add('active');
+            if(p === 'history') loadHistory();
+            if(p === 'cart') renderCart();
         }
 
-        function loadProfile() {
-            const n = localStorage.getItem('c777_name');
-            const p = localStorage.getItem('c777_phone');
-            if(n) {
-                document.getElementById('sideName').innerText = n;
-                document.getElementById('sidePhone').innerText = p;
-                document.getElementById('uName').value = n;
-                document.getElementById('uPhone').value = p;
-            }
-        }
-
-        function toggleDrawer() {
-            document.getElementById('sidebar').classList.toggle('open');
-            document.getElementById('drawerOverlay').classList.toggle('active');
-        }
-
-        function openModal(id) {
-            const m = document.getElementById(id);
-            m.style.display = 'flex';
-            setTimeout(() => m.classList.add('show'), 10);
-        }
-
-        function closeModal(id) {
-            const m = document.getElementById(id);
-            m.classList.remove('show');
-            setTimeout(() => m.style.display = 'none', 300);
-        }
-
-        function openDetail(id) {
-            const p = prods.find(x => x.id == id);
-            document.getElementById('m-img').src = p.img;
-            document.getElementById('m-title').innerText = p.name;
-            document.getElementById('m-desc').innerText = p.desc;
-            document.getElementById('m-price').innerText = p.price.toLocaleString() + " so'm";
-            document.getElementById('m-ctrl').innerHTML = btnHTML(id);
-            openModal('productModal');
-        }
+        function zoom(s) { document.getElementById('zoomImg').src = s; document.getElementById('imgModal').style.display = 'flex'; }
+        function showAlert(t, m) { document.getElementById('alertTitle').innerText = t; document.getElementById('alertMsg').innerText = m; document.getElementById('alertOverlay').style.display = 'flex'; }
+        function closeAlert() { document.getElementById('alertOverlay').style.display = 'none'; }
+        function loadUser() { const u = JSON.parse(localStorage.getItem('c777_u')); if(u) document.getElementById('userDisplay').innerText = u.n; }
 
         window.onload = init;
     </script>

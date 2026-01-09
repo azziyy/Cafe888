@@ -1,204 +1,122 @@
-/* 1. O'zgaruvchilar va Global uslublar */
 :root {
-    --primary: #ff4757;
-    --primary-soft: #ff475715;
-    --bg: #f7f8fa;
-    --white: #ffffff;
-    --text: #2f3542;
-    --text-light: #747d8c;
-    --card-shadow: 0 10px 20px rgba(0,0,0,0.05);
-    --radius: 20px;
-    --anim: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --primary: #e67e22;
+    --bg: #f8f9fa;
+    --card: #ffffff;
+    --text: #2c3e50;
+    --shadow: 0 10px 25px rgba(0,0,0,0.08);
 }
 
-.dark-theme {
+.dark-mode {
     --bg: #121212;
-    --white: #1e1e1e;
-    --text: #f1f2f6;
-    --text-light: #a4b0be;
-    --card-shadow: 0 10px 25px rgba(0,0,0,0.3);
+    --card: #1e1e1e;
+    --text: #ecf0f1;
 }
 
-* {
-    margin: 0; padding: 0; box-sizing: border-box;
-    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    -webkit-tap-highlight-color: transparent;
-}
+* { margin:0; padding:0; box-sizing: border-box; font-family: 'Poppins', sans-serif; -webkit-tap-highlight-color: transparent; }
 
-body {
-    background-color: var(--bg);
-    color: var(--text);
-    overflow-x: hidden;
-    transition: background var(--anim);
-}
+body { background: var(--bg); color: var(--text); overflow-x: hidden; }
 
-/* 2. Loader */
-.loader-wrapper {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: var(--bg); z-index: 1000;
-    display: flex; align-items: center; justify-content: center;
+/* Splash Screen */
+.splash {
+    position: fixed; inset: 0; background: var(--card); z-index: 1000;
+    display: flex; align-items: center; justify-content: center; transition: 0.5s;
 }
-.loader-content { text-align: center; }
-.logo-anim {
-    font-size: 32px; font-weight: 800; color: var(--text);
-    margin-bottom: 20px; letter-spacing: -1px;
+.loader .circle {
+    width: 60px; height: 60px; border: 4px solid #eee;
+    border-top-color: var(--primary); border-radius: 50%;
+    animation: spin 1s infinite linear;
 }
-.logo-anim span { color: var(--primary); }
-.progress-bar {
-    width: 150px; height: 4px; background: #eee;
-    border-radius: 10px; overflow: hidden; margin: 0 auto;
-}
-.progress {
-    width: 50%; height: 100%; background: var(--primary);
-    animation: loading 1.5s infinite ease-in-out;
-}
-@keyframes loading {
-    0% { transform: translateX(-100%); }
-    100% { transform: translateX(200%); }
-}
+.logo-text { font-size: 24px; font-weight: 800; margin-top: 15px; }
+.logo-text span { color: var(--primary); }
 
-/* 3. Header */
-.main-header {
-    position: sticky; top: 0; z-index: 100;
-    background: rgba(255,255,255,0.8);
-    backdrop-filter: blur(10px);
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 15px 20px; transition: 0.3s;
+/* Header */
+.glass-header {
+    position: sticky; top: 0; padding: 15px 20px; z-index: 100;
+    display: flex; justify-content: space-between; align-items: center;
+    background: rgba(255,255,255,0.8); backdrop-filter: blur(10px);
 }
-.dark-theme .main-header { background: rgba(30,30,30,0.8); }
-.icon-btn {
-    background: none; border: none; font-size: 20px;
-    color: var(--text); cursor: pointer; width: 40px; height: 40px;
-}
-.logo { font-size: 22px; font-weight: 800; }
+.logo { font-size: 20px; font-weight: 800; }
 .logo span { color: var(--primary); }
 
-/* 4. Sidebar / Drawer */
-.sidebar {
-    position: fixed; left: -280px; top: 0; width: 280px; height: 100%;
-    background: var(--white); z-index: 300; transition: var(--anim);
-    padding: 30px 20px; box-shadow: 20px 0 50px rgba(0,0,0,0.1);
+/* Category Scroll */
+.category-wrapper {
+    display: flex; overflow-x: auto; padding: 15px; gap: 10px;
+    scrollbar-width: none;
 }
-.sidebar.open { left: 0; }
-.drawer-overlay {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.4); z-index: 250;
-    display: none; backdrop-filter: blur(3px);
+.cat-chip {
+    padding: 8px 18px; background: var(--card); border-radius: 20px;
+    white-space: nowrap; font-size: 14px; font-weight: 600;
+    box-shadow: var(--shadow); transition: 0.3s;
 }
-.drawer-overlay.active { display: block; }
+.cat-chip.active { background: var(--primary); color: white; }
 
-.avatar-circle {
-    width: 60px; height: 60px; background: var(--primary-soft);
-    color: var(--primary); border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 24px; margin-bottom: 15px;
+/* Menu Grid */
+.menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 15px; margin-bottom: 80px; }
+.product-card {
+    background: var(--card); border-radius: 15px; overflow: hidden;
+    box-shadow: var(--shadow); animation: slideIn 0.5s ease-out;
 }
-.sidebar-menu { margin-top: 40px; }
-.menu-item {
-    display: flex; align-items: center; gap: 15px;
-    padding: 15px; border-radius: 15px; font-weight: 600;
-    margin-bottom: 5px; cursor: pointer;
-}
-.menu-item:hover { background: var(--primary-soft); color: var(--primary); }
+.product-card img { width: 100%; height: 130px; object-fit: cover; }
+.p-info { padding: 10px; }
+.p-info h4 { font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.p-info p { font-size: 11px; color: #7f8c8d; height: 32px; overflow: hidden; }
+.p-bottom { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; }
+.p-bottom b { color: var(--primary); font-size: 13px; }
 
-/* 5. Mahsulot Kartalari */
-.menu-grid {
-    display: grid; grid-template-columns: 1fr 1fr;
-    gap: 15px; padding: 15px;
-}
-
-.food-card {
-    background: var(--white); border-radius: var(--radius);
-    overflow: hidden; box-shadow: var(--card-shadow);
-    position: relative; transition: transform 0.2s;
-}
-.food-card:active { transform: scale(0.97); }
-.food-card img { width: 100%; height: 140px; object-fit: cover; }
-.food-info { padding: 12px; }
-.food-info h4 { font-size: 15px; margin-bottom: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.price { color: var(--primary); font-weight: 800; font-size: 14px; }
-
-.fav-icon {
-    position: absolute; top: 10px; right: 10px;
-    width: 32px; height: 32px; background: rgba(255,255,255,0.8);
-    backdrop-filter: blur(5px); border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    color: #ccc; transition: 0.3s; z-index: 5;
-}
-.fav-icon.active { color: var(--primary); }
-
-/* 6. Tugmalar va Boshqaruv */
+/* Buttons */
 .add-btn {
-    background: var(--primary); color: white; border: none;
-    padding: 8px 12px; border-radius: 12px; font-size: 12px;
-    font-weight: bold; cursor: pointer;
+    padding: 6px 12px; background: var(--primary); border: none;
+    color: white; border-radius: 8px; font-size: 11px; cursor: pointer;
 }
-.qty-ctrl {
-    display: flex; align-items: center; gap: 10px;
-    background: var(--bg); border-radius: 12px; padding: 4px;
+.qty-btn { display: flex; align-items: center; background: #f1f2f6; border-radius: 8px; padding: 2px; }
+.qty-btn button { width: 25px; height: 25px; border: none; background: white; border-radius: 5px; font-weight: bold; }
+.qty-btn span { padding: 0 10px; font-size: 14px; }
+
+/* Custom Alert */
+.alert-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 2000;
+    display: none; align-items: center; justify-content: center; opacity: 0; transition: 0.3s;
 }
-.qty-ctrl button {
-    width: 28px; height: 28px; border-radius: 8px; border: none;
-    background: var(--white); font-weight: bold; cursor: pointer;
+.alert-overlay.show { opacity: 1; }
+.alert-card {
+    background: white; padding: 25px; width: 85%; max-width: 320px;
+    border-radius: 20px; text-align: center; transform: scale(0.8); transition: 0.3s;
+}
+.alert-overlay.show .alert-card { transform: scale(1); }
+.alert-card button {
+    margin-top: 20px; width: 100%; padding: 12px;
+    background: var(--primary); color: white; border: none; border-radius: 10px;
 }
 
-/* 7. Bottom Nav */
-.bottom-nav {
-    position: fixed; bottom: 0; width: 100%; height: 70px;
-    background: var(--white); display: flex;
-    justify-content: space-around; align-items: center;
-    border-top: 1px solid rgba(0,0,0,0.05); z-index: 200;
-    padding-bottom: env(safe-area-inset-bottom);
-}
-.nav-item {
-    display: flex; flex-direction: column; align-items: center;
-    color: var(--text-light); font-size: 10px; gap: 5px;
-    position: relative; transition: 0.3s; width: 25%;
-}
-.nav-item i { font-size: 20px; }
-.nav-item.active { color: var(--primary); }
-.badge {
-    position: absolute; top: -5px; right: 25%;
-    background: var(--primary); color: white;
-    font-size: 10px; width: 18px; height: 18px;
-    border-radius: 50%; display: flex;
-    align-items: center; justify-content: center;
-    border: 2px solid var(--white);
-}
-
-/* 8. Order Status Cards */
-.order-card {
-    background: var(--white); margin: 15px; padding: 20px;
-    border-radius: var(--radius); border-left: 6px solid #ddd;
-}
-.status-1 { border-left-color: #ffc107; } /* Qabul */
-.status-2 { border-left-color: #007bff; } /* Tayyorlanish */
-.status-3 { border-left-color: #17a2b8; } /* Yo'lda */
-.status-4 { border-left-color: #28a745; } /* Yetkazildi */
-
-.status-label {
-    font-size: 11px; font-weight: bold; padding: 4px 10px;
-    background: #eee; border-radius: 10px;
-}
-.status-2 .status-label { background: #007bff20; color: #007bff; }
-
-/* 9. Modal Animation */
+/* Image Modal */
 .modal {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.7); z-index: 500;
-    display: none; align-items: center; justify-content: center;
-    opacity: 0; transition: 0.3s;
+    display: none; position: fixed; z-index: 1000; inset: 0;
+    background: rgba(0,0,0,0.9); padding-top: 100px;
 }
-.modal.show { opacity: 1; }
 .modal-content {
-    width: 90%; max-width: 400px; background: var(--white);
-    border-radius: 30px; overflow: hidden;
-    transform: translateY(50px); transition: 0.3s;
+    margin: auto; display: block; width: 80%; max-width: 700px;
+    border-radius: 10px; animation: zoom 0.3s;
 }
-.modal.show .modal-content { transform: translateY(0); }
+.close-modal { position: absolute; top: 30px; right: 35px; color: white; font-size: 40px; }
 
-/* Responsive Adjustments */
-@media (min-width: 768px) {
-    .menu-grid { grid-template-columns: 1fr 1fr 1fr 1fr; }
-    .main-header, .bottom-nav { max-width: 800px; margin: 0 auto; left: 0; right: 0; }
+/* Navigation */
+.toolbar {
+    position: fixed; bottom: 0; width: 100%; height: 65px;
+    background: var(--card); display: flex; box-shadow: 0 -5px 20px rgba(0,0,0,0.05);
 }
+.tool-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #bdc3c7; }
+.tool-item.active { color: var(--primary); }
+.tool-item span { font-size: 10px; margin-top: 4px; }
+.badge { position: absolute; top: 10px; background: red; color: white; border-radius: 50%; padding: 2px 6px; font-size: 10px; }
+
+/* Animations */
+@keyframes spin { 100% { transform: rotate(360deg); } }
+@keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes zoom { from { transform: scale(0); } to { transform: scale(1); } }
+
+/* Tarix Kartlari */
+.order-card { background: var(--card); margin: 10px; padding: 15px; border-radius: 15px; border-left: 5px solid #ccc; box-shadow: var(--shadow); }
+.s-1 { border-left-color: #f1c40f; }
+.s-2 { border-left-color: #3498db; }
+.s-3 { border-left-color: #e67e22; }
+.s-4 { border-left-color: #27ae60; }
