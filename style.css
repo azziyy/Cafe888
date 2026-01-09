@@ -1,3 +1,19 @@
+/* Matnni tanlash va nusxalashni taqiqlash */
+* {
+    -webkit-user-select: none; /* Safari uchun */
+    -moz-user-select: none;    /* Firefox uchun */
+    -ms-user-select: none;     /* IE10+ uchun */
+    user-select: none;         /* Standart brauzerlar uchun */
+}
+
+/* Input va Textarea-larda yozish imkoniyatini saqlab qolish uchun */
+input, textarea {
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
+}
+
 /* 1. O'ZGARUVCHILAR VA ASOSIY STIL */
 :root {
     --primary: #ffbe0b; 
