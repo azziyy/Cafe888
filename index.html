@@ -3,296 +3,300 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Cafe 777 Premium</title>
-    
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
-
-    <style>
-        :root {
-            --secondary: #fb5607; --dark: #1a1a1a; --light: #f8f9fa; 
-            --white: #ffffff; --gray: #8d99ae; --shadow: 0 10px 25px rgba(0,0,0,0.08);
-        }
-
-        * { box-sizing: border-box; font-family: 'Poppins', sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background-color: var(--light); margin: 0; padding-bottom: 110px; color: var(--dark); overflow-x: hidden; }
-
-        /* Sahifalar */
-        .page { display: none; padding: 20px; animation: fadeIn 0.4s ease; }
-        .page.active { display: block; }
-
-        /* Lightbox (Rasm kattalashishi) */
-        #imgModal {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.95); z-index: 3000;
-            display: none; flex-direction: column; align-items: center; justify-content: center;
-            backdrop-filter: blur(10px); padding: 20px;
-        }
-        #imgModal img { max-width: 100%; max-height: 60%; border-radius: 25px; object-fit: cover; box-shadow: 0 0 30px rgba(0,0,0,0.5); }
-        #modalDesc { color: white; margin-top: 20px; text-align: center; max-width: 90%; font-size: 14px; opacity: 0.9; }
-
-        /* Mahsulot Cardlari */
-        .product-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .product-card { background: var(--white); border-radius: 25px; overflow: hidden; box-shadow: var(--shadow); position: relative; }
-        .img-container { width: 100%; aspect-ratio: 1/1; cursor: zoom-in; }
-        .img-container img { width: 100%; height: 100%; object-fit: cover; }
-        
-        .p-info { padding: 12px; }
-        .p-name { font-size: 13px; font-weight: 700; margin-bottom: 4px; display: block; height: 38px; overflow: hidden; }
-        .p-price { color: var(--secondary); font-weight: 800; font-size: 15px; }
-
-        /* Tarix Cardlari */
-        .history-item { 
-            background: white; padding: 15px; border-radius: 20px; margin-bottom: 12px; 
-            box-shadow: var(--shadow); border-left: 6px solid var(--secondary);
-            animation: slideInRight 0.4s ease;
-        }
-        .status-pill { 
-            background: #fff3e0; padding: 5px 12px; border-radius: 10px; 
-            font-size: 11px; font-weight: 700; color: var(--secondary); 
-        }
-
-        /* Navigatsiya */
-        .navbar {
-            position: fixed; bottom: 20px; left: 5%; width: 90%;
-            background: white; display: flex; padding: 12px; border-radius: 25px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1); z-index: 1000;
-        }
-        .nav-item { flex: 1; text-align: center; color: var(--gray); font-size: 10px; font-weight: 700; }
-        .nav-item.active { color: var(--secondary); transform: translateY(-3px); transition: 0.3s; }
-        .nav-item i { font-size: 20px; display: block; margin-bottom: 2px; }
-
-        /* Tugmalar */
-        .btn-main { width: 100%; background: var(--secondary); color: white; border: none; padding: 12px; border-radius: 15px; font-weight: 700; cursor: pointer; }
-    </style>
+    <title>Cafe 777 - Premium System</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body>
+<body class="light-mode">
 
-    <div id="imgModal" onclick="closeModal()">
-        <span style="position:absolute; top:25px; right:25px; color:white; font-size:35px;">×</span>
-        <img id="modalImg" src="">
-        <h3 id="modalTitle" style="color:white; margin-top:15px; margin-bottom:5px;"></h3>
-        <p id="modalDesc"></p>
-    </div>
+    <div id="productInfoModal" class="modal" onclick="if(event.target==this) closeProductModal()">
+        <div class="modal-content" style="max-width: 400px; border-radius: 30px; overflow: hidden; position: relative;">
+            <button class="close-modal" onclick="closeProductModal()" style="position: absolute; top: 15px; right: 15px; z-index: 1000; background: rgba(0,0,0,0.5); border: none; color: white; border-radius: 50%; width: 35px; height: 35px; font-size: 20px; cursor: pointer;">×</button>
+            
+            <div style="width: 100%; height: 300px; background: #f8f9fa; display: flex; align-items: center; justify-content: center;">
+                <img id="p-modal-img" src="" style="width: 100%; height: 100%; object-fit: cover; display: block;">
+            </div>
 
-    <div id="p-reg" class="page active">
-        <div style="height:90vh; display:flex; flex-direction:column; justify-content:center; align-items:center;">
-            <h1 style="font-size:40px; color:var(--secondary); margin:0;">Cafe 777</h1>
-            <p style="color:var(--gray); margin-bottom:30px;">Premium Buyurtma Tizimi</p>
-            <input type="text" id="userName" placeholder="Ismingiz" style="width:85%; padding:18px; border-radius:18px; border:2px solid #eee; margin-bottom:15px; outline:none;">
-            <input type="tel" id="userPhone" value="+998 " style="width:85%; padding:18px; border-radius:18px; border:2px solid #eee; margin-bottom:20px; outline:none;">
-            <button onclick="login()" class="btn-main" style="width:85%; padding:20px;">KIRISH</button>
-        </div>
-    </div>
-
-    <div id="app" style="display:none;">
-        <div id="p-home" class="page">
-            <div id="catBox" style="display:flex; overflow-x:auto; gap:10px; padding-bottom:15px; scrollbar-width:none;"></div>
-            <div class="product-grid" id="menuGrid"></div>
-        </div>
-
-        <div id="p-history" class="page">
-            <h2 style="font-weight:800; margin-bottom:20px;">Buyurtmalar Tarixi 📜</h2>
-            <div id="historyList"></div>
-        </div>
-
-        <div id="p-cart" class="page">
-            <h2 style="font-weight:800; margin-bottom:20px;">Savatchangiz 🛒</h2>
-            <div id="cartList"></div>
-            <div id="cartSummary" style="display:none; background:white; padding:20px; border-radius:25px; margin-top:20px; box-shadow:var(--shadow);">
-                <h3 id="totalPrice">Jami: 0 so'm</h3>
-                <button onclick="getLocation()" id="locBtn" class="btn-main" style="background:#2ecc71; margin-bottom:10px;">📍 MANZILNI YUBORISH</button>
-                <button onclick="sendOrder()" class="btn-main">TASDIQLASH</button>
+            <div style="padding: 25px; background: var(--white);">
+                <h2 id="p-modal-title" style="margin: 0; font-size: 24px; color: var(--text);"></h2>
+                <div style="height: 2px; width: 50px; background: var(--primary); margin: 15px 0;"></div>
+                <p id="p-modal-desc" style="color: #666; font-size: 15px; line-height: 1.6; margin-bottom: 20px;"></p>
+                
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <b id="p-modal-price" style="font-size: 22px; color: var(--secondary);"></b>
+                    <button class="order-btn" style="width: auto; padding: 12px 30px; background: var(--dark); color: white;" onclick="closeProductModal()">YOPISH</button>
+                </div>
             </div>
         </div>
-
-        <nav class="navbar">
-            <div class="nav-item active" onclick="nav('home', this)"><i class="fas fa-utensils"></i>Menyu</div>
-            <div class="nav-item" onclick="nav('cart', this)"><i class="fas fa-shopping-basket"></i>Savat</div>
-            <div class="nav-item" onclick="nav('history', this)"><i class="fas fa-history"></i>Tarix</div>
-        </nav>
     </div>
 
+    <div id="customAlert" class="modal">
+        <div class="modal-content" style="padding: 30px; text-align: center; max-width: 320px;">
+            <div id="alertIcon" style="font-size: 60px; margin-bottom: 15px;"></div>
+            <h2 id="alertTitle" style="margin: 0;"></h2>
+            <p id="alertMsg" style="color: #777; margin: 15px 0;"></p>
+            <button class="order-btn" style="background: var(--dark); color: white;" onclick="closeAlert()">OK</button>
+        </div>
+    </div>
+
+    <div id="drawerOverlay" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:5000; display:none;" onclick="toggleDrawer()"></div>
+    <div id="myDrawer" class="drawer">
+        <div style="padding: 25px;">
+            <h2 style="color: var(--secondary); margin-bottom: 30px;">Cafe 777</h2>
+            <div class="drawer-item" onclick="toggleMode()">
+                <i class="fa fa-adjust"></i> <span>Tungi rejim</span>
+                <div id="modeToggle" class="toggle-switch"></div>
+            </div>
+            <div class="drawer-item" onclick="p('cart', this); toggleDrawer();">
+                <i class="fa fa-shopping-cart"></i> <span>Savatcham</span>
+            </div>
+            <div class="drawer-item" onclick="location.reload()">
+                <i class="fa fa-sync"></i> <span>Yangilash</span>
+            </div>
+        </div>
+    </div>
+
+    <header class="header-nav">
+        <i class="fa fa-bars-staggered" onclick="toggleDrawer()" style="font-size: 24px; cursor: pointer;"></i>
+        <span style="font-weight: 900; font-size: 22px; color: var(--dark);">CAFE <span style="color: var(--primary);">777</span></span>
+        <i class="fa-regular fa-circle-user" style="font-size: 24px;"></i>
+    </header>
+
+    <main id="main-p" class="p-con">
+        <div id="catNav" class="category-nav"></div>
+        <div id="menu" class="menu-grid"></div>
+    </main>
+
+    <div id="cart-p" class="p-con hidden">
+        <div style="padding: 25px; background: var(--white); margin: 15px; border-radius: 30px; box-shadow: var(--shadow);">
+            <h3 style="margin-top:0; font-size: 22px;">Savatcha 🛒</h3>
+            <div id="cartList" style="margin: 20px 0;"></div>
+            <div style="display:flex; justify-content:space-between; margin:20px 0; font-weight:bold; font-size:22px;">
+                <span>Jami:</span><span id="total" style="color: var(--secondary);">0 so'm</span>
+            </div>
+            <button id="locBtn" class="order-btn" style="background: #f0f2f5; color: #333; margin-bottom: 12px; border: 1px dashed #ccc;" onclick="getLocation()">
+                <i class="fa fa-location-crosshairs"></i> <span>MANZILNI ANIQLASH</span>
+            </button>
+            <button id="submitBtn" class="order-btn" style="background: var(--green); color: white; box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);" onclick="sendOrder()">
+                BUYURTMANI YUBORISH
+            </button>
+        </div>
+    </div>
+
+    <div id="fav-p" class="p-con hidden"><div id="favs" class="menu-grid"></div></div>
+
+    <nav class="toolbar">
+        <div class="tool-item active" onclick="p('main',this)"><i class="fa fa-home-alt"></i>Asosiy</div>
+        <div class="tool-item" onclick="p('cart',this)"><i class="fa fa-shopping-bag"></i>Savat</div>
+        <div class="tool-item" onclick="p('fav',this)"><i class="fa fa-heart"></i>Sevimlilar</div>
+    </nav>
+
     <script>
-        const BOT_TOKEN = "8032226679:AAETTGPvYZYSvF_QmdofXKibpOwt4E9Iitc";
-        const ADMIN_ID = "519326806";
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwAmCC_FsjnI1yUDX9BbGvwsz8ivDjbIZ7psfRsOwg_VvREicu3eL2e0wJzOZMKx1_oaA/exec";
-        const SHEET_ID = "1j6VojbeSYWgYj3UY98xCxHLCzHcGlEg0nXjYwHDkKQk";
+        const BOT = "8032226679:AAETTGPvYZYSvF_QmdofXKibpOwt4E9Iitc", 
+              ADMIN = "519326806", 
+              SHEET = "1j6VojbeSYWgYj3UY98xCxHLCzHcGlEg0nXjYwHDkKQk";
+        
+        let prods = [], cart = {}, favs = [], coords = null;
 
-        let state = {
-            products: [], cart: {}, activeCat: 'Hammasi', loc: null,
-            user: JSON.parse(localStorage.getItem('c7_user')),
-            history: JSON.parse(localStorage.getItem('c7_history') || '[]')
-        };
+        async function load() {
+            try {
+                const r = await fetch(`https://docs.google.com/spreadsheets/d/${SHEET}/gviz/tq?tqx=out:json`);
+                const t = await r.text();
+                const j = JSON.parse(t.substring(47, t.length - 2));
+                
+                prods = j.table.rows.map((r, i) => ({
+                    id: i + 1,
+                    cat: r.c[1] ? r.c[1].v : 'Boshqa',
+                    name: r.c[2] ? r.c[2].v : 'Nomsiz',
+                    price: r.c[3] ? r.c[3].v : 0,
+                    img: r.c[4] ? r.c[4].v : '', 
+                    desc: r.c[5] ? r.c[5].v : "Mahsulot haqida batafsil ma'lumot kiritilmagan."
+                }));
 
-        window.onload = () => { if(state.user) showMain(); };
-
-        function login() {
-            let n = document.getElementById('userName').value;
-            let p = document.getElementById('userPhone').value;
-            if(n.length < 3) return Swal.fire('Xato', 'Ismingizni yozing', 'error');
-            state.user = {name: n, phone: p};
-            localStorage.setItem('c7_user', JSON.stringify(state.user));
-            showMain();
-        }
-
-        function showMain() {
-            document.getElementById('p-reg').style.display='none';
-            document.getElementById('app').style.display='block';
-            loadData();
-            setInterval(syncStatus, 5000); // Har 5 soniyada statusni yangilash
-        }
-
-        async function loadData() {
-            const res = await fetch(`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`);
-            const text = await res.text();
-            const data = JSON.parse(text.substring(47).slice(0, -2));
-            state.products = data.table.rows.map((r, i) => ({
-                id: i, cat: r.c[1]?.v || "Boshqa", name: r.c[2]?.v, 
-                price: r.c[3]?.v, img: r.c[4]?.v, desc: r.c[5]?.v || "Mazali taom"
-            }));
-            renderCats(); renderMenu();
-        }
-
-        function openLightbox(id) {
-            let p = state.products[id];
-            document.getElementById('modalImg').src = p.img;
-            document.getElementById('modalTitle').innerText = p.name;
-            document.getElementById('modalDesc').innerText = p.desc;
-            document.getElementById('imgModal').style.display = 'flex';
-        }
-
-        function closeModal() { document.getElementById('imgModal').style.display = 'none'; }
-
-        function renderMenu() {
-            let filtered = state.activeCat === 'Hammasi' ? state.products : state.products.filter(p => p.cat === state.activeCat);
-            document.getElementById('menuGrid').innerHTML = filtered.map(p => `
-                <div class="product-card animate__animated animate__fadeInUp">
-                    <div class="img-container" onclick="openLightbox(${p.id})">
-                        <img src="${p.img}" loading="lazy">
-                    </div>
-                    <div class="p-info">
-                        <b class="p-name">${p.name}</b>
-                        <div style="display:flex; justify-content:space-between; align-items:center;">
-                            <b class="p-price">${p.price.toLocaleString()}</b>
-                            <button onclick="add(${p.id})" style="background:var(--secondary); color:white; border:none; border-radius:10px; padding:8px 12px;"><i class="fas fa-plus"></i></button>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
+                renderCats();
+                renderMenu(); 
+            } catch(e) {
+                showAlert("Xato", "Sheets ma'lumotlarini yuklab bo'lmadi.", "🌐");
+            }
         }
 
         function renderCats() {
-            let cats = ['Hammasi', ...new Set(state.products.map(p => p.cat))];
-            document.getElementById('catBox').innerHTML = cats.map(c => `
-                <div onclick="state.activeCat='${c}'; renderCats(); renderMenu();" 
-                     style="padding:10px 20px; background:${state.activeCat===c?'var(--secondary)':'white'}; 
-                            color:${state.activeCat===c?'white':'var(--gray)'}; border-radius:20px; white-space:nowrap; font-weight:600; box-shadow:var(--shadow); cursor:pointer;">
-                    ${c}
+            const cats = ['Barchasi', ...new Set(prods.map(p => p.cat))];
+            document.getElementById('catNav').innerHTML = cats.map(c => 
+                `<button class="cat-btn ${c==='Barchasi'?'active':''}" onclick="filterCat('${c}', this)">${c}</button>`).join('');
+        }
+
+        function filterCat(c, btn) {
+            document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            const f = (c === 'Barchasi') ? prods : prods.filter(p => p.cat === c);
+            document.getElementById('menu').innerHTML = f.map(p => genCard(p)).join('');
+        }
+
+        function genCard(p) {
+            let q = cart[p.id] || 0;
+            return `
+            <div class="card">
+                <div class="heart-btn ${favs.includes(p.id)?'active':''}" onclick="toggleF(${p.id},this)"><i class="fa fa-heart"></i></div>
+                <img src="${p.img}" alt="${p.name}" onclick="openProductModal(${p.id})" onerror="this.src='https://via.placeholder.com/300?text=Rasm+Mavjud+Emas'">
+                <div style="padding:12px; text-align:center;">
+                    <h4 style="margin:5px 0; font-size:15px;">${p.name}</h4>
+                    <b style="color:var(--secondary); font-size:14px;">${p.price.toLocaleString()} so'm</b>
+                    <div class="counter-box" style="margin-top:12px;">
+                        <button class="c-btn-sm" onclick="updateQty(${p.id},-1)">-</button>
+                        <span id="qty-${p.id}" style="font-weight:bold; min-width:25px; font-size:16px;">${q}</span>
+                        <button class="c-btn-sm" onclick="updateQty(${p.id},1)">+</button>
+                    </div>
                 </div>
-            `).join('');
+            </div>`;
         }
 
-        function add(id) {
-            state.cart[id] = (state.cart[id] || 0) + 1;
-            Swal.fire({ toast:true, position:'top', icon:'success', title:'Savatga qo\'shildi', showConfirmButton:false, timer:800 });
+        function openProductModal(id) {
+            const p = prods.find(x => x.id === id);
+            if(!p) return;
+
+            document.getElementById('p-modal-img').src = p.img;
+            document.getElementById('p-modal-title').innerText = p.name;
+            document.getElementById('p-modal-desc').innerText = p.desc;
+            document.getElementById('p-modal-price').innerText = p.price.toLocaleString() + " so'm";
+            
+            const modal = document.getElementById('productInfoModal');
+            modal.style.display = 'flex';
+            setTimeout(() => modal.classList.add('show'), 10);
         }
 
-        function nav(p, el) {
-            document.querySelectorAll('.page').forEach(pg => pg.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            document.getElementById('p-'+p).classList.add('active');
-            el.classList.add('active');
-            if(p === 'cart') renderCart();
-            if(p === 'history') renderHistory();
+        function closeProductModal() {
+            const modal = document.getElementById('productInfoModal');
+            modal.classList.remove('show');
+            setTimeout(() => modal.style.display = 'none', 300);
+        }
+
+        function updateQty(id, n) {
+            cart[id] = (cart[id] || 0) + n;
+            if(cart[id] <= 0) delete cart[id];
+            const el = document.getElementById(`qty-${id}`);
+            if(el) el.innerText = cart[id] || 0;
+            renderCart();
         }
 
         function renderCart() {
-            let keys = Object.keys(state.cart), total = 0;
-            if(!keys.length) { document.getElementById('cartList').innerHTML = "<p style='text-align:center; color:var(--gray)'>Savat bo'sh</p>"; document.getElementById('cartSummary').style.display='none'; return; }
-            document.getElementById('cartSummary').style.display='block';
-            document.getElementById('cartList').innerHTML = keys.map(id => {
-                let p = state.products[id]; total += p.price * state.cart[id];
-                return `<div style="display:flex; justify-content:space-between; background:white; padding:15px; border-radius:20px; margin-bottom:10px; box-shadow:var(--shadow);">
-                    <span><b>${p.name}</b><br><small>${state.cart[id]} dona</small></span>
-                    <b>${(p.price*state.cart[id]).toLocaleString()} so'm</b>
-                </div>`;
-            }).join('');
-            document.getElementById('totalPrice').innerText = "Jami: " + total.toLocaleString() + " so'm";
+            let t=0, h="";
+            for(let id in cart) { 
+                let p=prods.find(x=>x.id==id);
+                if(p) {
+                    t+=p.price*cart[id]; 
+                    h+=`<div class="cart-item"><span>${p.name} <b>x${cart[id]}</b></span><b>${(p.price*cart[id]).toLocaleString()}</b></div>`; 
+                }
+            }
+            document.getElementById('cartList').innerHTML = h || "<p style='text-align:center; color:#999; padding:20px;'>Savatda mahsulot yo'q</p>";
+            document.getElementById('total').innerText = t.toLocaleString() + " so'm";
         }
 
         function getLocation() {
-            navigator.geolocation.getCurrentPosition(pos => {
-                state.loc = `https://www.google.com/maps?q=${pos.coords.latitude},${pos.coords.longitude}`;
-                document.getElementById('locBtn').innerText = "✅ MANZIL ANIQLANDI";
-                Swal.fire('Rahmat', 'Joylashuv muvaffaqiyatli olindi', 'success');
-            }, () => Swal.fire('Xato', 'Geolokatsiyani yoqing', 'error'));
+            const btn = document.getElementById('locBtn');
+            btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> ANIQLANMOQDA...';
+            navigator.geolocation.getCurrentPosition(p => {
+                coords = p.coords;
+                btn.innerHTML = '<i class="fa fa-check-circle"></i> MANZIL ANIQLANDI';
+                btn.style.background = "#e7fdf0";
+                btn.style.color = "#2ecc71";
+            }, () => {
+                showAlert("Diqqat", "GPS'ni yoqing yoki ruxsat bering.", "📍");
+                btn.innerHTML = '<i class="fa fa-location-dot"></i> QAYTA URINISH';
+            });
         }
 
         async function sendOrder() {
-            if(!state.loc) return Swal.fire('Manzil?', 'Joylashuvni aniqlang', 'warning');
-            let orderId = "ORD" + Math.floor(Math.random()*9000 + 1000);
-            let items = Object.keys(state.cart).map(id => `${state.products[id].name} (x${state.cart[id]})`).join('\n');
-            let total = document.getElementById('totalPrice').innerText;
+            if(!Object.keys(cart).length) return showAlert("Savatcha", "Hali mahsulot tanlamadingiz!", "🛒");
+            if(!coords) return showAlert("Manzil", "Iltimos, manzilni aniqlang!", "📍");
 
-            // 1. Google Sheetsga buyurtmani yozish
-            await fetch(`${SCRIPT_URL}?orderId=${orderId}`);
+            const btn = document.getElementById('submitBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa fa-paper-plane"></i> JO\'NATILMOQDA...';
 
-            // 2. Telegramga adminga xabar yuborish
-            await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({
-                    chat_id: ADMIN_ID,
-                    text: `🆕 BUYURTMA: ${orderId}\n👤 Mijoz: ${state.user.name}\n📞 Tel: ${state.user.phone}\n📦 Mahsulotlar:\n${items}\n💰 ${total}\n📍 Manzil: ${state.loc}`,
-                    reply_markup: { 
-                        inline_keyboard: [[{ text: "✅ Qabul qilish", callback_data: `ok_${orderId}` }]] 
-                    }
-                })
-            });
+            let items = "🛍 BUYURTMA:\n"; 
+            for(let id in cart) {
+                let p = prods.find(x=>x.id==id);
+                items += `• ${p.name} (${cart[id]} dona)\n`;
+            }
+            const msg = `${items}\n💰 JAMI: ${document.getElementById('total').innerText}\n\n📍 Lokatsiya: https://www.google.com/maps?q=${coords.latitude},${coords.longitude}`;
 
-            state.history.unshift({ id: orderId, status: "Kutilmoqda ⏳", total: total, time: new Date().toLocaleTimeString() });
-            localStorage.setItem('c7_history', JSON.stringify(state.history));
-            
-            state.cart = {};
-            Swal.fire('Tayyor!', 'Buyurtmangiz yuborildi', 'success').then(() => nav('history', document.querySelectorAll('.nav-item')[2]));
-        }
-
-        async function syncStatus() {
-            if (!state.history.length) return;
             try {
-                const res = await fetch(`${SCRIPT_URL}?action=getStatuses`);
-                const cloud = await res.json();
-                let changed = false;
-                state.history.forEach(h => {
-                    if(cloud[h.id] && h.status !== cloud[h.id]) {
-                        h.status = cloud[h.id];
-                        changed = true;
-                    }
+                await fetch(`https://api.telegram.org/bot${BOT}/sendMessage`, {
+                    method: 'POST',
+                    headers: {'Content-Type':'application/json'},
+                    body: JSON.stringify({ chat_id: ADMIN, text: msg })
                 });
-                if(changed) {
-                    localStorage.setItem('c7_history', JSON.stringify(state.history));
-                    if(document.getElementById('p-history').classList.contains('active')) renderHistory();
-                }
-            } catch(e) {}
+                showAlert("Raxmat!", "Buyurtmangiz qabul qilindi!", "✅");
+                cart = {}; renderMenu(); renderCart();
+                p('main', document.querySelector('.tool-item'));
+            } catch(e) {
+                showAlert("Xato", "Telegram bilan aloqa yo'q.", "❌");
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = "BUYURTMANI YUBORISH";
+            }
         }
 
-        function renderHistory() {
-            document.getElementById('historyList').innerHTML = state.history.map(h => `
-                <div class="history-item">
-                    <div style="display:flex; justify-content:space-between;">
-                        <b>ID: ${h.id}</b>
-                        <span class="status-pill">${h.status}</span>
-                    </div>
-                    <div style="margin-top:10px;">
-                        <span style="font-size:16px; font-weight:800; color:var(--secondary)">${h.total}</span><br>
-                        <small style="color:var(--gray)">${h.time}</small>
-                    </div>
-                </div>
-            `).join('') || "<p style='text-align:center; color:var(--gray)'>Hozircha buyurtmalar yo'q</p>";
+        function showAlert(t, m, i) {
+            document.getElementById('alertTitle').innerText = t;
+            document.getElementById('alertMsg').innerText = m;
+            document.getElementById('alertIcon').innerText = i;
+            const a = document.getElementById('customAlert');
+            a.style.display = 'flex';
+            setTimeout(() => a.classList.add('show'), 10);
         }
+
+        function closeAlert() {
+            const a = document.getElementById('customAlert');
+            a.classList.remove('show');
+            setTimeout(() => a.style.display = 'none', 300);
+        }
+
+        function toggleDrawer() {
+            const d = document.getElementById('myDrawer');
+            const o = document.getElementById('drawerOverlay');
+            d.classList.toggle('open');
+            o.style.display = d.classList.contains('open') ? 'block' : 'none';
+        }
+
+        function toggleMode() {
+            document.body.classList.toggle('dark-mode');
+            document.getElementById('modeToggle').classList.toggle('active');
+            localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
+        }
+
+        function p(s, el) {
+            document.querySelectorAll('.p-con').forEach(x => x.classList.add('hidden'));
+            document.getElementById(s + '-p').classList.remove('hidden');
+            document.querySelectorAll('.tool-item').forEach(x => x.classList.remove('active'));
+            el.classList.add('active');
+            if(s === 'fav') renderF();
+            window.scrollTo(0,0);
+        }
+
+        function renderF() {
+            const f = prods.filter(x => favs.includes(x.id));
+            document.getElementById('favs').innerHTML = f.length ? f.map(p => genCard(p)).join('') : "<p style='text-align:center; width:100%; color:#999; padding-top:50px;'>Sevimlilar bo'sh</p>";
+        }
+
+        function renderMenu() { document.getElementById('menu').innerHTML = prods.map(p => genCard(p)).join(''); }
+
+        function toggleF(id, el) {
+            event.stopPropagation();
+            if(favs.includes(id)) favs = favs.filter(x=>x!=id); else favs.push(id);
+            el.classList.toggle('active');
+            localStorage.setItem('c777_f', JSON.stringify(favs));
+        }
+
+        window.onload = () => {
+            favs = JSON.parse(localStorage.getItem('c777_f') || "[]");
+            if(localStorage.getItem('theme') === 'dark') {
+                document.body.classList.add('dark-mode');
+                document.getElementById('modeToggle').classList.add('active');
+            }
+            load();
+        };
     </script>
 </body>
 </html>
