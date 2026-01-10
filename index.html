@@ -3,144 +3,138 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Cafe 777 Premium</title>
+    <title>Cafe 777 | Premium Menu</title>
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
     <style>
         :root {
             --primary: #ff7f50;
-            --bg: #f4f7f6;
+            --accent: #ff4757;
+            --bg: #f8f9fa;
             --white: #ffffff;
             --text: #2d3436;
-            --shadow: 0 10px 30px rgba(0,0,0,0.08);
-            --radius: 20px;
+            --glass: rgba(255, 255, 255, 0.8);
+            --radius: 24px;
+            --shadow: 0 10px 40px rgba(0,0,0,0.06);
         }
 
-        * { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI', sans-serif; -webkit-tap-highlight-color:transparent; }
+        * { margin:0; padding:0; box-sizing:border-box; font-family: 'Outfit', sans-serif; -webkit-tap-highlight-color:transparent; }
         body { background: var(--bg); color: var(--text); overflow-x: hidden; }
 
-        /* Splash Screen (Tuzatilgan) */
-        #splash { position:fixed; inset:0; background:var(--white); z-index:10000; display:flex; flex-direction:column; align-items:center; justify-content:center; transition:0.5s; }
-        .loader-ring { width:50px; height:50px; border:4px solid #f3f3f3; border-top:4px solid var(--primary); border-radius:50%; animation:spin 1s linear infinite; }
+        /* Yuklanish ekrani */
+        #splash { position:fixed; inset:0; background:var(--white); z-index:10000; display:flex; flex-direction:column; align-items:center; justify-content:center; transition:0.6s; }
+        .loader { width: 48px; height: 48px; border: 5px solid #FFF; border-bottom-color: var(--primary); border-radius: 50%; animation: rotation 1s linear infinite; }
+        @keyframes rotation { 0% { transform: rotate(0deg) } 100% { transform: rotate(360deg) } }
 
-        /* Custom Alert */
-        .alert-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:11000; display:none; align-items:center; justify-content:center; backdrop-filter:blur(5px); }
-        .alert-card { background:var(--white); padding:25px; border-radius:var(--radius); width:85%; max-width:320px; text-align:center; box-shadow: var(--shadow); }
-        .alert-card h3 { color:var(--primary); margin-bottom:10px; }
-        .alert-card button { margin-top:20px; width:100%; padding:12px; border:none; background:var(--primary); color:white; border-radius:12px; font-weight:bold; }
-
-        /* Header */
-        header { position:sticky; top:0; background:rgba(255,255,255,0.8); backdrop-filter:blur(15px); padding:15px 20px; display:flex; justify-content:space-between; align-items:center; z-index:1000; box-shadow:0 2px 10px rgba(0,0,0,0.03); }
-        .logo { font-size:22px; font-weight:900; }
+        /* Header dizayni */
+        header { position:sticky; top:0; background:var(--glass); backdrop-filter:blur(20px); padding:15px 20px; display:flex; justify-content:space-between; align-items:center; z-index:1000; box-shadow: 0 2px 15px rgba(0,0,0,0.04); border-bottom: 1px solid rgba(255,255,255,0.3); }
+        .logo { font-size:24px; font-weight:900; letter-spacing:-1px; }
         .logo span { color:var(--primary); }
 
-        /* Categories */
-        .cats { display:flex; overflow-x:auto; padding:15px; gap:10px; scrollbar-width:none; }
+        /* Kategoriyalar */
+        .cats { display:flex; overflow-x:auto; padding:15px 20px; gap:12px; scrollbar-width:none; }
         .cats::-webkit-scrollbar { display:none; }
-        .chip { padding:10px 20px; background:var(--white); border-radius:25px; font-size:14px; font-weight:600; white-space:nowrap; box-shadow:var(--shadow); transition:0.3s; }
-        .chip.active { background:var(--primary); color:white; }
+        .chip { padding:12px 24px; background:var(--white); border-radius:30px; font-size:14px; font-weight:700; white-space:nowrap; box-shadow: var(--shadow); transition:0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); border: 1px solid transparent; }
+        .chip.active { background:var(--primary); color:white; transform: scale(1.05); }
 
-        /* Grid */
-        .grid { display:grid; grid-template-columns: 1fr 1fr; gap:15px; padding:15px; margin-bottom:100px; }
-        .card { background:var(--white); border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow); }
-        .card img { width:100%; height:130px; object-fit:cover; background:#eee; }
-        .card-body { padding:12px; }
-        .card-body h4 { font-size:14px; margin-bottom:5px; height:20px; overflow:hidden; }
-        .card-footer { display:flex; justify-content:space-between; align-items:center; margin-top:10px; }
-        .price { color:var(--primary); font-weight:800; font-size:14px; }
+        /* Menyu Grid */
+        .grid { display:grid; grid-template-columns: 1fr 1fr; gap:16px; padding:0 16px 120px 16px; }
+        .card { background:var(--white); border-radius:var(--radius); overflow:hidden; box-shadow: var(--shadow); transition: 0.3s; position: relative; border: 1px solid rgba(0,0,0,0.02); }
+        .card:active { transform: scale(0.96); }
+        .card img { width:100%; height:140px; object-fit:cover; background:#f1f1f1; transition: 0.5s; }
+        .card-info { padding:14px; }
+        .card-info h4 { font-size:15px; margin-bottom:4px; font-weight:800; color:#1e272e; }
+        .card-info p { font-size:11px; color:#7f8c8d; height:32px; overflow:hidden; line-height:1.4; }
+        .card-price-row { display:flex; justify-content:space-between; align-items:center; margin-top:12px; }
+        .price { color:var(--primary); font-weight:900; font-size:15px; }
 
-        /* Buttons */
-        .add-btn { background:var(--primary); color:white; border:none; padding:8px 12px; border-radius:10px; font-size:11px; font-weight:bold; }
-        .qty-box { display:flex; align-items:center; gap:8px; background:#f1f2f6; border-radius:10px; padding:2px; }
-        .qty-box button { width:26px; height:26px; border:none; background:white; border-radius:8px; font-weight:bold; }
+        /* Tugmalar */
+        .add-btn { background:var(--primary); color:white; border:none; width:36px; height:36px; border-radius:12px; font-size:18px; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+        .qty-box { display:flex; align-items:center; gap:10px; background:#f1f2f6; border-radius:12px; padding:4px 8px; }
+        .qty-box button { background:none; border:none; font-size:18px; font-weight:bold; width:24px; color:var(--primary); }
+        .qty-box span { font-weight:800; font-size:14px; min-width:15px; text-align:center; }
 
-        /* Toolbar */
-        .toolbar { position:fixed; bottom:0; width:100%; height:70px; background:var(--white); display:flex; justify-content:space-around; align-items:center; box-shadow:0 -5px 20px rgba(0,0,0,0.05); z-index:1000; }
-        .tool-item { display:flex; flex-direction:column; align-items:center; color:#b2bec3; font-size:11px; gap:4px; text-decoration:none; }
+        /* Bottom Toolbar */
+        .toolbar { position:fixed; bottom:20px; left:20px; right:20px; height:70px; background:rgba(45, 52, 54, 0.95); backdrop-filter:blur(10px); border-radius:25px; display:flex; justify-content:space-around; align-items:center; z-index:1001; box-shadow: 0 15px 35px rgba(0,0,0,0.2); }
+        .tool-item { display:flex; flex-direction:column; align-items:center; color:#dfe6e9; font-size:10px; gap:4px; text-decoration:none; position:relative; width:60px; }
         .tool-item.active { color:var(--primary); }
-        .tool-item i { font-size:20px; }
-        .badge { position:absolute; top:12px; transform: translateX(12px); background:#ff4757; color:white; width:18px; height:18px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:10px; }
+        .tool-item i { font-size:22px; }
+        .badge { position:absolute; top:-8px; right:8px; background:var(--accent); color:white; width:20px; height:20px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:bold; border:2px solid #2d3436; }
 
-        /* History */
-        .h-card { background:var(--white); margin:10px 15px; padding:15px; border-radius:15px; border-left:6px solid #dfe6e9; box-shadow:var(--shadow); }
-        .st-1 { border-left-color: #fdcb6e; }
-        .st-2 { border-left-color: #0984e3; }
-        .st-3 { border-left-color: #e67e22; }
-        .st-4 { border-left-color: #00b894; }
-
-        .page { display:none; min-height:100vh; padding-bottom:100px; }
+        /* Sahifalar */
+        .page { display:none; min-height:100vh; animation: fadeIn 0.4s ease; }
         .page.active { display:block; }
+        @keyframes fadeIn { from { opacity:0; transform: translateY(10px); } to { opacity:1; transform: translateY(0); } }
 
-        #imgModal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.9); z-index:10001; align-items:center; justify-content:center; }
-        #imgModal img { width:90%; max-height:80%; object-fit:contain; }
+        /* Tarix kartochkalari */
+        .h-card { background:var(--white); margin:12px 16px; padding:18px; border-radius:20px; box-shadow: var(--shadow); border-left: 8px solid #dfe6e9; }
+        .st-1 { border-left-color: #f1c40f; } /* Kutilmoqda */
+        .st-2 { border-left-color: #3498db; } /* Tayyorlanmoqda */
+        .st-3 { border-left-color: #e67e22; } /* Yo'lda */
+        .st-4 { border-left-color: #2ecc71; } /* Yetkazildi */
 
-        @keyframes spin { 100% { transform:rotate(360deg); } }
+        /* Buyurtma Berish Section */
+        .cart-footer { position:fixed; bottom:100px; left:16px; right:16px; background:var(--white); padding:20px; border-radius:24px; box-shadow: 0 -10px 40px rgba(0,0,0,0.1); }
+        .btn-order { width:100%; padding:16px; border:none; background:var(--primary); color:white; border-radius:18px; font-weight:800; font-size:16px; margin-top:15px; box-shadow: 0 8px 20px rgba(255, 127, 80, 0.3); }
     </style>
 </head>
 <body>
 
     <div id="splash">
-        <div class="loader-ring"></div>
-        <h2 style="margin-top:20px">CAFE <span style="color:var(--primary)">777</span></h2>
+        <span class="loader"></span>
+        <h2 style="margin-top:20px; font-weight:900; letter-spacing:2px">CAFE <span style="color:var(--primary)">777</span></h2>
     </div>
-
-    <div id="alertOverlay" class="alert-overlay">
-        <div class="alert-card">
-            <h3 id="alertTitle">Xabar</h3>
-            <p id="alertMsg"></p>
-            <button onclick="closeAlert()">Tushunarli</button>
-        </div>
-    </div>
-
-    <div id="imgModal" onclick="this.style.display='none'"><img id="zoomImg"></div>
 
     <header>
         <div class="logo">CAFE <span>777</span></div>
-        <div id="userDisplay" style="font-weight:bold; font-size:14px">Profil</div>
+        <div id="userName" style="font-weight:800; color:var(--primary)">Premium</div>
     </header>
 
     <main id="app">
-        <section id="main-p" class="page active">
+        <section id="menu-p" class="page active">
             <div class="cats" id="catNav"></div>
             <div class="grid" id="menuItems"></div>
         </section>
 
         <section id="cart-p" class="page">
             <div style="padding:20px">
-                <h2>Savat 🛒</h2>
-                <div id="cartList" style="margin-top:20px"></div>
-                <div style="margin-top:20px; background:white; padding:20px; border-radius:15px">
-                    <div style="display:flex; justify-content:space-between; margin-bottom:15px">
-                        <span>Jami:</span> <b id="totalPrice" style="color:var(--primary)">0 so'm</b>
+                <h2 style="font-weight:900; margin-bottom:20px">Savatchangiz 🛒</h2>
+                <div id="cartList"></div>
+                <div style="height:250px"></div> <div class="cart-footer" id="cartFooter">
+                    <div style="display:flex; justify-content:space-between; align-items:center">
+                        <span style="font-weight:700; color:#636e72">Jami summa:</span>
+                        <b id="totalPrice" style="font-size:22px; color:var(--primary)">0 so'm</b>
                     </div>
-                    <button onclick="getLocation()" id="locBtn" style="width:100%; padding:12px; border:2px solid var(--primary); background:none; color:var(--primary); border-radius:10px; margin-bottom:10px; font-weight:bold">📍 Manzilni aniqlash</button>
-                    <button onclick="sendOrder()" style="width:100%; padding:15px; border:none; background:var(--primary); color:white; border-radius:10px; font-weight:bold">BUYURTMA BERISH</button>
+                    <button onclick="getLocation()" id="locBtn" style="width:100%; padding:12px; border:2px dashed var(--primary); background:none; color:var(--primary); border-radius:15px; margin-top:15px; font-weight:700">📍 Manzilni aniqlash</button>
+                    <button onclick="sendOrder()" class="btn-order">BUYURTMANI YUBORISH</button>
                 </div>
             </div>
         </section>
 
         <section id="history-p" class="page">
-            <div style="padding:20px"><h2>Buyurtmalar 📜</h2></div>
+            <div style="padding:20px"><h2 style="font-weight:900">Buyurtmalar Tarixi 📜</h2></div>
             <div id="historyList"></div>
         </section>
     </main>
 
     <nav class="toolbar">
-        <div class="tool-item active" onclick="changePage('main', this)"><i class="fa fa-home"></i><span>Menyu</span></div>
-        <div class="tool-item" onclick="changePage('cart', this)"><i class="fa fa-shopping-basket"></i><span id="badge" class="badge" style="display:none">0</span><span>Savat</span></div>
-        <div class="tool-item" onclick="changePage('history', this)"><i class="fa fa-history"></i><span>Tarix</span></div>
+        <div class="tool-item active" onclick="changePage('menu', this)"><i class="fa-solid fa-utensils"></i><span>Menyu</span></div>
+        <div class="tool-item" onclick="changePage('cart', this)"><i class="fa-solid fa-bag-shopping"></i><span id="badge" class="badge" style="display:none">0</span><span>Savat</span></div>
+        <div class="tool-item" onclick="changePage('history', this)"><i class="fa-solid fa-clock-rotate-left"></i><span>Tarix</span></div>
     </nav>
 
     <script>
-        // SOZLAMALAR (Sizning ID laringiz)
+        // SOZLAMALAR
         const CONFIG = {
             MENU_SHEET: "https://docs.google.com/spreadsheets/d/1j6VojbeSYWgYj3UY98xCxHLCzHcGlEg0nXjYwHDkKQk/gviz/tq?tqx=out:json",
-            SCRIPT: "https://script.google.com/macros/s/AKfycbxY3WpeGlsE6giypDRwV_yIjhfUzhYDolYcK4fE1OKWKQHdl1v_ID-XdEq6dAxX1_uK6A/exec",
-            BOT_TOKEN: "8032226679:AAETTGPvYZYSvF_QmdofXKibpOwt4E9Iitc",
-            ADMIN: "519326806"
+            SCRIPT: "https://script.google.com/macros/s/AKfycbyczPTwYHrR8RkuMpFuuHwc-lrj57OTFXykW4oGkoZdxGqcKOCSxQYKd6pTegz53uSBjg/exec"
         };
 
-        let products = [], cart = {}, coords = null;
+        let products = [], cart = {}, userCoords = null;
 
+        // Ilovani ishga tushirish
         async function init() {
             try {
                 const res = await fetch(CONFIG.MENU_SHEET);
@@ -148,33 +142,34 @@
                 const json = JSON.parse(text.substring(text.indexOf("{"), text.lastIndexOf("}") + 1));
                 
                 products = json.table.rows
-                    .filter(r => r.c[2] && r.c[2].v)
+                    .filter(r => r.c && r.c[2] && r.c[2].v)
                     .map((r, i) => ({
                         id: i + 1,
                         cat: r.c[1]?.v || 'Boshqa',
                         name: r.c[2].v,
                         price: r.c[3]?.v || 0,
-                        img: r.c[4]?.v || '',
+                        img: r.c[4]?.v || 'https://via.placeholder.com/300x200?text=777+Cafe',
                         desc: r.c[5]?.v || ''
                     }));
 
                 renderCats();
                 renderMenu('Barchasi');
-                loadUser();
+                loadUserData();
             } catch (e) {
-                showAlert("Xatolik", "Jadval yuklanmadi. Sharing sozlamalarini tekshiring.");
+                Swal.fire('Xato', 'Ma\'lumot yuklashda xatolik!', 'error');
             } finally {
-                document.getElementById('splash').style.opacity = '0';
-                setTimeout(() => document.getElementById('splash').remove(), 500);
+                setTimeout(() => {
+                    document.getElementById('splash').style.opacity = '0';
+                    setTimeout(() => document.getElementById('splash').remove(), 600);
+                }, 1000);
             }
         }
 
         function renderCats() {
             const cats = ['Barchasi', ...new Set(products.map(p => p.cat))];
-            document.getElementById('catNav').innerHTML = cats.map(c => 
-                `<div class="chip" onclick="filterMenu('${c}', this)">${c}</div>`
-            ).join('');
-            document.querySelector('.chip').classList.add('active');
+            const nav = document.getElementById('catNav');
+            nav.innerHTML = cats.map(c => `<div class="chip" onclick="filterMenu('${c}', this)">${c}</div>`).join('');
+            nav.querySelector('.chip').classList.add('active');
         }
 
         function filterMenu(cat, el) {
@@ -184,82 +179,105 @@
         }
 
         function renderMenu(cat) {
+            const container = document.getElementById('menuItems');
             const filtered = cat === 'Barchasi' ? products : products.filter(p => p.cat === cat);
-            document.getElementById('menuItems').innerHTML = filtered.map(p => `
+            
+            container.innerHTML = filtered.map(p => `
                 <div class="card">
-                    <img src="${p.img}" onclick="zoom('${p.img}')" onerror="this.src='https://via.placeholder.com/150'">
-                    <div class="card-body">
+                    <img src="${p.img}" loading="lazy" onclick="zoomImg('${p.img}')">
+                    <div class="card-info">
                         <h4>${p.name}</h4>
-                        <div class="card-footer">
+                        <p>${p.desc}</p>
+                        <div class="card-price-row">
                             <b class="price">${p.price.toLocaleString()} so'm</b>
-                            <div id="ctrl-${p.id}">${btnHTML(p.id)}</div>
+                            <div id="btn-container-${p.id}">${btnLogic(p.id)}</div>
                         </div>
                     </div>
                 </div>
             `).join('');
         }
 
-        function btnHTML(id) {
+        function btnLogic(id) {
             const q = cart[id] || 0;
             return q > 0 ? `
                 <div class="qty-box">
-                    <button onclick="updateQty(${id},-1)">-</button>
+                    <button onclick="updateQty(${id}, -1)">-</button>
                     <span>${q}</span>
-                    <button onclick="updateQty(${id},1)">+</button>
-                </div>` : `<button class="add-btn" onclick="updateQty(${id},1)">Savatga</button>`;
+                    <button onclick="updateQty(${id}, 1)">+</button>
+                </div>` : 
+                `<button class="add-btn" onclick="updateQty(${id}, 1)"><i class="fa fa-plus"></i></button>`;
         }
 
-        function updateQty(id, n) {
-            cart[id] = (cart[id] || 0) + n;
+        function updateQty(id, delta) {
+            cart[id] = (cart[id] || 0) + delta;
             if(cart[id] <= 0) delete cart[id];
             
-            const el = document.getElementById(`ctrl-${id}`);
-            if(el) el.innerHTML = btnHTML(id);
+            const btnBox = document.getElementById(`btn-container-${id}`);
+            if(btnBox) btnBox.innerHTML = btnLogic(id);
+            
             updateBadge();
             if(document.getElementById('cart-p').classList.contains('active')) renderCart();
         }
 
         function updateBadge() {
-            const total = Object.values(cart).reduce((a, b) => a + b, 0);
-            const b = document.getElementById('badge');
-            b.innerText = total;
-            b.style.display = total > 0 ? 'flex' : 'none';
+            const count = Object.values(cart).reduce((a, b) => a + b, 0);
+            const badge = document.getElementById('badge');
+            badge.innerText = count;
+            badge.style.display = count > 0 ? 'flex' : 'none';
         }
 
         function renderCart() {
             const list = document.getElementById('cartList');
             let total = 0, html = "";
+            
             for(let id in cart) {
                 const p = products.find(x => x.id == id);
                 total += p.price * cart[id];
                 html += `
-                <div style="display:flex; justify-content:space-between; align-items:center; background:white; padding:15px; border-radius:12px; margin-bottom:10px">
-                    <div><b>${p.name}</b><br><small>${p.price.toLocaleString()} so'm</small></div>
+                <div style="display:flex; justify-content:space-between; align-items:center; background:white; padding:15px; border-radius:18px; margin-bottom:12px; box-shadow:var(--shadow)">
+                    <div style="display:flex; align-items:center; gap:12px">
+                        <img src="${p.img}" style="width:50px; height:50px; border-radius:10px; object-fit:cover">
+                        <div>
+                            <b style="font-size:14px">${p.name}</b><br>
+                            <small style="color:var(--primary)">${p.price.toLocaleString()} x ${cart[id]}</small>
+                        </div>
+                    </div>
                     <div class="qty-box">
-                        <button onclick="updateQty(${id},-1)">-</button>
+                        <button onclick="updateQty(${id}, -1)">-</button>
                         <span>${cart[id]}</span>
-                        <button onclick="updateQty(${id},1)">+</button>
+                        <button onclick="updateQty(${id}, 1)">+</button>
                     </div>
                 </div>`;
             }
-            list.innerHTML = html || "<p style='text-align:center'>Savat bo'sh</p>";
+            
+            list.innerHTML = html || `<div style="text-align:center; padding:50px; color:#b2bec3"><i class="fa-solid fa-basket-shopping fa-3x"></i><p style="margin-top:15px">Savat bo'sh</p></div>`;
             document.getElementById('totalPrice').innerText = total.toLocaleString() + " so'm";
+            document.getElementById('cartFooter').style.display = total > 0 ? 'block' : 'none';
         }
 
         async function sendOrder() {
-            const user = JSON.parse(localStorage.getItem('c777_u'));
+            const user = JSON.parse(localStorage.getItem('c777_user'));
             if(!user) {
-                const n = prompt("Ismingiz:");
-                const p = prompt("Telefoningiz:", "+998");
-                if(!n || !p) return;
-                localStorage.setItem('c777_u', JSON.stringify({n, p}));
+                const { value: formValues } = await Swal.fire({
+                    title: 'Ma\'lumotlaringiz',
+                    html: '<input id="swal-n" class="swal2-input" placeholder="Ismingiz">' +
+                          '<input id="swal-p" class="swal2-input" placeholder="Telefoningiz" value="+998">',
+                    focusConfirm: false,
+                    preConfirm: () => [document.getElementById('swal-n').value, document.getElementById('swal-p').value]
+                });
+                if(!formValues || !formValues[0]) return;
+                localStorage.setItem('c777_user', JSON.stringify({name: formValues[0], phone: formValues[1]}));
+                loadUserData();
             }
-            if(!Object.keys(cart).length) return showAlert("Savat", "Savat bo'sh!");
-            if(!coords) return showAlert("Manzil", "Joylashuvni aniqlang!");
 
-            const u = JSON.parse(localStorage.getItem('c777_u'));
+            if(!userCoords) return Swal.fire('Manzil', 'Iltimos, manzilni aniqlang!', 'warning');
+
+            Swal.fire({ title: 'Yuborilmoqda...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+
+            const u = JSON.parse(localStorage.getItem('c777_user'));
             const orderId = Date.now();
             let items = "", total = 0;
+            
             for(let id in cart) {
                 const p = products.find(x => x.id == id);
                 items += `${p.name} (${cart[id]}x), `;
@@ -267,34 +285,31 @@
             }
 
             try {
-                fetch(`${CONFIG.SCRIPT}?action=add&id=${orderId}&name=${encodeURIComponent(u.n)}&phone=${u.p}&items=${encodeURIComponent(items)}&total=${total}`);
-                
-                await fetch(`https://api.telegram.org/bot${CONFIG.BOT_TOKEN}/sendMessage`, {
-                    method: 'POST',
-                    headers: {'Content-Type':'application/json'},
-                    body: JSON.stringify({
-                        chat_id: CONFIG.ADMIN,
-                        text: `🔔 YANGI BUYURTMA #${orderId}\n👤 ${u.n}\n📞 ${u.p}\n🛒 ${items}\n💰 ${total.toLocaleString()} so'm\n📍 Manzil: https://www.google.com/maps?q=${coords.latitude},${coords.longitude}`
-                    })
-                });
+                const url = `${CONFIG.SCRIPT}?action=add&id=${orderId}&name=${encodeURIComponent(u.name)}&phone=${u.phone}&items=${encodeURIComponent(items)}&total=${total}&lat=${userCoords.latitude}&lng=${userCoords.longitude}`;
+                await fetch(url, { mode: 'no-cors' });
 
-                let h = JSON.parse(localStorage.getItem('c777_h') || "[]");
-                h.unshift({id: orderId, items, total, status: 1});
-                localStorage.setItem('c777_h', JSON.stringify(h));
+                let history = JSON.parse(localStorage.getItem('c777_history') || "[]");
+                history.unshift({id: orderId, items, total, status: 1});
+                localStorage.setItem('c777_history', JSON.stringify(history));
 
-                showAlert("Rahmat!", "Buyurtmangiz qabul qilindi!");
-                cart = {}; updateBadge(); changePage('history', document.querySelectorAll('.tool-item')[2]);
-            } catch(e) { showAlert("Xato", "Bog'lanishda xato!"); }
+                cart = {};
+                updateBadge();
+                Swal.fire('Tayyor!', 'Buyurtmangiz qabul qilindi!', 'success');
+                changePage('history', document.querySelectorAll('.tool-item')[2]);
+            } catch (e) {
+                Swal.fire('Xato', 'Buyurtma yuborishda xatolik!', 'error');
+            }
         }
 
         async function loadHistory() {
-            const h = JSON.parse(localStorage.getItem('c777_h') || "[]");
             const container = document.getElementById('historyList');
-            if(!h.length) return container.innerHTML = "<p style='text-align:center'>Tarix bo'sh</p>";
+            const history = JSON.parse(localStorage.getItem('c777_history') || "[]");
+            if(!history.length) { container.innerHTML = '<p style="text-align:center; padding:50px">Tarix bo\'sh</p>'; return; }
 
-            const sts = ["", "Kutilmoqda", "Tayyorlanmoqda 👨‍🍳", "Yo'lda 🚴", "Yetkazildi ✅"];
+            const statusNames = ["", "Kutilmoqda ⏳", "Tayyorlanmoqda 👨‍🍳", "Yo'lda 🚴", "Yetkazildi ✅"];
             let html = "";
-            for(let o of h) {
+            
+            for(let o of history) {
                 if(o.status < 4) {
                     try {
                         const r = await fetch(`${CONFIG.SCRIPT}?orderId=${o.id}`);
@@ -304,23 +319,30 @@
                 }
                 html += `
                 <div class="h-card st-${o.status}">
-                    <div style="display:flex; justify-content:space-between"><small>#${o.id.toString().slice(-6)}</small> <b>${sts[o.status]}</b></div>
-                    <p style="font-size:13px; margin:8px 0">${o.items}</p>
-                    <b style="color:var(--primary)">${o.total.toLocaleString()} so'm</b>
+                    <div style="display:flex; justify-content:space-between; margin-bottom:10px">
+                        <span style="font-size:12px; color:#b2bec3">#${o.id.toString().slice(-6)}</span>
+                        <b style="font-size:13px">${statusNames[o.status]}</b>
+                    </div>
+                    <div style="font-weight:700; margin-bottom:8px">${o.items}</div>
+                    <div style="color:var(--primary); font-weight:900">${o.total.toLocaleString()} so'm</div>
                 </div>`;
             }
             container.innerHTML = html;
-            localStorage.setItem('c777_h', JSON.stringify(h));
+            localStorage.setItem('c777_history', JSON.stringify(history));
         }
 
         function getLocation() {
-            const b = document.getElementById('locBtn');
-            b.innerText = "Aniqlanmoqda...";
+            const btn = document.getElementById('locBtn');
+            btn.innerText = "Aniqlanmoqda...";
             navigator.geolocation.getCurrentPosition(p => {
-                coords = p.coords;
-                b.innerText = "✅ Manzil aniqlandi";
-                b.style.color = "green"; b.style.borderColor = "green";
-            }, () => showAlert("Xato", "GPSni yoqing!"));
+                userCoords = p.coords;
+                btn.innerHTML = "✅ Manzil aniqlandi";
+                btn.style.borderColor = "#2ecc71";
+                btn.style.color = "#2ecc71";
+            }, () => {
+                Swal.fire('GPS', 'Joylashuvni aniqlashga ruxsat bering!', 'error');
+                btn.innerText = "📍 Manzilni aniqlash";
+            });
         }
 
         function changePage(p, el) {
@@ -328,14 +350,19 @@
             document.getElementById(p + '-p').classList.add('active');
             document.querySelectorAll('.tool-item').forEach(x => x.classList.remove('active'));
             el.classList.add('active');
-            if(p === 'history') loadHistory();
             if(p === 'cart') renderCart();
+            if(p === 'history') loadHistory();
+            window.scrollTo(0,0);
         }
 
-        function zoom(s) { document.getElementById('zoomImg').src = s; document.getElementById('imgModal').style.display = 'flex'; }
-        function showAlert(t, m) { document.getElementById('alertTitle').innerText = t; document.getElementById('alertMsg').innerText = m; document.getElementById('alertOverlay').style.display = 'flex'; }
-        function closeAlert() { document.getElementById('alertOverlay').style.display = 'none'; }
-        function loadUser() { const u = JSON.parse(localStorage.getItem('c777_u')); if(u) document.getElementById('userDisplay').innerText = u.n; }
+        function zoomImg(src) {
+            Swal.fire({ imageUrl: src, imageAlt: 'Taom', showConfirmButton: false, background: 'transparent' });
+        }
+
+        function loadUserData() {
+            const u = JSON.parse(localStorage.getItem('c777_user'));
+            if(u) document.getElementById('userName').innerText = u.name;
+        }
 
         window.onload = init;
     </script>
